@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,17 @@ return new class extends Migration
     {
         Schema::create('studio_rooms', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('branch_id')
+                ->constrained('branches')
+                ->cascadeOnDelete();
+
+            $table->string('name');
+            $table->integer('capacity')->nullable();
+            $table->text('description')->nullable();
+
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }

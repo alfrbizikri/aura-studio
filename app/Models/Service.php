@@ -2,9 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'is_active',
+    ];
+
+    public function branches()
+    {
+        return $this->belongsToMany(Branch::class);
+    }
+
+    public function packages()
+    {
+        return $this->hasMany(Package::class);
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class);
+    }
 }

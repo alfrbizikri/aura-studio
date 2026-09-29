@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,32 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('branch_id')
+                ->constrained('branches')
+                ->cascadeOnDelete();
+
+            $table->foreignId('photographer_id')
+                ->nullable()
+                ->constrained('photographers')
+                ->cascadeOnDelete();
+
+            $table->foreignId('studio_room_id')
+                ->nullable()
+                ->constrained('studio_rooms')
+                ->cascadeOnDelete();
+
+            $table->date('schedule_date');
+            $table->time('start_time');
+            $table->time('end_time');
+
+            $table->enum('status', [
+                'available',
+                'unavailable'
+            ])->default('available');
+
+            $table->text('notes')->nullable();
+
             $table->timestamps();
         });
     }

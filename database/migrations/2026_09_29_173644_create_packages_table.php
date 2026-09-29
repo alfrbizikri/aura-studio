@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,22 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
+
+            $table->string('name');
+            $table->text('description')->nullable();
+
+            $table->decimal('price', 12, 2);
+            $table->integer('duration_minutes');
+
+            $table->integer('max_person')->nullable();
+            $table->string('image')->nullable();
+
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }
