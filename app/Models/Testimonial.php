@@ -5,20 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Gallery extends Model
+class Testimonial extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'service_id',
-        'title',
-        'image',
-        'description',
+        'booking_id',
+        'rating',
+        'comment',
         'status',
     ];
 
-    public function service()
+    public function booking()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Booking::class);
     }
 }

@@ -11,18 +11,36 @@ class Service extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
-        'is_active',
+        'image',
+        'requires_photographer',
+        'requires_room',
+        'is_on_location',
+        'status',
+    ];
+
+    protected $casts = [
+        'requires_photographer' => 'boolean',
+        'requires_room' => 'boolean',
+        'is_on_location' => 'boolean',
     ];
 
     public function branches()
     {
-        return $this->belongsToMany(Branch::class);
+        return $this->belongsToMany(Branch::class)
+            ->withPivot('status')
+            ->withTimestamps();
     }
 
     public function packages()
     {
         return $this->hasMany(Package::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
     }
 
     public function galleries()

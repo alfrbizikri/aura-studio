@@ -13,15 +13,17 @@ class Branch extends Model
         'name',
         'address',
         'phone',
-        'email',
-        'open_time',
-        'close_time',
-        'is_active',
+        'opening_time',
+        'closing_time',
+        'maps_url',
+        'status',
     ];
 
     public function services()
     {
-        return $this->belongsToMany(Service::class);
+        return $this->belongsToMany(Service::class)
+            ->withPivot('status')
+            ->withTimestamps();
     }
 
     public function photographers()
@@ -37,10 +39,5 @@ class Branch extends Model
     public function schedules()
     {
         return $this->hasMany(Schedule::class);
-    }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
     }
 }
