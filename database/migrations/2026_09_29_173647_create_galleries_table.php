@@ -14,17 +14,17 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('service_id')
-                ->nullable()
                 ->constrained('services')
-                ->nullOnDelete();
+                ->cascadeOnDelete();
 
-            $table->string('title')->nullable();
-
+            $table->string('title', 100);
             $table->string('image');
-
             $table->text('description')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', [
+                'published',
+                'hidden'
+            ])->default('published');
 
             $table->timestamps();
         });

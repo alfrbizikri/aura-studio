@@ -10,27 +10,22 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('branch_service', function (Blueprint $table) {
+        Schema::create('booking_schedule', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('branch_id')
-                ->constrained('branches')
+            $table->foreignId('booking_id')
+                ->constrained('bookings')
                 ->cascadeOnDelete();
 
-            $table->foreignId('service_id')
-                ->constrained('services')
+            $table->foreignId('schedule_id')
+                ->constrained('schedules')
                 ->cascadeOnDelete();
-
-            $table->enum('status', [
-                'active',
-                'inactive'
-            ])->default('active');
 
             $table->timestamps();
 
             $table->unique([
-                'branch_id',
-                'service_id'
+                'booking_id',
+                'schedule_id'
             ]);
         });
     }
@@ -40,6 +35,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('branch_service');
+        Schema::dropIfExists('booking_schedule');
     }
 };

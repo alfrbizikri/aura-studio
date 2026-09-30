@@ -10,34 +10,21 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('booking_id')
                 ->constrained('bookings')
                 ->cascadeOnDelete();
 
-            $table->string('payment_method', 50);
-
-            $table->decimal('amount', 12, 2);
-
-            $table->string('proof_of_payment')->nullable();
+            $table->unsignedTinyInteger('rating');
+            $table->text('comment');
 
             $table->enum('status', [
                 'pending',
-                'paid',
-                'rejected',
-                'refunded'
+                'published',
+                'hidden'
             ])->default('pending');
-
-            $table->text('rejection_reason')->nullable();
-
-            $table->foreignId('verified_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
-
-            $table->timestamp('verified_at')->nullable();
 
             $table->timestamps();
         });
@@ -48,6 +35,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('testimonials');
     }
 };

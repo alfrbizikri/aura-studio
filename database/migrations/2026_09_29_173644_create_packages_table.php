@@ -17,14 +17,16 @@ return new class extends Migration {
                 ->constrained('services')
                 ->cascadeOnDelete();
 
-            $table->string('name');
+            $table->string('name', 100);
             $table->text('description')->nullable();
 
             $table->decimal('price', 12, 2);
-            $table->integer('duration_minutes');
 
-            $table->integer('max_person')->nullable();
-            $table->string('image')->nullable();
+            $table->unsignedSmallInteger('duration_minutes');
+            $table->unsignedSmallInteger('max_people')->nullable();
+            $table->unsignedSmallInteger('photo_count')->nullable();
+
+            $table->text('package_includes')->nullable();
 
             $table->boolean('is_active')->default(true);
 

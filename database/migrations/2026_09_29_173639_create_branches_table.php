@@ -13,20 +13,23 @@ return new class extends Migration {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('name', 100);
             $table->text('address');
             $table->string('phone', 20)->nullable();
-            $table->string('email')->nullable();
 
-            $table->time('open_time')->nullable();
-            $table->time('close_time')->nullable();
+            $table->time('opening_time');
+            $table->time('closing_time');
 
-            $table->boolean('is_active')->default(true);
+            $table->string('maps_url')->nullable();
+
+            $table->enum('status', [
+                'active',
+                'inactive'
+            ])->default('active');
 
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

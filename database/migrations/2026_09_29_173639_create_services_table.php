@@ -13,11 +13,20 @@ return new class extends Migration {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('name', 100);
+            $table->string('slug', 100)->unique();
+
             $table->text('description')->nullable();
             $table->string('image')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('requires_photographer')->default(false);
+            $table->boolean('requires_room')->default(false);
+            $table->boolean('is_on_location')->default(false);
+
+            $table->enum('status', [
+                'active',
+                'inactive'
+            ])->default('active');
 
             $table->timestamps();
         });

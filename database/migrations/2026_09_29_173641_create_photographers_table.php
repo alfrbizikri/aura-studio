@@ -17,15 +17,16 @@ return new class extends Migration {
                 ->constrained('branches')
                 ->cascadeOnDelete();
 
-            $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone', 20)->nullable();
-
-            $table->string('specialization')->nullable();
-            $table->text('bio')->nullable();
+            $table->string('name', 100);
             $table->string('photo')->nullable();
+            $table->string('specialization', 150)->nullable();
+            $table->text('description')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', [
+                'active',
+                'inactive',
+                'leave'
+            ])->default('active');
 
             $table->timestamps();
         });

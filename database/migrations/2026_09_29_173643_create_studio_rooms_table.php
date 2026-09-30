@@ -17,11 +17,14 @@ return new class extends Migration {
                 ->constrained('branches')
                 ->cascadeOnDelete();
 
-            $table->string('name');
-            $table->integer('capacity')->nullable();
+            $table->string('name', 100);
             $table->text('description')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->enum('status', [
+                'active',
+                'maintenance',
+                'inactive'
+            ])->default('active');
 
             $table->timestamps();
         });

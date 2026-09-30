@@ -13,33 +13,20 @@ return new class extends Migration {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
+            $table->string('booking_code', 30)->unique();
 
-            $table->foreignId('branch_id')
-                ->constrained('branches');
+            $table->foreignId('user_id')
+                ->constrained('users');
 
             $table->foreignId('package_id')
                 ->constrained('packages');
 
-            $table->foreignId('photographer_id')
-                ->nullable()
-                ->constrained('photographers')
-                ->nullOnDelete();
+            $table->unsignedTinyInteger('number_of_people');
 
-            $table->foreignId('studio_room_id')
-                ->nullable()
-                ->constrained('studio_rooms')
-                ->nullOnDelete();
+            $table->text('location_address')->nullable();
+            $table->text('location_notes')->nullable();
 
-            $table->string('booking_code')->unique();
-
-            $table->date('booking_date');
-            $table->time('start_time');
-            $table->time('end_time');
-
-            $table->integer('number_of_people')->nullable();
+            $table->text('notes')->nullable();
 
             $table->decimal('total_price', 12, 2);
 
@@ -50,9 +37,8 @@ return new class extends Migration {
                 'cancelled'
             ])->default('pending');
 
-            $table->text('notes')->nullable();
-
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

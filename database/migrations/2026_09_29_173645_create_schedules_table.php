@@ -17,15 +17,19 @@ return new class extends Migration {
                 ->constrained('branches')
                 ->cascadeOnDelete();
 
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
+
             $table->foreignId('photographer_id')
                 ->nullable()
                 ->constrained('photographers')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
             $table->foreignId('studio_room_id')
                 ->nullable()
                 ->constrained('studio_rooms')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
             $table->date('schedule_date');
             $table->time('start_time');
@@ -33,10 +37,9 @@ return new class extends Migration {
 
             $table->enum('status', [
                 'available',
-                'unavailable'
+                'booked',
+                'blocked'
             ])->default('available');
-
-            $table->text('notes')->nullable();
 
             $table->timestamps();
         });
