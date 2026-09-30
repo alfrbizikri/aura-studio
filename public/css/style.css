@@ -1,3 +1,7 @@
+/* =========================================================
+   1. DESIGN TOKENS / ROOT VARIABLES
+   ========================================================= */
+
 :root {
     --color-primary: #b88a44;
     --color-dark: #24211d;
@@ -11,13 +15,30 @@
     --radius-lg: 20px;
 }
 
+/* =========================================================
+   2. RESET
+   ========================================================= */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* =========================================================
+   3. BASE / GLOBAL
+   ========================================================= */
+
+html,
 body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
     font-family: Arial, sans-serif;
     background: var(--color-light);
     color: var(--color-text);
@@ -28,27 +49,70 @@ a {
     color: inherit;
 }
 
+/* =========================================================
+   4. GLOBAL LAYOUT
+   ========================================================= */
+
 .container {
     width: min(1200px, 90%);
     margin: 0 auto;
 }
 
-/* NAVBAR */
+.main-content {
+    flex: 1;
+}
+
+/* =========================================================
+   5. NAVBAR
+   ========================================================= */
+
 .navbar {
-    background: var(--color-white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--color-border);
+    transition:
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 8px 30px rgba(36, 33, 29, 0.08);
 }
 
 .navbar-wrapper {
-    min-height: 72px;
+    min-height: 76px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    gap: 28px;
 }
 
 .navbar-brand {
-    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-dark);
+    color: var(--color-primary);
+    font-family: Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.brand-text {
+    font-family: Georgia, serif;
+    font-size: 21px;
     font-weight: 700;
     color: var(--color-dark);
 }
@@ -60,20 +124,111 @@ a {
 }
 
 .navbar-menu a {
+    position: relative;
+    padding: 28px 0 24px;
     font-size: 14px;
-    transition: 0.2s;
+    font-weight: 500;
+    color: var(--color-text);
+    transition: color 0.2s ease;
 }
 
-.navbar-menu a:hover {
-    color: var(--color-primary);
+.navbar-menu a::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary);
+    transform: translateX(-50%);
+    transition: width 0.2s ease;
+}
+
+.navbar-menu a:hover,
+.navbar-menu a.active {
+    color: var(--color-dark);
+}
+
+.navbar-menu a:hover::after,
+.navbar-menu a.active::after {
+    width: 22px;
 }
 
 .navbar-actions {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
-/* BUTTON */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(184, 138, 68, 0.22);
+}
+
+.btn-ghost {
+    color: var(--color-dark);
+    border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+    background: rgba(184, 138, 68, 0.08);
+}
+
+.navbar-toggle {
+    display: none;
+    border: 0;
+    background: transparent;
+    font-size: 28px;
+    color: var(--color-dark);
+    cursor: pointer;
+}
+
+/* =========================================================
+   NAVBAR BRAND / LOGO
+   ========================================================= */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.navbar-logo {
+    width: 210px;
+    height: auto;
+    display: block;
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.03);
+    filter: drop-shadow(0 4px 10px rgba(184, 138, 68, 0.18));
+}
+
+/* =========================================================
+   6. BUTTONS
+   ========================================================= */
+
 .btn {
     display: inline-block;
     padding: 10px 18px;
@@ -101,124 +256,469 @@ a {
     color: var(--color-white);
 }
 
-/* FOOTER */
+/* =========================================================
+   7. FOOTER
+   ========================================================= */
+
 .footer {
     margin-top: 80px;
-    background: var(--color-dark);
+    background: linear-gradient(135deg, #24211d 0%, #1c1a17 100%);
+
     color: var(--color-white);
+    position: relative;
+    overflow: hidden;
 }
+
+/* Garis aksen bagian atas */
+.footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-primary),
+        transparent
+    );
+}
+
+/* -------------------------
+   Footer Grid
+   ------------------------- */
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 60px;
-    padding: 60px 0;
+
+    grid-template-columns:
+        1.8fr
+        1fr
+        1fr
+        1.3fr;
+
+    gap: 55px;
+
+    padding: 70px 0 55px;
 }
 
-.footer-brand h3 {
-    font-size: 24px;
-    margin-bottom: 14px;
+/* -------------------------
+   Footer Brand
+   ------------------------- */
+
+.footer-brand {
+    max-width: 360px;
 }
 
-.footer-brand p {
-    max-width: 420px;
-    line-height: 1.7;
-    color: #d8d2ca;
+.footer-logo-link {
+    display: inline-block;
+    margin-bottom: 22px;
 }
+
+.footer-logo {
+    width: 210px;
+    height: auto;
+
+    /* supaya logo terlihat jelas di background gelap */
+    filter: brightness(1.15);
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+}
+
+.footer-logo-link:hover .footer-logo {
+    transform: translateY(-2px);
+    filter: brightness(1.25) drop-shadow(0 6px 14px rgba(184, 138, 68, 0.18));
+}
+
+.footer-description {
+    max-width: 330px;
+
+    color: #cfc8bf;
+
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* -------------------------
+   Footer Headings
+   ------------------------- */
+
+.footer-links h4,
+.footer-contact h4 {
+    position: relative;
+
+    margin-bottom: 22px;
+
+    color: var(--color-white);
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.footer-links h4::after,
+.footer-contact h4::after {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+
+    width: 28px;
+    height: 2px;
+
+    background: var(--color-primary);
+}
+
+/* -------------------------
+   Footer Links
+   ------------------------- */
 
 .footer-links {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-}
 
-.footer-links h4 {
-    margin-bottom: 6px;
-    color: var(--color-primary);
+    gap: 11px;
 }
 
 .footer-links a {
-    color: #d8d2ca;
+    position: relative;
+
+    width: fit-content;
+
+    color: #cfc8bf;
+
     font-size: 14px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .footer-links a:hover {
-    color: var(--color-white);
+    color: var(--color-primary);
+    transform: translateX(4px);
 }
 
-.footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
+/* -------------------------
+   Footer Contact
+   ------------------------- */
 
-.footer-bottom .container {
-    padding: 18px 0;
-}
-
-.footer-bottom p {
-    font-size: 13px;
-    color: #aaa39b;
-}
-
-html,
-body {
-    min-height: 100%;
-}
-
-body {
-    min-height: 100vh;
+.footer-contact {
     display: flex;
     flex-direction: column;
 }
 
-.main-content {
-    flex: 1;
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+
+    color: #cfc8bf;
+
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-.navbar-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 26px;
-    cursor: pointer;
-    color: var(--color-dark);
+.footer-contact-item i {
+    margin-top: 2px;
+
+    color: var(--color-primary);
+
+    font-size: 15px;
 }
+
+/* -------------------------
+   Social Media
+   ------------------------- */
+
+.footer-social {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.footer-social a {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    border-radius: 50%;
+
+    color: #d9d2c9;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.footer-social a:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+
+    color: var(--color-white);
+
+    transform: translateY(-3px);
+}
+
+/* -------------------------
+   Footer Bottom
+   ------------------------- */
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom-wrapper {
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.footer-bottom p {
+    color: #9f9890;
+
+    font-size: 13px;
+}
+
+.footer-back-top {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    color: #bfb8af;
+
+    font-size: 13px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.footer-back-top:hover {
+    color: var(--color-primary);
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   8. SHARED COMPONENTS
+   ========================================================= */
+
+/*
+   Contoh nanti:
+   .card
+   .badge
+   .section-title
+   .form-control
+   .alert
+*/
+
+/* =========================================================
+   9. UTILITIES
+   ========================================================= */
+
+/*
+   Contoh nanti:
+   .text-center
+   .mt-3
+   .mb-4
+*/
+
+/* =========================================================
+   RESPONSIVE - TABLET & MOBILE
+   ========================================================= */
 
 @media (max-width: 900px) {
-
     .navbar-wrapper {
+        min-height: 68px;
         flex-wrap: wrap;
+        gap: 0;
+    }
+
+    .navbar-logo {
+        width: 155px;
     }
 
     .navbar-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-left: auto;
+
+        width: 40px;
+        height: 40px;
+
+        border-radius: var(--radius-sm);
+        transition: 0.2s ease;
+    }
+
+    .navbar-toggle:hover {
+        background: rgba(184, 138, 68, 0.08);
+        color: var(--color-primary);
     }
 
     .navbar-menu {
         display: none;
+
         width: 100%;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        padding: 20px 0;
+        align-items: stretch;
+
+        gap: 4px;
+        padding: 16px 0 10px;
     }
 
     .navbar-menu.active {
         display: flex;
     }
 
+    .navbar-menu a {
+        width: 100%;
+        padding: 11px 12px;
+
+        font-size: 14px;
+        border-radius: var(--radius-sm);
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            padding-left 0.2s ease;
+    }
+
+    .navbar-menu a::after {
+        display: none;
+    }
+
+    .navbar-menu a:hover {
+        padding-left: 18px;
+        background: rgba(184, 138, 68, 0.08);
+        color: var(--color-primary);
+    }
+
+    .navbar-menu a.active {
+        background: rgba(184, 138, 68, 0.12);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
     .navbar-actions {
         display: none;
+
         width: 100%;
-        padding-bottom: 20px;
+        flex-direction: column;
+
+        gap: 10px;
+        padding: 10px 0 18px;
     }
 
     .navbar-actions.active {
         display: flex;
     }
 
+    .navbar-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-ghost {
+        border: 1px solid var(--color-border);
+        background: var(--color-white);
+    }
+}
+
+/* -------------------------
+   Footer Responsive
+   ------------------------- */
+
+@media (max-width: 900px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 40px;
+
+        padding: 55px 0 45px;
+    }
+
+    .footer-brand {
+        max-width: none;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+    .container {
+        width: min(100% - 28px, 1200px);
+    }
+
+    .navbar-logo {
+        width: 140px;
+    }
+
+    .navbar-menu {
+        padding-top: 12px;
+    }
+
+    .navbar-menu a {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .footer {
+        margin-top: 60px;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
-        gap: 30px;
+
+        gap: 34px;
+
+        padding: 45px 0 35px;
+    }
+
+    .footer-logo {
+        width: 175px;
+    }
+
+    .footer-description {
+        max-width: 100%;
+    }
+
+    .footer-bottom-wrapper {
+        min-height: auto;
+
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 20px 0;
+
+        gap: 12px;
     }
 }
