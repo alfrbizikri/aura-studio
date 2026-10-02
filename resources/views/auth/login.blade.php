@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Masuk - Aura Studio')
+@section('title', 'Login Customer - Aura Studio')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
@@ -14,7 +14,10 @@
 
         <div class="auth-layout">
 
-            {{-- VISUAL --}}
+
+            {{-- =========================
+                 BAGIAN VISUAL
+                 ========================= --}}
             <div class="auth-visual">
 
                 <div class="auth-visual-content">
@@ -24,14 +27,14 @@
                     </span>
 
                     <h1>
-                        Selamat Datang
-                        <em>Kembali.</em>
+                        Welcome
+                        <em>Back.</em>
                     </h1>
 
                     <p>
-                        Masuk untuk melanjutkan proses booking,
-                        melihat riwayat pemesanan, pembayaran,
-                        dan informasi akun Anda.
+                        Masuk ke akun Aura Studio untuk melihat
+                        riwayat booking, pembayaran, dan mengelola
+                        profil Anda.
                     </p>
 
                 </div>
@@ -46,11 +49,11 @@
                         <i class="bi bi-camera"></i>
 
                         <span>
-                            Aura Studio
+                            YOUR MOMENT
                         </span>
 
                         <strong>
-                            Capture Your Story
+                            Setiap momen layak untuk diabadikan.
                         </strong>
 
                     </div>
@@ -60,27 +63,73 @@
             </div>
 
 
-            {{-- FORM --}}
+
+            {{-- =========================
+                 BAGIAN FORM LOGIN
+                 ========================= --}}
             <div class="auth-form-wrapper">
 
                 <div class="auth-form-card">
 
+
                     <div class="auth-form-header">
 
                         <span>
-                            LOGIN CUSTOMER
+                            CUSTOMER ACCESS
                         </span>
 
                         <h2>
-                            Masuk ke Akun
+                            Login
                         </h2>
 
                         <p>
-                            Masukkan email dan password
-                            yang telah terdaftar.
+                            Masukkan email dan password akun Anda.
                         </p>
 
                     </div>
+
+
+
+                    {{-- SUCCESS MESSAGE --}}
+                    @if (session('success'))
+
+                        <div class="auth-alert auth-alert-success">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            <span>
+                                {{ session('success') }}
+                            </span>
+
+                        </div>
+
+                    @endif
+
+
+
+                    {{-- ERROR --}}
+                    @if ($errors->any())
+
+                        <div class="auth-alert auth-alert-error">
+
+                            <i class="bi bi-exclamation-circle"></i>
+
+                            <div>
+
+                                @foreach ($errors->all() as $error)
+
+                                    <div>
+                                        {{ $error }}
+                                    </div>
+
+                                @endforeach
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
 
 
                     <form
@@ -104,25 +153,19 @@
 
                                 <input
                                     type="email"
-                                    id="email"
                                     name="email"
+                                    id="email"
                                     value="{{ old('email') }}"
                                     placeholder="nama@email.com"
+                                    autocomplete="email"
                                     required
                                     autofocus
                                 >
 
                             </div>
 
-                            @error('email')
-
-                                <small class="auth-error">
-                                    {{ $message }}
-                                </small>
-
-                            @enderror
-
                         </div>
+
 
 
                         {{-- PASSWORD --}}
@@ -138,26 +181,20 @@
 
                                 <input
                                     type="password"
-                                    id="password"
                                     name="password"
+                                    id="password"
                                     placeholder="Masukkan password"
+                                    autocomplete="current-password"
                                     required
                                 >
 
                             </div>
 
-                            @error('password')
-
-                                <small class="auth-error">
-                                    {{ $message }}
-                                </small>
-
-                            @enderror
-
                         </div>
 
 
-                        {{-- REMEMBER --}}
+
+                        {{-- OPTIONS --}}
                         <div class="auth-form-options">
 
                             <label class="auth-checkbox">
@@ -166,6 +203,7 @@
                                     type="checkbox"
                                     name="remember"
                                     value="1"
+                                    {{ old('remember') ? 'checked' : '' }}
                                 >
 
                                 <span>
@@ -174,15 +212,28 @@
 
                             </label>
 
+
+                            <div class="auth-forgot">
+
+                                <a href="{{ route('password.request') }}">
+                                    Lupa password?
+                                </a>
+
+                            </div>
+
                         </div>
 
 
+
+                        {{-- LOGIN BUTTON --}}
                         <button
                             type="submit"
                             class="auth-submit-btn"
                         >
 
-                            Masuk
+                            <span>
+                                Login
+                            </span>
 
                             <i class="bi bi-arrow-right"></i>
 
@@ -191,14 +242,16 @@
                     </form>
 
 
+
+                    {{-- REGISTER --}}
                     <div class="auth-form-footer">
 
                         <span>
-                            Belum memiliki akun?
+                            Belum punya akun?
                         </span>
 
                         <a href="{{ route('register') }}">
-                            Daftar Sekarang
+                            Daftar sekarang
                         </a>
 
                     </div>

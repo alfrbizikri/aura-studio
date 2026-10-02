@@ -11,6 +11,10 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
+use App\Http\Controllers\Customer\BookingController as CustomerBookingController;
+use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\Auth\CustomerPasswordResetController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -48,7 +52,6 @@ Route::prefix('admin')
 
         Route::resource('galleries', AdminGalleryController::class)
             ->except('show');
-
     });
 
 Route::get('/galeri', [GalleryController::class, 'index'])
@@ -78,7 +81,6 @@ Route::middleware('guest')->group(function () {
         CustomerAuthController::class,
         'register'
     ])->name('register.process');
-
 });
 
 
@@ -88,3 +90,57 @@ Route::post('/logout', [
 ])
     ->middleware('auth')
     ->name('logout');
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/riwayat-booking', [
+        CustomerBookingController::class,
+        'index'
+    ])->name('customer.bookings.index');
+
+    Route::get('/profil', [
+        CustomerProfileController::class,
+        'edit'
+    ])->name('customer.profile.edit');
+
+    Route::put('/profil', [
+        CustomerProfileController::class,
+        'update'
+    ])->name('customer.profile.update');
+
+});
+
+Route::get('/riwayat-booking/{booking}', [
+    CustomerBookingController::class,
+    'show'
+])->name('customer.bookings.show');
+
+Route::get('/riwayat-booking/{booking}/pembayaran', [
+    CustomerPaymentController::class,
+    'create'
+])->name('customer.payments.create');
+
+Route::post('/riwayat-booking/{booking}/pembayaran', [
+    CustomerPaymentController::class,
+    'store'
+])->name('customer.payments.store');
+
+Route::get('/lupa-password', [
+    CustomerPasswordResetController::class,
+    'showForgotForm'
+])->name('password.request');
+
+Route::post('/lupa-password', [
+    CustomerPasswordResetController::class,
+    'sendResetLink'
+])->name('password.email');
+
+Route::get('/reset-password/{token}', [
+    CustomerPasswordResetController::class,
+    'showResetForm'
+])->name('password.reset');
+
+Route::post('/reset-password', [
+    CustomerPasswordResetController::class,
+    'resetPassword'
+])->name('password.update');

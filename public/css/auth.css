@@ -444,3 +444,61 @@
     }
 
 }
+
+/* =====================================================
+   FORGOT PASSWORD
+   ===================================================== */
+
+.auth-forgot a {
+    color: #91652e;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.auth-forgot a:hover {
+    color: #b7894c;
+}
+
+
+/* =====================================================
+   ALERT
+   ===================================================== */
+
+.auth-alert {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 9px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 18px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+.auth-alert-success {
+    border: 1px solid #cfe7d5;
+
+    background: #eaf6ed;
+
+    color: #347148;
+}
+
+.auth-alert-error {
+    border: 1px solid #efd2d0;
+
+    background: #fff0ef;
+
+    color: #9a4843;
+}
