@@ -2,68 +2,182 @@
 
 @section('title', 'Aura Studio - Beranda')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+@endpush
+
 @section('content')
 
+
 {{-- =====================================================
-     HERO SECTION
+     HERO
      ===================================================== --}}
 <section class="home-hero">
+
     <div class="container">
 
-        <div class="home-hero-content">
-            <span class="section-eyebrow">
-                Capture Your Moment
-            </span>
+        <div class="home-hero-grid">
 
-            <h1>
-                Setiap Momen Punya Cerita.
-                Kami Membantu Mengabadikannya.
-            </h1>
+            {{-- LEFT --}}
+            <div class="home-hero-copy">
 
-            <p>
-                Temukan pengalaman fotografi yang nyaman,
-                profesional, dan sesuai dengan momen spesialmu
-                bersama Aura Studio.
-            </p>
+                <span class="hero-badge">
+                    <i class="bi bi-stars"></i>
+                    Abadikan Momen Terbaik Anda
+                </span>
 
-            <div class="home-hero-actions">
+                <h1>
+                    Setiap Momen Layak
+                    <span>
+                        Diabadikan dengan Sempurna
+                    </span>
+                </h1>
 
-                <a href="#" class="btn btn-primary">
-                    Booking Sekarang
-                    <i class="bi bi-arrow-right"></i>
-                </a>
+                <p>
+                    Aura Studio menghadirkan pengalaman fotografi
+                    berkualitas mulai dari sesi studio profesional,
+                    self photo, hingga dokumentasi di lokasi pilihanmu.
+                </p>
 
-                <a href="{{ route('services.index') }}"
-                   class="btn btn-outline">
-                    Lihat Layanan
-                </a>
+                <div class="hero-actions">
+
+                    {{-- Booking dikerjakan Abi --}}
+                    <a href="#" class="btn btn-primary">
+                        Booking Sekarang
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    <a href="{{ route('services.index') }}" class="btn btn-outline">
+                        Lihat Layanan
+                    </a>
+
+                </div>
+
+                <div class="hero-note">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    <span>
+                        Pilih cabang, paket, fotografer,
+                        dan jadwal sesuai kebutuhanmu.
+                    </span>
+
+                </div>
 
             </div>
+
+
+            {{-- RIGHT --}}
+            <div class="home-hero-media">
+
+                {{-- Motif diafragma kamera (dekoratif) --}}
+                <div class="hero-aperture" aria-hidden="true">
+                    <svg viewBox="0 0 100 100" focusable="false">
+                        <circle cx="50" cy="50" r="49" pathLength="1" />
+                        <circle class="ring-soft" cx="50" cy="50" r="38" pathLength="1" />
+                        <circle class="ring-soft" cx="50" cy="50" r="14" pathLength="1" />
+
+                        <line class="ring-soft" x1="62.93" y1="55.36" x2="95.27" y2="68.75" pathLength="1" />
+                        <line class="ring-soft" x1="55.36" y1="62.93" x2="68.75" y2="95.27" pathLength="1" />
+                        <line class="ring-soft" x1="44.64" y1="62.93" x2="31.25" y2="95.27" pathLength="1" />
+                        <line class="ring-soft" x1="37.07" y1="55.36" x2="4.73"  y2="68.75" pathLength="1" />
+                        <line class="ring-soft" x1="37.07" y1="44.64" x2="4.73"  y2="31.25" pathLength="1" />
+                        <line class="ring-soft" x1="44.64" y1="37.07" x2="31.25" y2="4.73"  pathLength="1" />
+                        <line class="ring-soft" x1="55.36" y1="37.07" x2="68.75" y2="4.73"  pathLength="1" />
+                        <line class="ring-soft" x1="62.93" y1="44.64" x2="95.27" y2="31.25" pathLength="1" />
+                    </svg>
+                </div>
+
+                <div class="hero-photo">
+
+                    @if ($galleries->isNotEmpty())
+
+                        <img
+                            src="{{ asset('storage/' . $galleries->first()->image) }}"
+                            alt="{{ $galleries->first()->title }}"
+                        >
+
+                    @else
+
+                        <div class="hero-photo-placeholder">
+
+                            <i class="bi bi-camera"></i>
+
+                            <span>
+                                Aura Studio
+                            </span>
+
+                        </div>
+
+                    @endif
+
+
+                    <div class="hero-rating">
+
+                        <i class="bi bi-star-fill"></i>
+
+                        <strong>
+                            4.9/5
+                        </strong>
+
+                        <span>
+                            Pengalaman fotografi
+                        </span>
+
+                    </div>
+
+
+                    <div class="hero-booking-card">
+
+                        <div class="hero-booking-icon">
+                            <i class="bi bi-calendar2-check"></i>
+                        </div>
+
+                        <div>
+                            <strong>
+                                Booking Mudah
+                            </strong>
+
+                            <span>
+                                Pilih jadwal sesuai waktu Anda
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
+
 </section>
 
 
+
 {{-- =====================================================
-     SERVICES SECTION
+     SERVICES
      ===================================================== --}}
 <section class="home-services">
+
     <div class="container">
 
-        <div class="section-heading">
+        <div class="home-section-heading">
 
             <span class="section-eyebrow">
                 Layanan Kami
             </span>
 
             <h2>
-                Pilih Pengalaman Fotografi Sesuai Kebutuhanmu
+                Pilih Pengalaman Foto
+                yang Anda Inginkan
             </h2>
 
             <p>
-                Aura Studio menyediakan tiga layanan fotografi
-                untuk berbagai kebutuhan dan momen.
+                Temukan format fotografi yang paling tepat
+                untuk kebutuhan dan momen spesial Anda.
             </p>
 
         </div>
@@ -75,29 +189,89 @@
 
                 <article class="service-card">
 
-                    <div class="service-card-content">
+                    <div class="service-card-top">
 
-                        <span class="service-card-label">
-                            Layanan
+                        <span class="service-tag">
+                            {{ $service->is_on_location ? 'Di lokasi pilihanmu' : ($service->requires_photographer ? 'Dengan fotografer' : 'Foto mandiri') }}
                         </span>
 
-                        <h3>
-                            {{ $service->name }}
-                        </h3>
+                        <span class="service-card-icon">
 
-                        <p>
-                            {{ $service->description }}
-                        </p>
+                            @if ($service->name === 'Self Photo Studio')
+                                <i class="bi bi-person-bounding-box"></i>
 
-                        <a href="{{ route('services.show', $service->slug) }}"
-                           class="service-card-link">
+                            @elseif ($service->is_on_location)
+                                <i class="bi bi-geo-alt"></i>
 
-                            Lihat Detail
-                            <i class="bi bi-arrow-right"></i>
+                            @else
+                                <i class="bi bi-camera"></i>
 
-                        </a>
+                            @endif
+
+                        </span>
 
                     </div>
+
+
+                    <h3>
+                        {{ $service->name }}
+                    </h3>
+
+
+                    <p>
+                        {{ $service->description }}
+                    </p>
+
+
+                    <ul class="service-features">
+
+                        @if ($service->requires_photographer)
+
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Fotografer profesional
+                            </li>
+
+                        @else
+
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Foto mandiri dan fleksibel
+                            </li>
+
+                        @endif
+
+
+                        @if ($service->requires_room)
+
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Studio yang nyaman
+                            </li>
+
+                        @endif
+
+
+                        @if ($service->is_on_location)
+
+                            <li>
+                                <i class="bi bi-check-circle"></i>
+                                Lokasi sesuai pilihan Anda
+                            </li>
+
+                        @endif
+
+                    </ul>
+
+
+                    <a href="{{ route('services.show', $service->slug) }}"
+                       class="service-card-button">
+
+                        Lihat Detail
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </a>
 
                 </article>
 
@@ -106,24 +280,103 @@
         </div>
 
     </div>
+
 </section>
 
 
+
 {{-- =====================================================
-     FEATURED PACKAGES
+     BOOKING STEPS
      ===================================================== --}}
-<section class="home-packages">
+@php
+    $bookingSteps = [
+        ['icon' => 'bi-camera',      'title' => 'Pilih Layanan',    'text' => 'Studio, Self Photo, atau On Location.'],
+        ['icon' => 'bi-geo-alt',     'title' => 'Pilih Cabang',     'text' => 'Tentukan studio yang paling sesuai.'],
+        ['icon' => 'bi-box',         'title' => 'Pilih Paket',      'text' => 'Sesuaikan paket dengan kebutuhan.'],
+        ['icon' => 'bi-person',      'title' => 'Pilih Fotografer', 'text' => 'Tentukan fotografer untuk sesi Anda.'],
+        ['icon' => 'bi-calendar3',   'title' => 'Pilih Jadwal',     'text' => 'Tentukan tanggal dan jam tersedia.'],
+        ['icon' => 'bi-credit-card', 'title' => 'Pembayaran',       'text' => 'Selesaikan pembayaran untuk booking.'],
+    ];
+@endphp
+
+<section class="home-booking-flow">
+
     <div class="container">
 
-        <div class="section-heading">
+        <div class="booking-flow-panel">
+
+            <div class="home-section-heading">
+
+                <span class="section-eyebrow">
+                    Alur Pemesanan
+                </span>
+
+                <h2>
+                    Booking Foto Lebih Mudah
+                </h2>
+
+                <p>
+                    Selesaikan pemesanan hanya dalam
+                    beberapa langkah sederhana.
+                </p>
+
+            </div>
+
+
+            <div class="booking-steps-grid">
+
+                @foreach ($bookingSteps as $step)
+
+                    <article class="booking-step">
+
+                        <span class="step-number">
+                            {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                        </span>
+
+                        <i class="bi {{ $step['icon'] }}"></i>
+
+                        <strong>
+                            {{ $step['title'] }}
+                        </strong>
+
+                        <p>
+                            {{ $step['text'] }}
+                        </p>
+
+                    </article>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+{{-- =====================================================
+     PACKAGES
+     ===================================================== --}}
+<section class="home-packages">
+
+    <div class="container">
+
+        <div class="home-section-heading">
 
             <span class="section-eyebrow">
                 Paket Pilihan
             </span>
 
             <h2>
-                Paket Favorit untuk Momen Spesialmu
+                Paket Favorit Pelanggan
             </h2>
+
+            <p>
+                Pilihan paket untuk berbagai kebutuhan fotografi.
+            </p>
 
         </div>
 
@@ -132,58 +385,82 @@
 
             @foreach ($packages as $package)
 
-                <article class="package-card">
+                <article
+                    class="package-card {{ $loop->iteration === 2 ? 'featured' : '' }}"
+                >
 
-                    <div class="package-card-content">
+                    @if ($loop->iteration === 2)
 
-                        <span class="package-card-label">
-                            Paket
+                        <span class="package-popular">
+                            Pilihan Populer
                         </span>
 
-                        <h3>
-                            {{ $package->name }}
-                        </h3>
-
-                        <p>
-                            {{ $package->description }}
-                        </p>
-
-                        <div class="package-card-meta">
-
-                            <span>
-                                <i class="bi bi-clock"></i>
-                                {{ $package->duration_minutes }} menit
-                            </span>
-
-                            @if ($package->max_people)
-
-                                <span>
-                                    <i class="bi bi-people"></i>
-                                    Maks. {{ $package->max_people }} orang
-                                </span>
-
-                            @endif
-
-                        </div>
+                    @endif
 
 
-                        <div class="package-card-footer">
+                    <span class="package-service">
+                        {{ $package->service->name }}
+                    </span>
 
-                            <strong>
-                                Rp{{ number_format($package->price, 0, ',', '.') }}
-                            </strong>
 
-                            <a href="{{ route('packages.show', $package->id) }}"
-                               class="package-card-link">
+                    <h3>
+                        {{ $package->name }}
+                    </h3>
 
-                                Lihat Detail
-                                <i class="bi bi-arrow-right"></i>
 
-                            </a>
+                    <div class="package-price">
 
-                        </div>
+                        Rp{{ number_format($package->price, 0, ',', '.') }}
+
+                        <small>
+                            / sesi
+                        </small>
 
                     </div>
+
+
+                    <div class="package-meta">
+
+                        <span>
+                            {{ $package->duration_minutes }} menit
+                        </span>
+
+                        @if ($package->max_people)
+
+                            <span>
+                                Maks.
+                                {{ $package->max_people }}
+                                orang
+                            </span>
+
+                        @endif
+
+                    </div>
+
+
+                    @if ($package->package_includes)
+
+                        <div class="package-includes">
+
+                            <strong>
+                                Yang Anda Dapatkan:
+                            </strong>
+
+                            <p>
+                                {{ $package->package_includes }}
+                            </p>
+
+                        </div>
+
+                    @endif
+
+
+                    <a href="{{ route('packages.show', $package->id) }}"
+                       class="package-button">
+
+                        Lihat Detail
+
+                    </a>
 
                 </article>
 
@@ -191,25 +468,55 @@
 
         </div>
 
+
+        <div class="section-action">
+
+            <a href="{{ route('packages.index') }}" class="btn btn-outline">
+
+                Lihat Semua Paket
+
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
+
+        </div>
+
     </div>
+
 </section>
+
 
 
 {{-- =====================================================
      BRANCHES
      ===================================================== --}}
 <section class="home-branches">
+
     <div class="container">
 
-        <div class="section-heading">
+        <div class="section-header-row">
 
-            <span class="section-eyebrow">
-                Cabang Aura Studio
-            </span>
+            <div>
 
-            <h2>
-                Temukan Studio Terdekat
-            </h2>
+                <span class="section-eyebrow">
+                    Cabang Aura Studio
+                </span>
+
+                <h2>
+                    Temukan Studio Terdekat
+                </h2>
+
+            </div>
+
+
+            {{-- Nanti diarahkan ke halaman Qila --}}
+            <a href="#" class="section-text-link">
+
+                Lihat Semua Cabang
+
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
 
         </div>
 
@@ -220,49 +527,73 @@
 
                 <article class="branch-card">
 
-                    <div class="branch-card-content">
+                    <div class="branch-card-heading">
 
-                        <span class="branch-card-label">
-                            Cabang
+                        <span class="branch-icon">
+                            <i class="bi bi-building"></i>
                         </span>
 
-                        <h3>
-                            {{ $branch->name }}
-                        </h3>
+                        <span class="branch-status">
+                            Buka
+                        </span>
 
-                        <p>
-                            {{ $branch->address }}
-                        </p>
+                    </div>
 
 
-                        <div class="branch-card-meta">
+                    <h3>
+                        {{ $branch->name }}
+                    </h3>
 
-                            @if ($branch->phone)
 
-                                <span>
-                                    <i class="bi bi-telephone"></i>
-                                    {{ $branch->phone }}
-                                </span>
+                    <p class="branch-address">
+                        {{ $branch->address }}
+                    </p>
 
-                            @endif
 
+                    <div class="branch-info">
+
+                        @if ($branch->phone)
 
                             <span>
-                                <i class="bi bi-clock"></i>
-
-                                {{ $branch->opening_time }}
-                                -
-                                {{ $branch->closing_time }}
+                                <i class="bi bi-telephone"></i>
+                                {{ $branch->phone }}
                             </span>
 
-                        </div>
+                        @endif
 
 
-                        {{-- Detail cabang dikerjakan oleh Qila --}}
-                        <a href="#" class="branch-card-link">
+                        <span>
+                            <i class="bi bi-clock"></i>
 
-                            Lihat Detail Cabang
-                            <i class="bi bi-arrow-right"></i>
+                            {{ $branch->opening_time }}
+                            -
+                            {{ $branch->closing_time }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="branch-actions">
+
+                        @if ($branch->maps_url)
+
+                            <a href="{{ $branch->maps_url }}"
+                               target="_blank"
+                               rel="noopener"
+                               class="branch-location-link">
+
+                                <i class="bi bi-geo-alt"></i>
+                                Lihat di Peta
+
+                            </a>
+
+                        @endif
+
+
+                        {{-- Detail cabang milik Qila --}}
+                        <a href="#" class="branch-detail-link">
+
+                            Lihat Cabang
 
                         </a>
 
@@ -275,120 +606,269 @@
         </div>
 
     </div>
+
 </section>
 
 
+
 {{-- =====================================================
-     GALLERY PREVIEW
+     GALLERY
      ===================================================== --}}
 <section class="home-gallery">
+
     <div class="container">
 
-        <div class="section-heading">
+        <div class="home-section-heading">
 
             <span class="section-eyebrow">
                 Galeri
             </span>
 
             <h2>
-                Cerita yang Kami Abadikan
+                Cerita dalam Setiap Foto
             </h2>
+
+            <p>
+                Lihat berbagai momen yang telah kami abadikan.
+            </p>
 
         </div>
 
 
-        <div class="gallery-grid">
+        @if ($galleries->isNotEmpty())
 
-            @forelse ($galleries as $gallery)
+            <div class="gallery-grid">
 
-                <article class="gallery-card">
+                @foreach ($galleries as $gallery)
 
-                    <div class="gallery-card-image">
+                    <article class="gallery-item">
 
                         <img
                             src="{{ asset('storage/' . $gallery->image) }}"
                             alt="{{ $gallery->title }}"
+                            loading="lazy"
                         >
 
-                    </div>
+                        <div class="gallery-overlay">
 
+                            <span>
+                                {{ $gallery->title }}
+                            </span>
 
-                    <div class="gallery-card-content">
+                        </div>
 
-                        <h3>
-                            {{ $gallery->title }}
-                        </h3>
+                    </article>
 
-
-                        @if ($gallery->description)
-
-                            <p>
-                                {{ $gallery->description }}
-                            </p>
-
-                        @endif
-
-                    </div>
-
-                </article>
-
-            @empty
-
-                <div class="gallery-empty">
-
-                    <i class="bi bi-images"></i>
-
-                    <h3>
-                        Galeri Segera Hadir
-                    </h3>
-
-                    <p>
-                        Koleksi hasil fotografi Aura Studio
-                        akan ditampilkan di sini.
-                    </p>
-
-                </div>
-
-            @endforelse
-
-        </div>
-
-    </div>
-</section>
-
-
-{{-- =====================================================
-     BOOKING CTA
-     ===================================================== --}}
-<section class="home-cta">
-    <div class="container">
-
-        <div class="home-cta-box">
-
-            <div>
-
-                <span class="section-eyebrow">
-                    Siap Mengabadikan Momenmu?
-                </span>
-
-                <h2>
-                    Jadwalkan Sesi Fotomu Bersama Aura Studio
-                </h2>
+                @endforeach
 
             </div>
 
+        @else
 
-            {{-- Alur booking dikerjakan oleh Abi --}}
-            <a href="#" class="btn btn-primary">
+            <div class="gallery-empty">
 
-                Mulai Booking
-                <i class="bi bi-arrow-right"></i>
+                <i class="bi bi-images"></i>
 
-            </a>
+                <h3>
+                    Galeri Segera Hadir
+                </h3>
+
+                <p>
+                    Koleksi hasil fotografi Aura Studio
+                    akan ditampilkan di sini.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</section>
+
+
+
+{{-- =====================================================
+     WHY AURA
+     ===================================================== --}}
+@php
+    $benefits = [
+        ['icon' => 'bi-camera',         'title' => 'Fotografer Profesional',        'text' => 'Tim fotografer berpengalaman untuk berbagai kebutuhan foto.'],
+        ['icon' => 'bi-box-seam',       'title' => 'Banyak Pilihan Paket',          'text' => 'Pilihan paket fleksibel sesuai kebutuhan dan anggaran Anda.'],
+        ['icon' => 'bi-calendar-check', 'title' => 'Jadwal Fleksibel',              'text' => 'Tentukan tanggal dan waktu fotografi yang paling nyaman.'],
+        ['icon' => 'bi-geo-alt',        'title' => 'Tersedia di Berbagai Cabang',   'text' => 'Pilih Aura Studio yang paling dekat dengan lokasi Anda.'],
+    ];
+@endphp
+
+<section class="home-benefits">
+
+    <div class="container">
+
+        <div class="home-section-heading">
+
+            <span class="section-eyebrow">
+                Keunggulan
+            </span>
+
+            <h2>
+                Mengapa Memilih Aura Studio?
+            </h2>
+
+            <p>
+                Pengalaman fotografi yang kami bangun
+                bukan hanya tentang hasil akhir.
+            </p>
+
+        </div>
+
+
+        <div class="benefits-grid">
+
+            @foreach ($benefits as $benefit)
+
+                <article class="benefit-card">
+
+                    <i class="bi {{ $benefit['icon'] }}"></i>
+
+                    <h3>
+                        {{ $benefit['title'] }}
+                    </h3>
+
+                    <p>
+                        {{ $benefit['text'] }}
+                    </p>
+
+                </article>
+
+            @endforeach
 
         </div>
 
     </div>
+
 </section>
+
+
+
+{{-- =====================================================
+     TESTIMONIAL
+     ===================================================== --}}
+
+@if ($testimonials->isNotEmpty())
+
+<section class="home-testimonials">
+
+    <div class="container">
+
+        <div class="home-section-heading">
+
+            <span class="section-eyebrow">
+                Testimoni
+            </span>
+
+            <h2>
+                Cerita dari Pelanggan Kami
+            </h2>
+
+            <p>
+                Pengalaman pelanggan setelah
+                menikmati layanan Aura Studio.
+            </p>
+
+        </div>
+
+
+        <div class="testimonials-grid">
+
+            @foreach ($testimonials as $testimonial)
+
+                <article class="testimonial-card">
+
+                    <div class="testimonial-stars"
+                         role="img"
+                         aria-label="Rating {{ $testimonial->rating }} dari 5">
+
+                        @for ($i = 1; $i <= 5; $i++)
+
+                            <i class="bi bi-star{{ $i <= $testimonial->rating ? '-fill' : '' }}"></i>
+
+                        @endfor
+
+                    </div>
+
+
+                    <p>
+                        {{ $testimonial->comment }}
+                    </p>
+
+
+                    <strong>
+
+                        {{ $testimonial->booking->user->name ?? 'Pelanggan Aura Studio' }}
+
+                    </strong>
+
+                </article>
+
+            @endforeach
+
+        </div>
+
+    </div>
+
+</section>
+
+@endif
+
+
+
+{{-- =====================================================
+     FINAL CTA
+     ===================================================== --}}
+<section class="home-final-cta">
+
+    <div class="container">
+
+        <div class="final-cta-box">
+
+            <span class="final-cta-label">
+                Reservasi Sekarang
+            </span>
+
+
+            <h2>
+                Siap Mengabadikan
+                Momen Terbaik Anda?
+            </h2>
+
+
+            <p>
+                Pilih layanan, cabang, paket,
+                dan jadwal yang sesuai dengan kebutuhan Anda.
+            </p>
+
+
+            <div class="final-cta-actions">
+
+                {{-- Booking bagian Abi --}}
+                <a href="#" class="btn btn-primary">
+                    Booking Sekarang
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+
+                <a href="{{ route('services.index') }}" class="btn btn-outline-light">
+
+                    Lihat Layanan Kami
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 @endsection

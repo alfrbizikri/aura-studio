@@ -4,7 +4,7 @@
 
         {{-- BRAND --}}
         <div class="footer-brand">
-            <a href="{{ route('home') }}" class="footer-logo-link">
+            <a href="{{ route('home') }}" class="footer-logo-link" aria-label="Aura Studio — Beranda">
                 <img
                     src="{{ asset('images/aura-studio-logo.png') }}"
                     alt="Aura Studio"
@@ -20,25 +20,25 @@
 
 
         {{-- NAVIGASI --}}
-        <div class="footer-links">
+        <nav class="footer-links" aria-label="Navigasi footer">
             <h4>Navigasi</h4>
 
             <a href="{{ route('home') }}">Beranda</a>
-            <a href="#">Layanan</a>
-            <a href="#">Paket</a>
+            <a href="{{ route('services.index') }}">Layanan</a>
+            <a href="{{ route('packages.index') }}">Paket</a>
             <a href="#">Cabang</a>
             <a href="#">Fotografer</a>
-        </div>
+        </nav>
 
 
         {{-- INFORMASI --}}
-        <div class="footer-links">
+        <nav class="footer-links" aria-label="Informasi">
             <h4>Informasi</h4>
 
             <a href="#">Galeri</a>
             <a href="#">Tentang Kami</a>
             <a href="#">Kontak</a>
-        </div>
+        </nav>
 
 
         {{-- KONTAK --}}
@@ -87,7 +87,7 @@
                 All rights reserved.
             </p>
 
-            <a href="{{ route('home') }}" class="footer-back-top">
+            <a href="#top" class="footer-back-top">
                 Kembali ke atas
                 <i class="bi bi-arrow-up"></i>
             </a>

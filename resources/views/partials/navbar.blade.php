@@ -1,21 +1,40 @@
-<nav class="navbar" id="mainNavbar">
+<nav class="navbar" id="mainNavbar" aria-label="Navigasi utama">
     <div class="container navbar-wrapper">
 
-        <a href="{{ route('home') }}" class="navbar-brand">
+        <a href="{{ route('home') }}" class="navbar-brand" aria-label="Aura Studio — Beranda">
             <img src="{{ asset('images/aura-studio-logo.png') }}" alt="Aura Studio" class="navbar-logo">
         </a>
 
-        <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu">
+        <button
+            type="button"
+            class="navbar-toggle"
+            id="navbarToggle"
+            aria-label="Buka menu"
+            aria-expanded="false"
+            aria-controls="navbarMenu"
+        >
             <i class="bi bi-list"></i>
         </button>
 
         <div class="navbar-menu" id="navbarMenu">
-            <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">
+            <a href="{{ route('home') }}"
+               class="{{ request()->routeIs('home') ? 'active' : '' }}"
+               @if (request()->routeIs('home')) aria-current="page" @endif>
                 Beranda
             </a>
 
-            <a href="#">Layanan</a>
-            <a href="#">Paket</a>
+            <a href="{{ route('services.index') }}"
+               class="{{ request()->routeIs('services.*') ? 'active' : '' }}"
+               @if (request()->routeIs('services.*')) aria-current="page" @endif>
+                Layanan
+            </a>
+
+            <a href="{{ route('packages.index') }}"
+               class="{{ request()->routeIs('packages.*') ? 'active' : '' }}"
+               @if (request()->routeIs('packages.*')) aria-current="page" @endif>
+                Paket
+            </a>
+
             <a href="#">Cabang</a>
             <a href="#">Fotografer</a>
             <a href="#">Galeri</a>

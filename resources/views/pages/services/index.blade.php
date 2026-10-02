@@ -2,6 +2,10 @@
 
 @section('title', 'Daftar Layanan - Aura Studio')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
+@endpush
+
 @section('content')
 
 <section class="services-page">
@@ -31,27 +35,42 @@
 
             <article class="service-card">
 
-                <div class="service-card-content">
+                <div class="service-card-top">
 
-                    <span class="service-card-label">
-                        Layanan
+                    <span class="service-tag">
+                        {{ $service->is_on_location ? 'Di lokasi pilihanmu' : ($service->requires_photographer ? 'Dengan fotografer' : 'Foto mandiri') }}
                     </span>
 
-                    <h3>
-                        {{ $service->name }}
-                    </h3>
+                    <span class="service-card-icon">
 
-                    <p>
-                        {{ $service->description }}
-                    </p>
+                        @if ($service->name === 'Self Photo Studio')
+                            <i class="bi bi-person-bounding-box"></i>
 
-                    <a href="{{ route('services.show', $service->slug) }}"
-                        class="service-card-link">
-                        Lihat Detail
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
+                        @elseif ($service->is_on_location)
+                            <i class="bi bi-geo-alt"></i>
+
+                        @else
+                            <i class="bi bi-camera"></i>
+
+                        @endif
+
+                    </span>
 
                 </div>
+
+                <h3>
+                    {{ $service->name }}
+                </h3>
+
+                <p>
+                    {{ $service->description }}
+                </p>
+
+                <a href="{{ route('services.show', $service->slug) }}"
+                    class="service-card-button">
+                    Lihat Detail
+                    <i class="bi bi-arrow-right"></i>
+                </a>
 
             </article>
 

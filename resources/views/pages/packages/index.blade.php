@@ -4,6 +4,10 @@
 
 @section('content')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/packages.css') }}">
+@endpush
+
 <section class="packages-page">
 
     <div class="container">

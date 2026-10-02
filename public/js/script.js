@@ -1,66 +1,144 @@
 /* =========================================================
-   1. NAVBAR MOBILE TOGGLE
+   AURA STUDIO — GLOBAL SCRIPT
+   1. Navbar mobile toggle
+   2. Navbar scroll effect
+   3. Reveal on scroll
    ========================================================= */
 
-const navbarToggle = document.getElementById('navbarToggle');
-const navbarMenu = document.getElementById('navbarMenu');
-const navbarActions = document.querySelector('.navbar-actions');
+(function () {
+    'use strict';
 
-if (navbarToggle && navbarMenu && navbarActions) {
-    navbarToggle.addEventListener('click', function () {
+    var navbar = document.getElementById('mainNavbar');
+    var toggle = document.getElementById('navbarToggle');
+    var menu = document.getElementById('navbarMenu');
+    var actions = document.querySelector('.navbar-actions');
+    var MOBILE_BREAKPOINT = 1160; // harus sama dengan breakpoint navbar di style.css
 
-        // Tampilkan / sembunyikan menu navigasi
-        navbarMenu.classList.toggle('active');
 
-        // Tampilkan / sembunyikan tombol Login dan Booking
-        navbarActions.classList.toggle('active');
+    /* -----------------------------------------------------
+       1. NAVBAR MOBILE TOGGLE
+       ----------------------------------------------------- */
 
-        // Cek apakah menu sedang terbuka
-        const isOpen = navbarMenu.classList.contains('active');
+    function setMenu(open) {
+        if (!toggle || !menu || !actions) return;
 
-        // Ubah icon hamburger menjadi icon X ketika menu terbuka
-        navbarToggle.innerHTML = isOpen
+        menu.classList.toggle('active', open);
+        actions.classList.toggle('active', open);
+
+        toggle.innerHTML = open
             ? '<i class="bi bi-x-lg"></i>'
             : '<i class="bi bi-list"></i>';
 
-        // Membantu accessibility
-        navbarToggle.setAttribute('aria-expanded', isOpen);
-    });
-}
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    }
+
+    if (toggle && menu && actions) {
+        toggle.addEventListener('click', function () {
+            setMenu(!menu.classList.contains('active'));
+        });
+
+        // Tutup menu setelah salah satu link dipilih
+        menu.addEventListener('click', function (event) {
+            if (event.target.closest('a')) setMenu(false);
+        });
+
+        // Tutup dengan tombol Escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && menu.classList.contains('active')) {
+                setMenu(false);
+                toggle.focus();
+            }
+        });
+
+        // Reset saat layar kembali lebar
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > MOBILE_BREAKPOINT && menu.classList.contains('active')) {
+                setMenu(false);
+            }
+        });
+    }
 
 
-/* =========================================================
-   2. NAVBAR SCROLL EFFECT
-   ========================================================= */
+    /* -----------------------------------------------------
+       2. NAVBAR SCROLL EFFECT
+       ----------------------------------------------------- */
 
-const navbar = document.getElementById('mainNavbar');
+    if (navbar) {
+        var ticking = false;
 
-if (navbar) {
-    window.addEventListener('scroll', function () {
-
-        // Jika halaman discroll lebih dari 10px,
-        // tambahkan class "scrolled"
-        if (window.scrollY > 10) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        function updateNavbar() {
+            navbar.classList.toggle('scrolled', window.scrollY > 10);
+            ticking = false;
         }
 
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(updateNavbar);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        updateNavbar();
+    }
+
+
+    /* -----------------------------------------------------
+       3. REVEAL ON SCROLL
+       Elemen di bawah ini muncul bertahap saat masuk layar.
+       Class "js" dipasang di <head>, jadi bila script ini gagal
+       dimuat, semua konten tetap terlihat.
+       ----------------------------------------------------- */
+
+    var REVEAL_TARGETS = [
+        '.home-section-heading',
+        '.section-header-row',
+        '.section-heading',
+        '.services-grid > *',
+        '.packages-grid > *',
+        '.branches-grid > *',
+        '.booking-step',
+        '.gallery-item',
+        '.gallery-empty',
+        '.benefit-card',
+        '.testimonial-card',
+        '.final-cta-box',
+        '.section-action',
+        '.service-info-item',
+        '.package-detail-price',
+        '.package-detail-page .package-includes'
+    ].join(',');
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var items = document.querySelectorAll(REVEAL_TARGETS);
+
+    if (!items.length) return;
+
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+    // Beri jeda bertingkat (stagger) di antara saudara kandung
+    var siblingCount = new Map();
+
+    items.forEach(function (el) {
+        var parent = el.parentElement;
+        var index = siblingCount.get(parent) || 0;
+
+        el.style.setProperty('--i', Math.min(index, 6));
+        el.classList.add('reveal');
+
+        siblingCount.set(parent, index + 1);
     });
-}
 
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
 
-/* =========================================================
-   3. FUTURE GLOBAL INTERACTIONS
-   ========================================================= */
+            entry.target.classList.add('in');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
 
-/*
-   Logic global lain nanti bisa ditaruh di sini.
-
-   Contoh:
-   - dropdown
-   - modal
-   - alert close
-   - back to top
-   - animation on scroll
-*/
+    items.forEach(function (el) {
+        observer.observe(el);
+    });
+})();
