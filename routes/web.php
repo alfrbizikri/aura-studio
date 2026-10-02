@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\PhotographerController;
+use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -33,3 +34,10 @@ Route::get('/fotografer', [PhotographerController::class, 'index'])
 
 Route::get('/fotografer/{photographer}', [PhotographerController::class, 'show'])
     ->name('photographers.show');
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('branches', AdminBranchController::class)
+            ->except('show');
+    });
