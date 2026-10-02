@@ -44,8 +44,16 @@
     {{ request()->routeIs('photographers.*') ? 'active' : '' }}">
                     Fotografer
                 </a>
-                <a href="#">Galeri</a>
-                <a href="#">Tentang Kami</a>
+                <a
+                    href="{{ route('gallery.index') }}"
+                    class="navbar-link {{ request()->routeIs('gallery.*') ? 'active' : '' }}">
+                    Galeri
+                </a>
+                <a
+                    href="{{ route('about') }}"
+                    class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">
+                    Tentang Kami
+                </a>
         </div>
 
         <div class="navbar-actions">

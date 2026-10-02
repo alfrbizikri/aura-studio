@@ -7,6 +7,8 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\Admin\BranchController as AdminBranchController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\AboutController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -41,3 +43,9 @@ Route::prefix('admin')
         Route::resource('branches', AdminBranchController::class)
             ->except('show');
     });
+
+Route::get('/galeri', [GalleryController::class, 'index'])
+    ->name('gallery.index');
+
+Route::get('/tentang-kami', [AboutController::class, 'index'])
+    ->name('about');
