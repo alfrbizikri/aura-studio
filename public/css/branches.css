@@ -1603,3 +1603,96 @@
     }
 
 }
+
+/* =========================================================
+   PHOTOGRAPHER DETAIL LINK
+   ========================================================= */
+
+.branch-photographer-detail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 16px;
+    padding: 11px 15px;
+
+    border-radius: 999px;
+
+    background: #2b1719;
+
+    color: #ffffff;
+
+    font-size: 0.64rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.branch-photographer-detail i {
+    color: #d3a149;
+
+    transition: transform 0.2s ease;
+}
+
+.branch-photographer-detail:hover {
+    transform: translateY(-2px);
+
+    background: #402224;
+}
+
+.branch-photographer-detail:hover i {
+    transform: translateX(4px);
+}
+
+
+/* LINK LIHAT SEMUA FOTOGRAFER */
+
+.branch-view-all {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 10px;
+
+    color: #93692f;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+}
+
+.branch-view-all i {
+    transition: transform 0.2s ease;
+}
+
+.branch-view-all:hover i {
+    transform: translateX(4px);
+}
+/* =========================================================
+   TEMPORARY FIX - SHOW BRANCH CONTENT
+   Animasi akan dipolish kembali pada tahap final
+   ========================================================= */
+
+.branches-hero .reveal,
+.branches-hero .reveal-left,
+.branches-hero .reveal-right,
+.branches-section .reveal,
+.branches-section .reveal-left,
+.branches-section .reveal-right,
+.branch-detail-hero .reveal,
+.branch-detail-hero .reveal-left,
+.branch-detail-hero .reveal-right,
+.branch-services-section .reveal,
+.branch-photographers-section .reveal,
+.branch-rooms-section .reveal,
+.branch-detail-cta .reveal {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+}

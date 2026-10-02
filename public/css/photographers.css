@@ -1623,3 +1623,25 @@
     }
 
 }
+/* =========================================================
+   TEMPORARY FIX - SHOW PHOTOGRAPHER CONTENT
+   Animasi akan dipolish kembali pada tahap final
+   ========================================================= */
+
+.photographers-hero .reveal,
+.photographers-hero .reveal-left,
+.photographers-hero .reveal-right,
+.photographers-section .reveal,
+.photographers-section .reveal-left,
+.photographers-section .reveal-right,
+.photographers-cta .reveal,
+.photographer-detail-hero .reveal,
+.photographer-detail-hero .reveal-left,
+.photographer-detail-hero .reveal-right,
+.photographer-about-section .reveal,
+.photographer-branch-section .reveal,
+.photographer-detail-cta .reveal {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+}

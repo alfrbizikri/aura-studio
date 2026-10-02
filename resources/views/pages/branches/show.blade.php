@@ -51,8 +51,9 @@
 
         <div class="branch-detail-grid">
 
-            {{-- LEFT --}}
-            <div class="branch-detail-copy reveal-left">
+
+            {{-- CONTENT --}}
+            <div class="branch-detail-content reveal-left">
 
                 <div class="section-kicker">
 
@@ -79,12 +80,15 @@
 
                 <div class="branch-detail-info">
 
+                    {{-- PHONE --}}
                     @if ($branch->phone)
 
-                        <div class="branch-detail-info-item">
+                        <div class="branch-info-item">
 
-                            <div class="branch-detail-info-icon">
+                            <div class="branch-info-icon">
+
                                 <i class="bi bi-telephone"></i>
+
                             </div>
 
                             <div>
@@ -104,10 +108,13 @@
                     @endif
 
 
-                    <div class="branch-detail-info-item">
+                    {{-- HOURS --}}
+                    <div class="branch-info-item">
 
-                        <div class="branch-detail-info-icon">
+                        <div class="branch-info-icon">
+
                             <i class="bi bi-clock"></i>
+
                         </div>
 
                         <div>
@@ -118,11 +125,15 @@
 
                             <strong>
 
-                                {{ \Carbon\Carbon::parse($branch->opening_time)->format('H:i') }}
+                                {{ \Carbon\Carbon::parse(
+                                    $branch->opening_time
+                                )->format('H:i') }}
 
                                 -
 
-                                {{ \Carbon\Carbon::parse($branch->closing_time)->format('H:i') }}
+                                {{ \Carbon\Carbon::parse(
+                                    $branch->closing_time
+                                )->format('H:i') }}
 
                             </strong>
 
@@ -146,7 +157,7 @@
 
                             <i class="bi bi-map"></i>
 
-                            Lihat Lokasi
+                            Lihat Google Maps
 
                         </a>
 
@@ -160,7 +171,7 @@
 
                         <i class="bi bi-arrow-left"></i>
 
-                        Cabang Lain
+                        Semua Cabang
 
                     </a>
 
@@ -169,24 +180,19 @@
             </div>
 
 
-            {{-- RIGHT --}}
+
+            {{-- VISUAL --}}
             <div class="branch-detail-visual reveal-right">
 
-                <div class="branch-detail-visual-circle"></div>
+                <div class="branch-detail-circle"></div>
 
                 <div class="branch-detail-building">
 
-                    <div class="branch-building-icon">
-
-                        <i class="bi bi-building"></i>
-
-                    </div>
-
+                    <i class="bi bi-building"></i>
 
                     <span>
                         Aura Studio
                     </span>
-
 
                     <strong>
                         {{ $branch->name }}
@@ -195,7 +201,7 @@
                 </div>
 
 
-                <div class="branch-detail-status">
+                <div class="branch-active-badge">
 
                     <span></span>
 
@@ -214,13 +220,13 @@
 
 
 {{-- =====================================================
-     SERVICES
+     LAYANAN CABANG
      ===================================================== --}}
-<section class="branch-detail-section">
+<section class="branch-services-section">
 
     <div class="container">
 
-        <div class="branch-section-header reveal">
+        <div class="branch-section-heading reveal">
 
             <div>
 
@@ -233,7 +239,7 @@
                 </div>
 
                 <h2>
-                    Layanan yang Tersedia
+                    Layanan di Cabang Ini
                 </h2>
 
             </div>
@@ -247,64 +253,74 @@
         </div>
 
 
-        <div class="branch-detail-services">
+
+        <div class="branch-services-grid">
 
             @forelse ($branch->services as $service)
 
-                <article
-                    class="branch-service-card reveal
-                    reveal-delay-{{ min($loop->iteration, 3) }}"
-                >
+                <article class="branch-service-card reveal">
 
                     <div class="branch-service-icon">
 
-                        @if ($service->is_on_location)
-
-                            <i class="bi bi-geo-alt"></i>
-
-                        @elseif ($service->requires_photographer)
-
-                            <i class="bi bi-camera"></i>
-
-                        @else
-
-                            <i class="bi bi-person-bounding-box"></i>
-
-                        @endif
+                        <i class="bi bi-camera"></i>
 
                     </div>
 
 
-                    <h3>
-                        {{ $service->name }}
-                    </h3>
+                    <div class="branch-service-content">
+
+                        <span>
+                            Layanan Aura Studio
+                        </span>
+
+                        <h3>
+                            {{ $service->name }}
+                        </h3>
 
 
-                    <p>
-                        {{ $service->description }}
-                    </p>
+                        @if ($service->description)
+
+                            <p>
+                                {{ \Illuminate\Support\Str::limit(
+                                    $service->description,
+                                    120
+                                ) }}
+                            </p>
+
+                        @endif
 
 
-                    <a
-                        href="{{ route('services.show', $service->slug) }}"
-                    >
+                        <a
+                            href="{{ route(
+                                'services.show',
+                                $service->slug
+                            ) }}"
+                        >
 
-                        Lihat Layanan
+                            Lihat Layanan
 
-                        <i class="bi bi-arrow-right"></i>
+                            <i class="bi bi-arrow-right"></i>
 
-                    </a>
+                        </a>
+
+                    </div>
 
                 </article>
 
+
             @empty
 
-                <div class="branch-detail-empty">
+                <div class="branch-empty-state">
 
                     <i class="bi bi-camera"></i>
 
+                    <h3>
+                        Belum Ada Layanan
+                    </h3>
+
                     <p>
-                        Belum ada layanan aktif di cabang ini.
+                        Belum ada layanan aktif
+                        pada cabang ini.
                     </p>
 
                 </div>
@@ -320,13 +336,13 @@
 
 
 {{-- =====================================================
-     PHOTOGRAPHERS
+     FOTOGRAFER CABANG
      ===================================================== --}}
 <section class="branch-photographers-section">
 
     <div class="container">
 
-        <div class="branch-section-header reveal">
+        <div class="branch-section-heading reveal">
 
             <div>
 
@@ -345,35 +361,55 @@
             </div>
 
 
-            <p>
-                Kenali fotografer yang tersedia
-                di {{ $branch->name }}.
-            </p>
+            <div>
+
+                <p>
+                    Kenali fotografer yang tersedia
+                    di {{ $branch->name }}.
+                </p>
+
+                <a
+                    href="{{ route(
+                        'photographers.index',
+                        ['branch' => $branch->id]
+                    ) }}"
+                    class="branch-view-all"
+                >
+
+                    Lihat Semua Fotografer
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </div>
 
         </div>
+
 
 
         <div class="branch-photographers-grid">
 
             @forelse ($branch->photographers as $photographer)
 
-                <article
-                    class="branch-photographer-card reveal
-                    reveal-delay-{{ min($loop->iteration, 3) }}"
-                >
+                <article class="branch-photographer-card reveal">
 
+
+                    {{-- PHOTO --}}
                     <div class="branch-photographer-photo">
 
                         @if ($photographer->photo)
 
                             <img
-                                src="{{ asset('storage/' . $photographer->photo) }}"
+                                src="{{ asset(
+                                    'storage/' . $photographer->photo
+                                ) }}"
                                 alt="{{ $photographer->name }}"
                             >
 
                         @else
 
-                            <div class="branch-photo-placeholder">
+                            <div class="branch-photographer-placeholder">
 
                                 <i class="bi bi-person"></i>
 
@@ -381,14 +417,29 @@
 
                         @endif
 
+
+                        <div class="branch-photographer-status">
+
+                            <span></span>
+
+                            Tersedia
+
+                        </div>
+
                     </div>
 
 
+
+                    {{-- CONTENT --}}
                     <div class="branch-photographer-content">
 
-                        <span>
-                            {{ $photographer->specialization ?? 'Fotografer' }}
+                        <span class="branch-photographer-specialization">
+
+                            {{ $photographer->specialization
+                                ?? 'Fotografer' }}
+
                         </span>
+
 
                         <h3>
                             {{ $photographer->name }}
@@ -398,26 +449,57 @@
                         @if ($photographer->description)
 
                             <p>
+
                                 {{ \Illuminate\Support\Str::limit(
                                     $photographer->description,
                                     110
                                 ) }}
+
+                            </p>
+
+                        @else
+
+                            <p>
+                                Fotografer Aura Studio yang siap
+                                membantu mengabadikan momen Anda.
                             </p>
 
                         @endif
+
+
+                        {{-- INI LINK KE DETAIL FOTOGRAFER --}}
+                        <a
+                            href="{{ route(
+                                'photographers.show',
+                                $photographer->id
+                            ) }}"
+                            class="branch-photographer-detail"
+                        >
+
+                            Lihat Profil
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
 
                     </div>
 
                 </article>
 
+
             @empty
 
-                <div class="branch-detail-empty">
+                <div class="branch-empty-state">
 
                     <i class="bi bi-person"></i>
 
+                    <h3>
+                        Belum Ada Fotografer
+                    </h3>
+
                     <p>
-                        Belum ada fotografer aktif di cabang ini.
+                        Belum ada fotografer aktif
+                        pada cabang ini.
                     </p>
 
                 </div>
@@ -433,13 +515,13 @@
 
 
 {{-- =====================================================
-     STUDIO ROOMS
+     STUDIO ROOM
      ===================================================== --}}
 <section class="branch-rooms-section">
 
     <div class="container">
 
-        <div class="branch-section-header reveal">
+        <div class="branch-section-heading reveal">
 
             <div>
 
@@ -447,7 +529,7 @@
 
                     <span></span>
 
-                    Studio Room
+                    Studio
 
                 </div>
 
@@ -459,21 +541,31 @@
 
 
             <p>
-                Ruang studio yang tersedia untuk mendukung
-                sesi fotografi Anda.
+                Ruang studio yang tersedia
+                di {{ $branch->name }}.
             </p>
 
         </div>
+
 
 
         <div class="branch-rooms-grid">
 
             @forelse ($branch->studioRooms as $room)
 
-                <article
-                    class="branch-room-card reveal
-                    reveal-delay-{{ min($loop->iteration, 3) }}"
-                >
+                <article class="branch-room-card reveal">
+
+                    <div class="branch-room-number">
+
+                        {{ str_pad(
+                            $loop->iteration,
+                            2,
+                            '0',
+                            STR_PAD_LEFT
+                        ) }}
+
+                    </div>
+
 
                     <div class="branch-room-icon">
 
@@ -482,10 +574,10 @@
                     </div>
 
 
-                    <div>
+                    <div class="branch-room-content">
 
                         <span>
-                            Studio Room
+                            Ruang Studio
                         </span>
 
                         <h3>
@@ -501,18 +593,33 @@
 
                         @endif
 
+
+                        <div class="branch-room-status">
+
+                            <span></span>
+
+                            Tersedia
+
+                        </div>
+
                     </div>
 
                 </article>
 
+
             @empty
 
-                <div class="branch-detail-empty">
+                <div class="branch-empty-state">
 
                     <i class="bi bi-door-open"></i>
 
+                    <h3>
+                        Belum Ada Ruang Studio
+                    </h3>
+
                     <p>
-                        Belum ada ruang studio aktif.
+                        Informasi ruang studio
+                        belum tersedia.
                     </p>
 
                 </div>
@@ -542,14 +649,14 @@
 
 
             <h2>
-                Sudah Menemukan Cabang
-                yang Sesuai?
+                Siap Membuat
+                Momen Berkesan?
             </h2>
 
 
             <p>
-                Pilih layanan dan paket yang sesuai,
-                lalu lanjutkan proses booking.
+                Pilih layanan dan paket fotografi
+                yang sesuai dengan kebutuhan Anda.
             </p>
 
 
@@ -557,7 +664,7 @@
 
                 <a
                     href="{{ route('services.index') }}"
-                    class="branch-cta-primary"
+                    class="branch-detail-cta-primary"
                 >
 
                     Lihat Layanan
@@ -567,7 +674,7 @@
 
                 <a
                     href="{{ route('packages.index') }}"
-                    class="branch-cta-secondary"
+                    class="branch-detail-cta-secondary"
                 >
 
                     Lihat Paket
