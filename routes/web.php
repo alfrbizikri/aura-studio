@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -41,8 +42,13 @@ Route::get('/fotografer/{photographer}', [PhotographerController::class, 'show']
 Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
+
         Route::resource('branches', AdminBranchController::class)
             ->except('show');
+
+        Route::resource('galleries', AdminGalleryController::class)
+            ->except('show');
+
     });
 
 Route::get('/galeri', [GalleryController::class, 'index'])
