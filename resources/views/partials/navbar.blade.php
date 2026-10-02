@@ -38,7 +38,12 @@
                 class="navbar-link {{ request()->routeIs('branches.*') ? 'active' : '' }}">
                 Cabang
                 </a>
-                <a href="#">Fotografer</a>
+                <a
+                    href="{{ route('photographers.index') }}"
+                    class="navbar-link
+    {{ request()->routeIs('photographers.*') ? 'active' : '' }}">
+                    Fotografer
+                </a>
                 <a href="#">Galeri</a>
                 <a href="#">Tentang Kami</a>
         </div>

@@ -1,0 +1,1625 @@
+/* =========================================================
+   PHOTOGRAPHERS PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.photographers-hero {
+    overflow: hidden;
+
+    padding: 75px 0 80px;
+
+    background:
+        radial-gradient(
+            circle at 82% 30%,
+            rgba(189, 142, 69, 0.17),
+            transparent 29%
+        ),
+        linear-gradient(
+            120deg,
+            #f8f4ee,
+            #efe4d8
+        );
+}
+
+
+.photographers-hero-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(350px, 0.8fr);
+
+    align-items: center;
+
+    gap: 65px;
+}
+
+
+.photographers-hero-copy h1 {
+    max-width: 650px;
+
+    margin: 14px 0 20px;
+
+    font-family: var(--font-heading);
+
+    color: #291617;
+
+    font-size: clamp(3rem, 5vw, 4.8rem);
+
+    font-weight: 600;
+
+    line-height: 0.94;
+
+    letter-spacing: -1.5px;
+}
+
+
+.photographers-hero-copy h1 em {
+    display: block;
+
+    font-weight: 500;
+}
+
+
+.photographers-hero-copy p {
+    max-width: 570px;
+
+    color: #6e655d;
+
+    font-size: 0.8rem;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   HERO VISUAL
+   ========================================================= */
+
+.photographers-hero-visual {
+    position: relative;
+
+    min-height: 320px;
+}
+
+
+.photographer-hero-circle {
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: 290px;
+    height: 290px;
+
+    transform: translateX(-50%);
+
+    border:
+        1px solid rgba(175, 123, 47, 0.42);
+
+    border-radius: 50%;
+}
+
+
+.photographer-hero-card {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 50%;
+    bottom: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    width: 250px;
+    height: 260px;
+
+    transform: translateX(-50%);
+
+    border-radius:
+        125px
+        125px
+        22px
+        22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #291619,
+            #51372a
+        );
+
+    box-shadow:
+        0 24px 45px rgba(48, 30, 24, 0.17);
+
+    color: white;
+}
+
+
+.photographer-hero-card i {
+    margin-bottom: 19px;
+
+    color: #dfa947;
+
+    font-size: 2rem;
+}
+
+
+.photographer-hero-card span {
+    margin-bottom: 4px;
+
+    color: rgba(255,255,255,0.55);
+
+    font-size: 0.56rem;
+}
+
+
+.photographer-hero-card strong {
+    font-family: var(--font-heading);
+
+    font-size: 1.4rem;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.photographers-section {
+    padding: 90px 0 105px;
+
+    background: #faf8f4;
+}
+
+
+.photographers-heading {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 35px;
+
+    margin-bottom: 32px;
+}
+
+
+.photographers-heading h2 {
+    margin-top: 7px;
+
+    font-family: var(--font-heading);
+
+    color: #2c1919;
+
+    font-size: clamp(2.3rem, 3.6vw, 3.5rem);
+
+    font-weight: 600;
+}
+
+
+.photographers-heading > p {
+    max-width: 410px;
+
+    color: #7a7169;
+
+    font-size: 0.72rem;
+
+    line-height: 1.7;
+}
+
+
+.photographers-count {
+    color: #9a6e31;
+
+    font-size: 0.63rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FILTER
+   ========================================================= */
+
+.photographer-filters {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 38px;
+}
+
+
+.photographer-filter-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 37px;
+
+    padding: 0 15px;
+
+    border: 1px solid #d9cfc4;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.58);
+
+    color: #665b52;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+
+    transition:
+        background 0.22s ease,
+        border-color 0.22s ease,
+        color 0.22s ease,
+        transform 0.22s ease;
+}
+
+
+.photographer-filter-btn:hover {
+    transform: translateY(-1px);
+
+    border-color: #bda985;
+
+    background: white;
+}
+
+
+.photographer-filter-btn.active {
+    border-color: #2c1719;
+
+    background: #2c1719;
+
+    color: white;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.photographers-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.photographer-card {
+    overflow: hidden;
+
+    border: 1px solid #dfd7ce;
+
+    border-radius: 23px;
+
+    background: rgba(255,255,255,0.72);
+
+    box-shadow:
+        0 15px 36px rgba(54, 41, 29, 0.055);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.photographer-card:hover {
+    transform: translateY(-7px);
+
+    border-color: #cdb890;
+
+    box-shadow:
+        0 24px 46px rgba(54, 41, 29, 0.09);
+}
+
+
+/* =========================================================
+   PHOTO
+   ========================================================= */
+
+.photographer-photo {
+    position: relative;
+
+    height: 270px;
+
+    overflow: hidden;
+
+    background: #dfd4c9;
+}
+
+
+.photographer-photo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.5s ease;
+}
+
+
+.photographer-card:hover
+.photographer-photo img {
+    transform: scale(1.04);
+}
+
+
+.photographer-placeholder {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(222, 171, 75, 0.15),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #291719,
+            #523729
+        );
+
+    color: #dba84a;
+
+    font-size: 3rem;
+}
+
+
+.photographer-status {
+    position: absolute;
+
+    right: 14px;
+    bottom: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.9);
+
+    backdrop-filter: blur(10px);
+
+    color: #437052;
+
+    font-size: 0.58rem;
+    font-weight: 700;
+
+    box-shadow:
+        0 8px 20px rgba(42, 31, 23, 0.1);
+}
+
+
+.photographer-status > span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #5ca271;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.photographer-content {
+    padding: 24px;
+}
+
+
+.photographer-branch {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 8px;
+
+    color: #9c7136;
+
+    font-size: 0.58rem;
+
+    font-weight: 700;
+}
+
+
+.photographer-content h3 {
+    margin-bottom: 6px;
+
+    font-family: var(--font-heading);
+
+    color: #2c1a19;
+
+    font-size: 1.55rem;
+
+    font-weight: 600;
+}
+
+
+.photographer-specialization {
+    display: inline-block;
+
+    margin-bottom: 13px;
+
+    color: #786e66;
+
+    font-size: 0.63rem;
+
+    font-weight: 700;
+}
+
+
+.photographer-content > p {
+    min-height: 70px;
+
+    margin-bottom: 22px;
+
+    color: #756c64;
+
+    font-size: 0.67rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   CARD ACTION
+   ========================================================= */
+
+.photographer-card-footer {
+    padding-top: 18px;
+
+    border-top: 1px solid #ebe4dc;
+}
+
+
+.photographer-detail-btn {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 43px;
+
+    padding:
+        0 7px
+        0 17px;
+
+    border-radius: 999px;
+
+    background: #2b1718;
+
+    color: white;
+
+    font-size: 0.66rem;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.photographer-detail-btn > span {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 31px;
+    height: 31px;
+
+    border-radius: 50%;
+
+    background: #d6a44a;
+
+    color: #291719;
+}
+
+
+.photographer-detail-btn:hover {
+    transform: translateY(-2px);
+
+    background: #3e2223;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.photographers-empty {
+    grid-column: 1 / -1;
+
+    padding: 60px 30px;
+
+    border: 1px dashed #d6c9bc;
+
+    border-radius: 22px;
+
+    background: white;
+
+    text-align: center;
+}
+
+
+.photographers-empty-icon {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+
+    margin-bottom: 15px;
+
+    border-radius: 16px;
+
+    background: #efe4d5;
+
+    color: #a17539;
+
+    font-size: 1.3rem;
+}
+
+
+.photographers-empty h3 {
+    margin-bottom: 6px;
+
+    font-family: var(--font-heading);
+
+    color: #342320;
+
+    font-size: 1.4rem;
+}
+
+
+.photographers-empty p {
+    margin-bottom: 14px;
+
+    color: #80766d;
+
+    font-size: 0.7rem;
+}
+
+
+.photographers-empty a {
+    color: #93682e;
+
+    font-size: 0.66rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.photographers-cta {
+    padding: 0 0 95px;
+
+    background: #faf8f4;
+}
+
+
+.photographers-cta-box {
+    padding: 60px 30px;
+
+    border-radius: 25px;
+
+    background:
+        radial-gradient(
+            circle at 82% 30%,
+            rgba(199, 151, 75, 0.22),
+            transparent 30%
+        ),
+        linear-gradient(
+            120deg,
+            #281618,
+            #473127
+        );
+
+    text-align: center;
+
+    color: white;
+}
+
+
+.photographers-cta-box > span {
+    color: #daa94c;
+
+    font-size: 0.6rem;
+}
+
+
+.photographers-cta-box h2 {
+    max-width: 600px;
+
+    margin: 10px auto 12px;
+
+    font-family: var(--font-heading);
+
+    font-size: clamp(2.5rem, 4vw, 3.7rem);
+
+    font-weight: 600;
+
+    line-height: 0.98;
+}
+
+
+.photographers-cta-box > p {
+    max-width: 450px;
+
+    margin: 0 auto 25px;
+
+    color: rgba(255,255,255,0.61);
+
+    font-size: 0.68rem;
+
+    line-height: 1.7;
+}
+
+
+.photographers-cta-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 9px;
+}
+
+
+.photographers-cta-primary,
+.photographers-cta-secondary {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    border-radius: 999px;
+
+    font-size: 0.65rem;
+
+    font-weight: 700;
+}
+
+
+.photographers-cta-primary {
+    background: #d0a04b;
+
+    color: #281817;
+}
+
+
+.photographers-cta-secondary {
+    border: 1px solid rgba(255,255,255,0.2);
+
+    color: white;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .photographers-hero-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .photographers-hero-visual {
+        max-width: 480px;
+
+        width: 100%;
+
+        margin-inline: auto;
+    }
+
+    .photographers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .photographers-hero {
+        padding: 60px 0;
+    }
+
+    .photographers-hero-copy h1 {
+        font-size: 3rem;
+    }
+
+    .photographers-section {
+        padding: 70px 0;
+    }
+
+    .photographers-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .photographers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .photographer-photo {
+        height: 300px;
+    }
+
+    .photographers-cta-actions {
+        flex-direction: column;
+    }
+
+    .photographers-cta-primary,
+    .photographers-cta-secondary {
+        width: 100%;
+    }
+
+}
+
+/* =========================================================
+   PHOTOGRAPHER DETAIL PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   BREADCRUMB
+   ========================================================= */
+
+.photographer-detail-top {
+    padding: 18px 0;
+
+    border-bottom: 1px solid #eee7df;
+
+    background: #faf8f4;
+}
+
+.photographer-breadcrumb {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #8e8278;
+
+    font-size: 0.63rem;
+}
+
+.photographer-breadcrumb a {
+    color: #665b52;
+
+    transition: color 0.2s ease;
+}
+
+.photographer-breadcrumb a:hover {
+    color: #a67734;
+}
+
+.photographer-breadcrumb i {
+    font-size: 0.52rem;
+}
+
+
+/* =========================================================
+   DETAIL HERO
+   ========================================================= */
+
+.photographer-detail-hero {
+    overflow: hidden;
+
+    padding: 75px 0 90px;
+
+    background:
+        radial-gradient(
+            circle at 22% 35%,
+            rgba(192, 145, 72, 0.16),
+            transparent 30%
+        ),
+        linear-gradient(
+            120deg,
+            #f7f3ed,
+            #efe4d8
+        );
+}
+
+.photographer-detail-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(340px, 0.8fr)
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 85px;
+}
+
+
+/* =========================================================
+   PHOTO
+   ========================================================= */
+
+.photographer-detail-photo-wrap {
+    position: relative;
+
+    min-height: 470px;
+}
+
+.photographer-detail-circle {
+    position: absolute;
+
+    top: 10px;
+    left: 50%;
+
+    width: 405px;
+    height: 405px;
+
+    transform: translateX(-50%);
+
+    border:
+        1px solid rgba(171, 121, 47, 0.42);
+
+    border-radius: 50%;
+}
+
+.photographer-detail-photo {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 50%;
+    bottom: 0;
+
+    overflow: hidden;
+
+    width: 345px;
+    height: 410px;
+
+    transform: translateX(-50%);
+
+    border-radius:
+        175px
+        175px
+        27px
+        27px;
+
+    background: #dfd2c5;
+
+    box-shadow:
+        0 26px 50px rgba(49, 31, 23, 0.17);
+}
+
+.photographer-detail-photo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.photographer-detail-placeholder {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(
+            circle at 50% 38%,
+            rgba(218, 166, 72, 0.15),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #281719,
+            #54392b
+        );
+
+    color: #dda94b;
+}
+
+.photographer-detail-placeholder i {
+    font-size: 3rem;
+}
+
+.photographer-detail-placeholder span {
+    color: rgba(255,255,255,0.6);
+
+    font-size: 0.64rem;
+}
+
+.photographer-detail-status {
+    position: absolute;
+
+    z-index: 4;
+
+    right: 0;
+    bottom: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 10px 14px;
+
+    border-radius: 999px;
+
+    background: rgba(255,255,255,0.93);
+
+    box-shadow:
+        0 14px 30px rgba(55, 40, 28, 0.13);
+
+    color: #477253;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+}
+
+.photographer-detail-status span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #58a470;
+}
+
+
+/* =========================================================
+   DETAIL CONTENT
+   ========================================================= */
+
+.photographer-detail-content h1 {
+    max-width: 650px;
+
+    margin: 14px 0 8px;
+
+    font-family: var(--font-heading);
+
+    color: #291718;
+
+    font-size: clamp(3rem, 5vw, 4.8rem);
+
+    font-weight: 600;
+
+    line-height: 0.95;
+
+    letter-spacing: -1.4px;
+}
+
+.photographer-detail-specialization {
+    display: inline-block;
+
+    margin-bottom: 22px;
+
+    color: #9c7034;
+
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.photographer-detail-description {
+    max-width: 600px;
+
+    color: #6f665e;
+
+    font-size: 0.8rem;
+
+    line-height: 1.8;
+}
+
+.photographer-detail-divider {
+    height: 1px;
+
+    margin: 28px 0;
+
+    background: rgba(120, 96, 74, 0.18);
+}
+
+
+/* =========================================================
+   META
+   ========================================================= */
+
+.photographer-detail-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+}
+
+.photographer-meta-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    min-width: 210px;
+
+    padding: 13px 15px;
+
+    border: 1px solid rgba(140, 113, 87, 0.18);
+
+    border-radius: 13px;
+
+    background: rgba(255,255,255,0.54);
+}
+
+.photographer-meta-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: #ede0ce;
+
+    color: #9d7032;
+}
+
+.photographer-meta-item > div:last-child {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.photographer-meta-item span {
+    color: #91857b;
+
+    font-size: 0.55rem;
+}
+
+.photographer-meta-item strong {
+    color: #4b4039;
+
+    font-size: 0.67rem;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.photographer-detail-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 28px;
+}
+
+.photographer-primary-action,
+.photographer-secondary-action {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 999px;
+
+    font-size: 0.67rem;
+    font-weight: 700;
+}
+
+.photographer-primary-action {
+    background: #2b1719;
+
+    color: white;
+}
+
+.photographer-secondary-action {
+    border: 1px solid #d4c9bd;
+
+    color: #51473f;
+}
+
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+
+.photographer-about-section {
+    padding: 90px 0;
+
+    background: #faf8f4;
+}
+
+.photographer-about-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(280px, 0.7fr)
+        minmax(0, 1.3fr);
+
+    gap: 80px;
+}
+
+.photographer-about-heading h2 {
+    margin-top: 10px;
+
+    font-family: var(--font-heading);
+
+    color: #2c1919;
+
+    font-size: clamp(2.3rem, 3.6vw, 3.5rem);
+
+    font-weight: 600;
+
+    line-height: 1;
+}
+
+.photographer-about-content > p {
+    max-width: 700px;
+
+    margin-bottom: 28px;
+
+    color: #70675f;
+
+    font-size: 0.78rem;
+
+    line-height: 1.85;
+}
+
+.photographer-about-info {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 12px;
+}
+
+.photographer-about-info > div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 17px;
+
+    border: 1px solid #e3dad0;
+
+    border-radius: 13px;
+
+    background: white;
+}
+
+.photographer-about-info span {
+    color: #968a80;
+
+    font-size: 0.55rem;
+}
+
+.photographer-about-info strong {
+    color: #423630;
+
+    font-size: 0.68rem;
+}
+
+
+/* =========================================================
+   BRANCH
+   ========================================================= */
+
+.photographer-branch-section {
+    padding: 90px 0;
+
+    background: #f3ece4;
+}
+
+.photographer-branch-card {
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 24px;
+
+    padding: 30px;
+
+    border: 1px solid #ded4ca;
+
+    border-radius: 22px;
+
+    background: #fffdf9;
+
+    box-shadow:
+        0 15px 35px rgba(55, 42, 30, 0.055);
+}
+
+.photographer-branch-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 65px;
+    height: 65px;
+
+    border-radius: 18px;
+
+    background: #2b1719;
+
+    color: #dba748;
+
+    font-size: 1.4rem;
+}
+
+.photographer-branch-content > span {
+    color: #9f7337;
+
+    font-size: 0.56rem;
+    font-weight: 700;
+}
+
+.photographer-branch-content h2 {
+    margin: 5px 0 8px;
+
+    font-family: var(--font-heading);
+
+    color: #2d1b1a;
+
+    font-size: 1.7rem;
+}
+
+.photographer-branch-content > p {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 7px;
+
+    color: #736a62;
+
+    font-size: 0.68rem;
+}
+
+.photographer-branch-content > p i {
+    color: #a77939;
+}
+
+.photographer-branch-meta {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin-top: 13px;
+}
+
+.photographer-branch-meta span {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #756b63;
+
+    font-size: 0.61rem;
+}
+
+.photographer-branch-meta i {
+    color: #a77939;
+}
+
+.photographer-branch-action a {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 42px;
+
+    padding: 0 17px;
+
+    border: 1px solid #d2c6ba;
+
+    border-radius: 999px;
+
+    color: #4c423b;
+
+    font-size: 0.64rem;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.photographer-detail-cta {
+    padding: 85px 0 95px;
+
+    background: #faf8f4;
+}
+
+.photographer-detail-cta-box {
+    padding: 60px 30px;
+
+    border-radius: 25px;
+
+    background:
+        radial-gradient(
+            circle at 82% 30%,
+            rgba(198, 150, 73, 0.23),
+            transparent 30%
+        ),
+        linear-gradient(
+            120deg,
+            #281719,
+            #493328
+        );
+
+    color: white;
+
+    text-align: center;
+}
+
+.photographer-detail-cta-box > span {
+    color: #dba94b;
+
+    font-size: 0.6rem;
+}
+
+.photographer-detail-cta-box h2 {
+    max-width: 590px;
+
+    margin: 10px auto 12px;
+
+    font-family: var(--font-heading);
+
+    font-size: clamp(2.5rem, 4vw, 3.8rem);
+
+    font-weight: 600;
+
+    line-height: 0.98;
+}
+
+.photographer-detail-cta-box > p {
+    max-width: 470px;
+
+    margin: 0 auto 25px;
+
+    color: rgba(255,255,255,0.62);
+
+    font-size: 0.68rem;
+
+    line-height: 1.7;
+}
+
+.photographer-detail-cta-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 9px;
+}
+
+.photographer-detail-cta-primary,
+.photographer-detail-cta-secondary {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    border-radius: 999px;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.photographer-detail-cta-primary {
+    background: #d0a04b;
+
+    color: #291818;
+}
+
+.photographer-detail-cta-secondary {
+    border: 1px solid rgba(255,255,255,0.2);
+
+    color: white;
+}
+
+
+/* =========================================================
+   RESPONSIVE DETAIL
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .photographer-detail-grid {
+        grid-template-columns: 1fr;
+
+        gap: 55px;
+    }
+
+    .photographer-detail-photo-wrap {
+        max-width: 520px;
+
+        width: 100%;
+
+        margin-inline: auto;
+    }
+
+    .photographer-about-grid {
+        grid-template-columns: 1fr;
+
+        gap: 35px;
+    }
+
+    .photographer-branch-card {
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+    }
+
+    .photographer-branch-action {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .photographer-detail-hero {
+        padding: 55px 0 65px;
+    }
+
+    .photographer-detail-photo-wrap {
+        min-height: 370px;
+    }
+
+    .photographer-detail-circle {
+        width: 310px;
+        height: 310px;
+    }
+
+    .photographer-detail-photo {
+        width: 270px;
+        height: 325px;
+
+        border-radius:
+            140px
+            140px
+            22px
+            22px;
+    }
+
+    .photographer-detail-status {
+        right: 0;
+        bottom: 30px;
+    }
+
+    .photographer-detail-content h1 {
+        font-size: 3rem;
+    }
+
+    .photographer-detail-meta,
+    .photographer-detail-actions {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .photographer-primary-action,
+    .photographer-secondary-action {
+        width: 100%;
+    }
+
+    .photographer-about-info {
+        grid-template-columns: 1fr;
+    }
+
+    .photographer-branch-card {
+        grid-template-columns: 1fr;
+    }
+
+    .photographer-branch-icon {
+        width: 55px;
+        height: 55px;
+    }
+
+    .photographer-detail-cta-actions {
+        flex-direction: column;
+    }
+
+    .photographer-detail-cta-primary,
+    .photographer-detail-cta-secondary {
+        width: 100%;
+    }
+
+}

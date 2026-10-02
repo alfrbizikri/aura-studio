@@ -5,6 +5,7 @@ use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\PhotographerController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -26,3 +27,9 @@ Route::get('/cabang', [BranchController::class, 'index'])
 
 Route::get('/cabang/{branch}', [BranchController::class, 'show'])
     ->name('branches.show');
+
+Route::get('/fotografer', [PhotographerController::class, 'index'])
+    ->name('photographers.index');
+
+Route::get('/fotografer/{photographer}', [PhotographerController::class, 'show'])
+    ->name('photographers.show');
