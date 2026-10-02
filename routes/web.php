@@ -9,6 +9,7 @@ use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Auth\CustomerAuthController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
@@ -49,3 +50,35 @@ Route::get('/galeri', [GalleryController::class, 'index'])
 
 Route::get('/tentang-kami', [AboutController::class, 'index'])
     ->name('about');
+
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', [
+        CustomerAuthController::class,
+        'showLogin'
+    ])->name('login');
+
+    Route::post('/login', [
+        CustomerAuthController::class,
+        'login'
+    ])->name('login.process');
+
+    Route::get('/register', [
+        CustomerAuthController::class,
+        'showRegister'
+    ])->name('register');
+
+    Route::post('/register', [
+        CustomerAuthController::class,
+        'register'
+    ])->name('register.process');
+
+});
+
+
+Route::post('/logout', [
+    CustomerAuthController::class,
+    'logout'
+])
+    ->middleware('auth')
+    ->name('logout');

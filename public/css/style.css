@@ -1380,3 +1380,34 @@ ul {
         opacity: 1;
     }
 }
+
+/* Navbar customer authentication */
+
+.navbar-customer {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    max-width: 140px;
+
+    color: var(--dark);
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar-customer i {
+    color: var(--primary);
+}
+
+.navbar-logout {
+    margin: 0;
+}
+
+.navbar-logout button {
+    font-family: inherit;
+    cursor: pointer;
+}
