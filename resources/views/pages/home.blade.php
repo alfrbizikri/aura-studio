@@ -3,7 +3,7 @@
 @section('title', 'Aura Studio - Beranda')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 @endpush
 
 @section('content')
@@ -80,10 +80,10 @@
                         <line class="ring-soft" x1="62.93" y1="55.36" x2="95.27" y2="68.75" pathLength="1" />
                         <line class="ring-soft" x1="55.36" y1="62.93" x2="68.75" y2="95.27" pathLength="1" />
                         <line class="ring-soft" x1="44.64" y1="62.93" x2="31.25" y2="95.27" pathLength="1" />
-                        <line class="ring-soft" x1="37.07" y1="55.36" x2="4.73"  y2="68.75" pathLength="1" />
-                        <line class="ring-soft" x1="37.07" y1="44.64" x2="4.73"  y2="31.25" pathLength="1" />
-                        <line class="ring-soft" x1="44.64" y1="37.07" x2="31.25" y2="4.73"  pathLength="1" />
-                        <line class="ring-soft" x1="55.36" y1="37.07" x2="68.75" y2="4.73"  pathLength="1" />
+                        <line class="ring-soft" x1="37.07" y1="55.36" x2="4.73" y2="68.75" pathLength="1" />
+                        <line class="ring-soft" x1="37.07" y1="44.64" x2="4.73" y2="31.25" pathLength="1" />
+                        <line class="ring-soft" x1="44.64" y1="37.07" x2="31.25" y2="4.73" pathLength="1" />
+                        <line class="ring-soft" x1="55.36" y1="37.07" x2="68.75" y2="4.73" pathLength="1" />
                         <line class="ring-soft" x1="62.93" y1="44.64" x2="95.27" y2="31.25" pathLength="1" />
                     </svg>
                 </div>
@@ -92,22 +92,21 @@
 
                     @if ($galleries->isNotEmpty())
 
-                        <img
-                            src="{{ asset('storage/' . $galleries->first()->image) }}"
-                            alt="{{ $galleries->first()->title }}"
-                        >
+                    <img
+                        src="{{ asset('storage/' . $galleries->first()->image) }}"
+                        alt="{{ $galleries->first()->title }}">
 
                     @else
 
-                        <div class="hero-photo-placeholder">
+                    <div class="hero-photo-placeholder">
 
-                            <i class="bi bi-camera"></i>
+                        <i class="bi bi-camera"></i>
 
-                            <span>
-                                Aura Studio
-                            </span>
+                        <span>
+                            Aura Studio
+                        </span>
 
-                        </div>
+                    </div>
 
                     @endif
 
@@ -187,93 +186,93 @@
 
             @foreach ($services as $service)
 
-                <article class="service-card">
+            <article class="service-card">
 
-                    <div class="service-card-top">
+                <div class="service-card-top">
 
-                        <span class="service-tag">
-                            {{ $service->is_on_location ? 'Di lokasi pilihanmu' : ($service->requires_photographer ? 'Dengan fotografer' : 'Foto mandiri') }}
-                        </span>
+                    <span class="service-tag">
+                        {{ $service->is_on_location ? 'Di lokasi pilihanmu' : ($service->requires_photographer ? 'Dengan fotografer' : 'Foto mandiri') }}
+                    </span>
 
-                        <span class="service-card-icon">
+                    <span class="service-card-icon">
 
-                            @if ($service->name === 'Self Photo Studio')
-                                <i class="bi bi-person-bounding-box"></i>
+                        @if ($service->name === 'Self Photo Studio')
+                        <i class="bi bi-person-bounding-box"></i>
 
-                            @elseif ($service->is_on_location)
-                                <i class="bi bi-geo-alt"></i>
-
-                            @else
-                                <i class="bi bi-camera"></i>
-
-                            @endif
-
-                        </span>
-
-                    </div>
-
-
-                    <h3>
-                        {{ $service->name }}
-                    </h3>
-
-
-                    <p>
-                        {{ $service->description }}
-                    </p>
-
-
-                    <ul class="service-features">
-
-                        @if ($service->requires_photographer)
-
-                            <li>
-                                <i class="bi bi-check-circle"></i>
-                                Fotografer profesional
-                            </li>
+                        @elseif ($service->is_on_location)
+                        <i class="bi bi-geo-alt"></i>
 
                         @else
-
-                            <li>
-                                <i class="bi bi-check-circle"></i>
-                                Foto mandiri dan fleksibel
-                            </li>
+                        <i class="bi bi-camera"></i>
 
                         @endif
 
+                    </span>
 
-                        @if ($service->requires_room)
-
-                            <li>
-                                <i class="bi bi-check-circle"></i>
-                                Studio yang nyaman
-                            </li>
-
-                        @endif
+                </div>
 
 
-                        @if ($service->is_on_location)
-
-                            <li>
-                                <i class="bi bi-check-circle"></i>
-                                Lokasi sesuai pilihan Anda
-                            </li>
-
-                        @endif
-
-                    </ul>
+                <h3>
+                    {{ $service->name }}
+                </h3>
 
 
-                    <a href="{{ route('services.show', $service->slug) }}"
-                       class="service-card-button">
+                <p>
+                    {{ $service->description }}
+                </p>
 
-                        Lihat Detail
 
-                        <i class="bi bi-arrow-right"></i>
+                <ul class="service-features">
 
-                    </a>
+                    @if ($service->requires_photographer)
 
-                </article>
+                    <li>
+                        <i class="bi bi-check-circle"></i>
+                        Fotografer profesional
+                    </li>
+
+                    @else
+
+                    <li>
+                        <i class="bi bi-check-circle"></i>
+                        Foto mandiri dan fleksibel
+                    </li>
+
+                    @endif
+
+
+                    @if ($service->requires_room)
+
+                    <li>
+                        <i class="bi bi-check-circle"></i>
+                        Studio yang nyaman
+                    </li>
+
+                    @endif
+
+
+                    @if ($service->is_on_location)
+
+                    <li>
+                        <i class="bi bi-check-circle"></i>
+                        Lokasi sesuai pilihan Anda
+                    </li>
+
+                    @endif
+
+                </ul>
+
+
+                <a href="{{ route('services.show', $service->slug) }}"
+                    class="service-card-button">
+
+                    Lihat Detail
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            </article>
 
             @endforeach
 
@@ -289,14 +288,14 @@
      BOOKING STEPS
      ===================================================== --}}
 @php
-    $bookingSteps = [
-        ['icon' => 'bi-camera',      'title' => 'Pilih Layanan',    'text' => 'Studio, Self Photo, atau On Location.'],
-        ['icon' => 'bi-geo-alt',     'title' => 'Pilih Cabang',     'text' => 'Tentukan studio yang paling sesuai.'],
-        ['icon' => 'bi-box',         'title' => 'Pilih Paket',      'text' => 'Sesuaikan paket dengan kebutuhan.'],
-        ['icon' => 'bi-person',      'title' => 'Pilih Fotografer', 'text' => 'Tentukan fotografer untuk sesi Anda.'],
-        ['icon' => 'bi-calendar3',   'title' => 'Pilih Jadwal',     'text' => 'Tentukan tanggal dan jam tersedia.'],
-        ['icon' => 'bi-credit-card', 'title' => 'Pembayaran',       'text' => 'Selesaikan pembayaran untuk booking.'],
-    ];
+$bookingSteps = [
+['icon' => 'bi-camera', 'title' => 'Pilih Layanan', 'text' => 'Studio, Self Photo, atau On Location.'],
+['icon' => 'bi-geo-alt', 'title' => 'Pilih Cabang', 'text' => 'Tentukan studio yang paling sesuai.'],
+['icon' => 'bi-box', 'title' => 'Pilih Paket', 'text' => 'Sesuaikan paket dengan kebutuhan.'],
+['icon' => 'bi-person', 'title' => 'Pilih Fotografer', 'text' => 'Tentukan fotografer untuk sesi Anda.'],
+['icon' => 'bi-calendar3', 'title' => 'Pilih Jadwal', 'text' => 'Tentukan tanggal dan jam tersedia.'],
+['icon' => 'bi-credit-card', 'title' => 'Pembayaran', 'text' => 'Selesaikan pembayaran untuk booking.'],
+];
 @endphp
 
 <section class="home-booking-flow">
@@ -327,23 +326,23 @@
 
                 @foreach ($bookingSteps as $step)
 
-                    <article class="booking-step">
+                <article class="booking-step">
 
-                        <span class="step-number">
-                            {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
-                        </span>
+                    <span class="step-number">
+                        {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                    </span>
 
-                        <i class="bi {{ $step['icon'] }}"></i>
+                    <i class="bi {{ $step['icon'] }}"></i>
 
-                        <strong>
-                            {{ $step['title'] }}
-                        </strong>
+                    <strong>
+                        {{ $step['title'] }}
+                    </strong>
 
-                        <p>
-                            {{ $step['text'] }}
-                        </p>
+                    <p>
+                        {{ $step['text'] }}
+                    </p>
 
-                    </article>
+                </article>
 
                 @endforeach
 
@@ -385,84 +384,83 @@
 
             @foreach ($packages as $package)
 
-                <article
-                    class="package-card {{ $loop->iteration === 2 ? 'featured' : '' }}"
-                >
+            <article
+                class="package-card {{ $loop->iteration === 2 ? 'featured' : '' }}">
 
-                    @if ($loop->iteration === 2)
+                @if ($loop->iteration === 2)
 
-                        <span class="package-popular">
-                            Pilihan Populer
-                        </span>
+                <span class="package-popular">
+                    Pilihan Populer
+                </span>
 
-                    @endif
+                @endif
 
 
-                    <span class="package-service">
-                        {{ $package->service->name }}
+                <span class="package-service">
+                    {{ $package->service->name }}
+                </span>
+
+
+                <h3>
+                    {{ $package->name }}
+                </h3>
+
+
+                <div class="package-price">
+
+                    Rp{{ number_format($package->price, 0, ',', '.') }}
+
+                    <small>
+                        / sesi
+                    </small>
+
+                </div>
+
+
+                <div class="package-meta">
+
+                    <span>
+                        {{ $package->duration_minutes }} menit
                     </span>
 
+                    @if ($package->max_people)
 
-                    <h3>
-                        {{ $package->name }}
-                    </h3>
-
-
-                    <div class="package-price">
-
-                        Rp{{ number_format($package->price, 0, ',', '.') }}
-
-                        <small>
-                            / sesi
-                        </small>
-
-                    </div>
-
-
-                    <div class="package-meta">
-
-                        <span>
-                            {{ $package->duration_minutes }} menit
-                        </span>
-
-                        @if ($package->max_people)
-
-                            <span>
-                                Maks.
-                                {{ $package->max_people }}
-                                orang
-                            </span>
-
-                        @endif
-
-                    </div>
-
-
-                    @if ($package->package_includes)
-
-                        <div class="package-includes">
-
-                            <strong>
-                                Yang Anda Dapatkan:
-                            </strong>
-
-                            <p>
-                                {{ $package->package_includes }}
-                            </p>
-
-                        </div>
+                    <span>
+                        Maks.
+                        {{ $package->max_people }}
+                        orang
+                    </span>
 
                     @endif
 
+                </div>
 
-                    <a href="{{ route('packages.show', $package->id) }}"
-                       class="package-button">
 
-                        Lihat Detail
+                @if ($package->package_includes)
 
-                    </a>
+                <div class="package-includes">
 
-                </article>
+                    <strong>
+                        Yang Anda Dapatkan:
+                    </strong>
+
+                    <p>
+                        {{ $package->package_includes }}
+                    </p>
+
+                </div>
+
+                @endif
+
+
+                <a href="{{ route('packages.show', $package->id) }}"
+                    class="package-button">
+
+                    Lihat Detail
+
+                </a>
+
+            </article>
 
             @endforeach
 
@@ -525,81 +523,81 @@
 
             @foreach ($branches as $branch)
 
-                <article class="branch-card">
+            <article class="branch-card">
 
-                    <div class="branch-card-heading">
+                <div class="branch-card-heading">
 
-                        <span class="branch-icon">
-                            <i class="bi bi-building"></i>
-                        </span>
+                    <span class="branch-icon">
+                        <i class="bi bi-building"></i>
+                    </span>
 
-                        <span class="branch-status">
-                            Buka
-                        </span>
+                    <span class="branch-status">
+                        Buka
+                    </span>
 
-                    </div>
-
-
-                    <h3>
-                        {{ $branch->name }}
-                    </h3>
+                </div>
 
 
-                    <p class="branch-address">
-                        {{ $branch->address }}
-                    </p>
+                <h3>
+                    {{ $branch->name }}
+                </h3>
 
 
-                    <div class="branch-info">
-
-                        @if ($branch->phone)
-
-                            <span>
-                                <i class="bi bi-telephone"></i>
-                                {{ $branch->phone }}
-                            </span>
-
-                        @endif
+                <p class="branch-address">
+                    {{ $branch->address }}
+                </p>
 
 
-                        <span>
-                            <i class="bi bi-clock"></i>
+                <div class="branch-info">
 
-                            {{ $branch->opening_time }}
-                            -
-                            {{ $branch->closing_time }}
-                        </span>
+                    @if ($branch->phone)
 
-                    </div>
+                    <span>
+                        <i class="bi bi-telephone"></i>
+                        {{ $branch->phone }}
+                    </span>
 
-
-                    <div class="branch-actions">
-
-                        @if ($branch->maps_url)
-
-                            <a href="{{ $branch->maps_url }}"
-                               target="_blank"
-                               rel="noopener"
-                               class="branch-location-link">
-
-                                <i class="bi bi-geo-alt"></i>
-                                Lihat di Peta
-
-                            </a>
-
-                        @endif
+                    @endif
 
 
-                        {{-- Detail cabang milik Qila --}}
-                        <a href="#" class="branch-detail-link">
+                    <span>
+                        <i class="bi bi-clock"></i>
 
-                            Lihat Cabang
+                        {{ $branch->opening_time }}
+                        -
+                        {{ $branch->closing_time }}
+                    </span>
 
-                        </a>
+                </div>
 
-                    </div>
 
-                </article>
+                <div class="branch-actions">
+
+                    @if ($branch->maps_url)
+
+                    <a href="{{ $branch->maps_url }}"
+                        target="_blank"
+                        rel="noopener"
+                        class="branch-location-link">
+
+                        <i class="bi bi-geo-alt"></i>
+                        Lihat di Peta
+
+                    </a>
+
+                    @endif
+
+
+                    <a href="{{ route('branches.show', $branch->id) }}"
+                        class="branch-detail">
+
+                        Lihat Cabang
+
+                    </a>
+
+                </div>
+
+            </article>
 
             @endforeach
 
@@ -637,48 +635,47 @@
 
         @if ($galleries->isNotEmpty())
 
-            <div class="gallery-grid">
+        <div class="gallery-grid">
 
-                @foreach ($galleries as $gallery)
+            @foreach ($galleries as $gallery)
 
-                    <article class="gallery-item">
+            <article class="gallery-item">
 
-                        <img
-                            src="{{ asset('storage/' . $gallery->image) }}"
-                            alt="{{ $gallery->title }}"
-                            loading="lazy"
-                        >
+                <img
+                    src="{{ asset('storage/' . $gallery->image) }}"
+                    alt="{{ $gallery->title }}"
+                    loading="lazy">
 
-                        <div class="gallery-overlay">
+                <div class="gallery-overlay">
 
-                            <span>
-                                {{ $gallery->title }}
-                            </span>
+                    <span>
+                        {{ $gallery->title }}
+                    </span>
 
-                        </div>
+                </div>
 
-                    </article>
+            </article>
 
-                @endforeach
+            @endforeach
 
-            </div>
+        </div>
 
         @else
 
-            <div class="gallery-empty">
+        <div class="gallery-empty">
 
-                <i class="bi bi-images"></i>
+            <i class="bi bi-images"></i>
 
-                <h3>
-                    Galeri Segera Hadir
-                </h3>
+            <h3>
+                Galeri Segera Hadir
+            </h3>
 
-                <p>
-                    Koleksi hasil fotografi Aura Studio
-                    akan ditampilkan di sini.
-                </p>
+            <p>
+                Koleksi hasil fotografi Aura Studio
+                akan ditampilkan di sini.
+            </p>
 
-            </div>
+        </div>
 
         @endif
 
@@ -692,12 +689,12 @@
      WHY AURA
      ===================================================== --}}
 @php
-    $benefits = [
-        ['icon' => 'bi-camera',         'title' => 'Fotografer Profesional',        'text' => 'Tim fotografer berpengalaman untuk berbagai kebutuhan foto.'],
-        ['icon' => 'bi-box-seam',       'title' => 'Banyak Pilihan Paket',          'text' => 'Pilihan paket fleksibel sesuai kebutuhan dan anggaran Anda.'],
-        ['icon' => 'bi-calendar-check', 'title' => 'Jadwal Fleksibel',              'text' => 'Tentukan tanggal dan waktu fotografi yang paling nyaman.'],
-        ['icon' => 'bi-geo-alt',        'title' => 'Tersedia di Berbagai Cabang',   'text' => 'Pilih Aura Studio yang paling dekat dengan lokasi Anda.'],
-    ];
+$benefits = [
+['icon' => 'bi-camera', 'title' => 'Fotografer Profesional', 'text' => 'Tim fotografer berpengalaman untuk berbagai kebutuhan foto.'],
+['icon' => 'bi-box-seam', 'title' => 'Banyak Pilihan Paket', 'text' => 'Pilihan paket fleksibel sesuai kebutuhan dan anggaran Anda.'],
+['icon' => 'bi-calendar-check', 'title' => 'Jadwal Fleksibel', 'text' => 'Tentukan tanggal dan waktu fotografi yang paling nyaman.'],
+['icon' => 'bi-geo-alt', 'title' => 'Tersedia di Berbagai Cabang', 'text' => 'Pilih Aura Studio yang paling dekat dengan lokasi Anda.'],
+];
 @endphp
 
 <section class="home-benefits">
@@ -726,19 +723,19 @@
 
             @foreach ($benefits as $benefit)
 
-                <article class="benefit-card">
+            <article class="benefit-card">
 
-                    <i class="bi {{ $benefit['icon'] }}"></i>
+                <i class="bi {{ $benefit['icon'] }}"></i>
 
-                    <h3>
-                        {{ $benefit['title'] }}
-                    </h3>
+                <h3>
+                    {{ $benefit['title'] }}
+                </h3>
 
-                    <p>
-                        {{ $benefit['text'] }}
-                    </p>
+                <p>
+                    {{ $benefit['text'] }}
+                </p>
 
-                </article>
+            </article>
 
             @endforeach
 
@@ -782,33 +779,33 @@
 
             @foreach ($testimonials as $testimonial)
 
-                <article class="testimonial-card">
+            <article class="testimonial-card">
 
-                    <div class="testimonial-stars"
-                         role="img"
-                         aria-label="Rating {{ $testimonial->rating }} dari 5">
+                <div class="testimonial-stars"
+                    role="img"
+                    aria-label="Rating {{ $testimonial->rating }} dari 5">
 
-                        @for ($i = 1; $i <= 5; $i++)
+                    @for ($i = 1; $i <= 5; $i++)
 
-                            <i class="bi bi-star{{ $i <= $testimonial->rating ? '-fill' : '' }}"></i>
+                        <i class="bi bi-star{{ $i <= $testimonial->rating ? '-fill' : '' }}"></i>
 
                         @endfor
 
-                    </div>
+                </div>
 
 
-                    <p>
-                        {{ $testimonial->comment }}
-                    </p>
+                <p>
+                    {{ $testimonial->comment }}
+                </p>
 
 
-                    <strong>
+                <strong>
 
-                        {{ $testimonial->booking->user->name ?? 'Pelanggan Aura Studio' }}
+                    {{ $testimonial->booking->user->name ?? 'Pelanggan Aura Studio' }}
 
-                    </strong>
+                </strong>
 
-                </article>
+            </article>
 
             @endforeach
 

@@ -11,34 +11,36 @@
             id="navbarToggle"
             aria-label="Buka menu"
             aria-expanded="false"
-            aria-controls="navbarMenu"
-        >
+            aria-controls="navbarMenu">
             <i class="bi bi-list"></i>
         </button>
 
         <div class="navbar-menu" id="navbarMenu">
             <a href="{{ route('home') }}"
-               class="{{ request()->routeIs('home') ? 'active' : '' }}"
-               @if (request()->routeIs('home')) aria-current="page" @endif>
+                class="{{ request()->routeIs('home') ? 'active' : '' }}"
+                @if (request()->routeIs('home')) aria-current="page" @endif>
                 Beranda
             </a>
 
             <a href="{{ route('services.index') }}"
-               class="{{ request()->routeIs('services.*') ? 'active' : '' }}"
-               @if (request()->routeIs('services.*')) aria-current="page" @endif>
+                class="{{ request()->routeIs('services.*') ? 'active' : '' }}"
+                @if (request()->routeIs('services.*')) aria-current="page" @endif>
                 Layanan
             </a>
 
             <a href="{{ route('packages.index') }}"
-               class="{{ request()->routeIs('packages.*') ? 'active' : '' }}"
-               @if (request()->routeIs('packages.*')) aria-current="page" @endif>
+                class="{{ request()->routeIs('packages.*') ? 'active' : '' }}"
+                @if (request()->routeIs('packages.*')) aria-current="page" @endif>
                 Paket
             </a>
 
-            <a href="#">Cabang</a>
-            <a href="#">Fotografer</a>
-            <a href="#">Galeri</a>
-            <a href="#">Tentang Kami</a>
+            <<a href="{{ route('branches.index') }}"
+                class="navbar-link {{ request()->routeIs('branches.*') ? 'active' : '' }}">
+                Cabang
+                </a>
+                <a href="#">Fotografer</a>
+                <a href="#">Galeri</a>
+                <a href="#">Tentang Kami</a>
         </div>
 
         <div class="navbar-actions">
