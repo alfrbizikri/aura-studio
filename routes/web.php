@@ -19,6 +19,10 @@ use App\Http\Controllers\Customer\ProfileController as CustomerProfileController
 
 use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
+use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 
 
 /*
@@ -312,4 +316,49 @@ Route::prefix('admin')
             'galleries',
             AdminGalleryController::class
         )->except('show');
+
+        Route::get(
+            'schedules',
+            [AdminScheduleController::class, 'index']
+        )->name('schedules.index');
+
+        Route::get(
+            'bookings',
+            [AdminBookingController::class, 'index']
+        )->name('bookings.index');
+
+        Route::get(
+            'bookings/{booking}',
+            [AdminBookingController::class, 'show']
+        )->name('bookings.show');
+
+        Route::get(
+            'payments',
+            [AdminPaymentController::class, 'index']
+        )->name('payments.index');
+
+        Route::get(
+            'payments/{payment}',
+            [AdminPaymentController::class, 'show']
+        )->name('payments.show');
+
+        Route::patch(
+            'payments/{payment}/approve',
+            [AdminPaymentController::class, 'approve']
+        )->name('payments.approve');
+
+        Route::patch(
+            'payments/{payment}/reject',
+            [AdminPaymentController::class, 'reject']
+        )->name('payments.reject');
+
+        Route::get(
+            'customers',
+            [AdminCustomerController::class, 'index']
+        )->name('customers.index');
+
+        Route::get(
+            'customers/{user}',
+            [AdminCustomerController::class, 'show']
+        )->name('customers.show');
     });
