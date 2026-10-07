@@ -106,7 +106,28 @@
         '.section-action',
         '.service-info-item',
         '.package-detail-price',
-        '.package-detail-page .package-includes'
+        '.package-detail-page .package-includes',
+        '.svc-head',
+        '.svc-row',
+        '.svc-compare',
+        '.svc-guide',
+        '.svc-spec',
+        '.svc-fac-copy',
+        '.svc-plan',
+        '.svc-step',
+        '.svc-branch',
+        '.svc-person',
+        '.svc-shot',
+        '.svc-faq details',
+        '.svc-others',
+        '.svc-cta-box',
+        '.pkg-card',
+        '.pkg-includes li',
+        '.pkg-info',
+        '.brn-room',
+        '.brn-strip li',
+        '.brn-contact',
+        '.brn-map'
     ].join(',');
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

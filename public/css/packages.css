@@ -1,0 +1,392 @@
+/* =========================================================
+   AURA STUDIO — HALAMAN PAKET
+   Daftar Paket (pages/packages/index) & Detail Paket (show)
+   Memakai komponen svc-* dari services.css (muat keduanya).
+   Class khusus halaman ini berawalan "pkg-".
+   ========================================================= */
+
+.svc-crumb.is-center { justify-content: center; }
+
+.pkg-tag {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 5px 14px;
+    border-radius: var(--r-pill);
+    background: rgba(176, 136, 72, 0.16);
+    color: var(--gold-deep);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+/* ---------- Hero daftar ---------- */
+.pkg-hero {
+    --ring-top: 50%;
+    --ring-left: 50%;
+    --ring-size: clamp(420px, 60vw, 760px);
+    --ring-color: rgba(176, 136, 72, 0.22);
+
+    padding: clamp(28px, 4vw, 52px) 0 clamp(56px, 7vw, 92px);
+    text-align: center;
+    background:
+        radial-gradient(60% 80% at 50% 100%, rgba(241, 216, 205, 0.9), transparent 70%),
+        var(--paper);
+}
+
+.pkg-hero .container > * { animation: svcRise 0.9s var(--ease) backwards; }
+.pkg-hero .container > :nth-child(2) { animation-delay: 0.08s; }
+.pkg-hero .container > :nth-child(3) { animation-delay: 0.16s; }
+.pkg-hero .container > :nth-child(4) { animation-delay: 0.24s; }
+.pkg-hero .container > :nth-child(5) { animation-delay: 0.32s; }
+
+.pkg-hero h1 {
+    margin-bottom: 20px;
+    font-size: clamp(2.6rem, 5.8vw, 4.6rem);
+    font-weight: 450;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+}
+
+.pkg-hero h1 em { font-weight: 400; }
+
+.pkg-hero .svc-lead { margin-inline: auto; }
+
+.pkg-hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pkg-hero-tags li {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 18px 7px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    background: rgba(251, 250, 247, 0.8);
+    color: var(--ink);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.pkg-hero-tags i { color: var(--gold); font-size: 1.3rem; }
+
+/* ---------- Toolbar filter ---------- */
+.pkg-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+}
+
+.pkg-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pkg-tabs button {
+    padding: 10px 22px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.pkg-tabs button:hover { border-color: var(--gold); }
+
+.pkg-tabs button.is-active {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--on-dark);
+}
+
+.pkg-count { color: var(--soft); font-size: 0.92rem; }
+.pkg-count strong { color: var(--ink); }
+
+/* ---------- Kartu paket ---------- */
+.pkg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.pkg-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 30px 28px 28px;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: var(--surface);
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.3s ease;
+}
+
+.pkg-card[hidden] { display: none; }
+
+.pkg-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(176, 136, 72, 0.6);
+    box-shadow: var(--shadow-lift);
+}
+
+.pkg-card h2,
+.pkg-card h3 {
+    font-size: 1.6rem;
+    line-height: 1.12;
+}
+
+.pkg-price {
+    color: var(--gold-deep);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3vw, 2.4rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.pkg-price small {
+    margin-left: 4px;
+    color: var(--soft);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.pkg-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    padding: 16px 18px;
+    border-radius: var(--r-md);
+    background: var(--paper);
+}
+
+.pkg-stats div { flex: 1 1 auto; }
+
+.pkg-stats dt {
+    color: var(--soft);
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.pkg-stats dd {
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.pkg-desc { font-size: 0.94rem; line-height: 1.7; }
+
+.pkg-card .svc-checks { flex: 1; }
+.pkg-card .pkg-desc { flex: 1; }
+
+.pkg-card-foot {
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+    margin-top: auto;
+    padding-top: 6px;
+}
+
+.pkg-card-foot .btn { width: 100%; }
+
+.pkg-grid.is-related { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.pkg-grid.is-related .pkg-card { gap: 14px; }
+
+/* ---------- Hero detail ---------- */
+.pkg-dhero {
+    --ring-top: 20%;
+    --ring-left: 100%;
+    --ring-size: clamp(280px, 40vw, 520px);
+
+    padding: clamp(28px, 4vw, 48px) 0 clamp(56px, 7vw, 96px);
+    background:
+        radial-gradient(50% 70% at 0% 60%, rgba(241, 216, 205, 0.9), transparent 68%),
+        var(--paper);
+}
+
+.pkg-dhero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+    gap: clamp(28px, 5vw, 64px);
+}
+
+.pkg-visual { animation: svcRise 0.9s var(--ease) backwards; }
+
+.pkg-visual-main {
+    position: relative;
+    aspect-ratio: 4 / 4.3;
+    overflow: hidden;
+    border-radius: 34px;
+    box-shadow: var(--shadow-lift);
+}
+
+.pkg-visual-main img { width: 100%; height: 100%; object-fit: cover; }
+
+.pkg-thumbs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.pkg-thumbs img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 18px;
+}
+
+.pkg-info {
+    padding: clamp(26px, 3.4vw, 40px);
+    border: 1px solid var(--line);
+    border-radius: 34px;
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+    animation: svcRise 0.9s var(--ease) 0.12s backwards;
+}
+
+.pkg-info-tags { margin-bottom: 16px; }
+
+.pkg-info h1 {
+    margin-bottom: 14px;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+}
+
+.pkg-info > p { margin-bottom: 24px; line-height: 1.75; }
+
+.pkg-pricebox {
+    margin-bottom: 20px;
+    padding: 20px 22px;
+    border-radius: var(--r-md);
+    background: var(--paper);
+}
+
+.pkg-pricebox span { display: block; color: var(--soft); font-size: 0.8rem; font-weight: 600; }
+
+.pkg-pricebox strong {
+    display: block;
+    margin: 2px 0 4px;
+    color: var(--gold-deep);
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4.4vw, 3.2rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+}
+
+.pkg-pricebox small { color: var(--soft); font-size: 0.82rem; }
+
+.pkg-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 26px;
+}
+
+.pkg-facts div {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+}
+
+.pkg-facts i {
+    grid-row: span 2;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(176, 136, 72, 0.16);
+    color: var(--gold-deep);
+}
+
+.pkg-facts dt { color: var(--soft); font-size: 0.74rem; font-weight: 600; }
+.pkg-facts dd { color: var(--ink); font-size: 0.92rem; font-weight: 700; line-height: 1.25; }
+
+.pkg-info-actions { display: grid; gap: 12px; text-align: center; }
+.pkg-info-actions .btn { width: 100%; }
+.pkg-info-actions small { color: var(--soft); font-size: 0.82rem; }
+
+/* ---------- Yang didapatkan ---------- */
+.pkg-got {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 80px);
+}
+
+.pkg-got h2 {
+    margin: 8px 0 28px;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    letter-spacing: -0.02em;
+}
+
+.pkg-includes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.pkg-includes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.pkg-includes i { margin-top: 2px; color: var(--gold-deep); }
+
+.pkg-spec { margin-bottom: 20px; }
+
+.pkg-spec li { border-top-color: var(--line); }
+.pkg-spec .svc-spec-ico { background: rgba(176, 136, 72, 0.16); color: var(--gold-deep); }
+.pkg-spec li span:not(.svc-spec-ico) { color: var(--soft); }
+.pkg-spec strong { color: var(--ink); }
+
+.pkg-foot-note {
+    margin-top: 24px;
+    color: var(--soft);
+    font-size: 0.86rem;
+    text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+    .pkg-dhero-grid,
+    .pkg-got { grid-template-columns: minmax(0, 1fr); }
+    .pkg-visual-main { aspect-ratio: 4 / 3.4; }
+}
+
+@media (max-width: 576px) {
+    .pkg-tabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 0 16px 6px; }
+    .pkg-tabs button { flex-shrink: 0; }
+    .pkg-includes,
+    .pkg-facts { grid-template-columns: minmax(0, 1fr); }
+    .pkg-card { padding: 26px 22px 24px; border-radius: 26px; }
+    .pkg-info { border-radius: 28px; }
+}
