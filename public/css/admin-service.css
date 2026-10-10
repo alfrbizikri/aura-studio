@@ -1,0 +1,139 @@
+/* =========================================================
+   AURA STUDIO — ADMIN SERVICES
+   Tambahan untuk halaman CRUD Layanan
+   ========================================================= */
+
+.admin-service-thumb {
+    width: 82px;
+    height: 62px;
+    overflow: hidden;
+    border: 1px solid var(--a-line);
+    border-radius: var(--a-r-sm);
+    background: var(--a-paper);
+}
+
+.admin-service-thumb img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.admin-service-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(
+        145deg,
+        #efe7da,
+        #e3d6c0
+    );
+    color: var(--a-gold-deep);
+    font-size: 1.3rem;
+}
+
+.admin-service-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.admin-service-feature {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--a-paper);
+    color: var(--a-soft);
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.admin-service-feature i {
+    color: var(--a-gold-deep);
+}
+
+.admin-check-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.admin-check-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--a-line-strong);
+    border-radius: var(--a-r-md);
+    background: var(--a-surface);
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.admin-check-card:hover {
+    border-color: var(--a-gold);
+    background: #fbf8f2;
+}
+
+.admin-check-card input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    min-width: 17px;
+    margin: 3px 0 0;
+    accent-color: var(--a-wine);
+}
+
+.admin-check-card strong {
+    display: block;
+    color: var(--a-ink);
+    font-size: 0.86rem;
+}
+
+.admin-check-card small {
+    display: block;
+    margin-top: 3px;
+    color: var(--a-soft);
+    font-size: 0.76rem;
+    line-height: 1.45;
+}
+
+.admin-current-service-image {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px;
+    border: 1px solid var(--a-line);
+    border-radius: var(--a-r-md);
+    background: var(--a-paper);
+}
+
+.admin-current-service-image img {
+    display: block;
+    width: 220px;
+    max-width: 100%;
+    height: 145px;
+    object-fit: cover;
+    border-radius: var(--a-r-sm);
+}
+
+.admin-help-text {
+    display: block;
+    margin-top: 6px;
+    color: var(--a-soft);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+    .admin-check-grid {
+        grid-template-columns: 1fr;
+    }
+}

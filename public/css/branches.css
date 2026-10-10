@@ -321,3 +321,37 @@
     .brn-map { min-height: 300px; }
     .brn-contact { padding: 24px 22px; }
 }
+
+.admin-logout-form {
+    margin: 8px 20px 20px;
+}
+
+.admin-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 0;
+
+    background: transparent;
+    border: none;
+
+    color: #f8f5ef;
+
+    font: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+    text-align: left;
+
+    transition: 0.2s ease;
+}
+
+.admin-logout-btn i {
+    color: #b88a44;
+}
+
+.admin-logout-btn:hover {
+    color: #b88a44;
+}

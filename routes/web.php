@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 
 
 /*
@@ -291,6 +293,26 @@ Route::middleware('auth')->group(function () {
     ])->name('customer.payments.store');
 });
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN AUTH
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::get('/login', [
+            AdminAuthController::class,
+            'showLogin'
+        ])->name('login');
+
+        Route::post('/login', [
+            AdminAuthController::class,
+            'login'
+        ])->name('login.process');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -305,6 +327,7 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
+    ->middleware('admin')
     ->group(function () {
 
         Route::resource(
@@ -315,6 +338,11 @@ Route::prefix('admin')
         Route::resource(
             'galleries',
             AdminGalleryController::class
+        )->except('show');
+
+        Route::resource(
+            'services',
+            AdminServiceController::class
         )->except('show');
 
         Route::get(
@@ -361,4 +389,9 @@ Route::prefix('admin')
             'customers/{user}',
             [AdminCustomerController::class, 'show']
         )->name('customers.show');
+
+        Route::post('/logout', [
+            AdminAuthController::class,
+            'logout'
+        ])->name('logout');
     });

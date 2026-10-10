@@ -1,0 +1,317 @@
+/* =========================================================
+   AURA STUDIO — LOGIN ADMIN
+   Berdiri sendiri (tidak memakai auth.css milik login customer).
+   ========================================================= */
+
+:root {
+    --l-ink: #1f0f12;
+    --l-wine: #5a1f2b;
+    --l-gold: #b08848;
+    --l-gold-bright: #e0b766;
+    --l-gold-deep: #7a5a24;
+    --l-paper: #f4f1ec;
+    --l-text: #4a3f3d;
+    --l-soft: #7a6e6a;
+    --l-line: rgba(31, 15, 18, 0.18);
+    --l-bad: #a8353f;
+    --l-ok: #2f7a4f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background: var(--l-paper);
+    color: var(--l-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+:focus-visible { outline: 2px solid var(--l-gold); outline-offset: 2px; }
+
+/* ---------- Layout ---------- */
+.alg-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+/* ---------- Panel merek ---------- */
+.alg-brand {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(32px, 5vw, 64px);
+    color: #fff;
+    background:
+        radial-gradient(80% 50% at 0% 0%, rgba(176, 136, 72, 0.4), transparent 62%),
+        radial-gradient(70% 60% at 100% 100%, rgba(139, 45, 64, 0.65), transparent 70%),
+        var(--l-ink);
+}
+
+/* Motif cincin diafragma */
+.alg-brand::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    right: -140px;
+    bottom: -140px;
+    width: 520px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px rgba(224, 183, 102, 0.4);
+    background: repeating-conic-gradient(from 22.5deg, rgba(224, 183, 102, 0.4) 0 0.6deg, transparent 0.6deg 45deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 17%, #000 17.4%);
+    mask: radial-gradient(circle, transparent 0 17%, #000 17.4%);
+    animation: algSpin 120s linear infinite;
+}
+
+.alg-brand-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.alg-mark {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: linear-gradient(145deg, var(--l-gold-bright), var(--l-gold));
+    color: var(--l-ink);
+    font-size: 1.3rem;
+}
+
+.alg-brand-top strong {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.alg-brand-copy span {
+    display: block;
+    margin-bottom: 14px;
+    color: var(--l-gold-bright);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.alg-brand-copy p {
+    max-width: 420px;
+    margin: 0;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- Panel form ---------- */
+.alg-panel {
+    display: grid;
+    place-items: center;
+    padding: clamp(24px, 5vw, 64px);
+}
+
+.alg-card {
+    width: 100%;
+    max-width: 420px;
+    animation: algRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.alg-heading { margin-bottom: 28px; }
+
+.alg-heading span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--l-gold-deep);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.alg-heading h1 {
+    margin: 0 0 8px;
+    color: var(--l-ink);
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(2rem, 4vw, 2.6rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.alg-heading p { margin: 0; color: var(--l-soft); }
+
+/* ---------- Alert ---------- */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.alert i { margin-top: 2px; }
+
+.alert-success {
+    border-color: rgba(47, 122, 79, 0.28);
+    background: rgba(47, 122, 79, 0.12);
+    color: #1f5a38;
+}
+
+.alert-error {
+    border-color: rgba(168, 53, 63, 0.28);
+    background: rgba(168, 53, 63, 0.1);
+    color: #7e2630;
+}
+
+/* ---------- Form ---------- */
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--l-ink);
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.alg-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.alg-input > i:first-child {
+    position: absolute;
+    left: 16px;
+    color: var(--l-soft);
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.alg-input input {
+    width: 100%;
+    padding: 14px 48px 14px 46px;
+    border: 1px solid var(--l-line);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--l-ink);
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alg-input input::placeholder { color: #a99f9b; }
+.alg-input input:hover { border-color: rgba(31, 15, 18, 0.35); }
+
+.alg-input input:focus {
+    outline: 0;
+    border-color: var(--l-gold);
+    box-shadow: 0 0 0 4px rgba(176, 136, 72, 0.18);
+}
+
+.alg-input:focus-within > i:first-child { color: var(--l-gold-deep); }
+
+.alg-eye {
+    position: absolute;
+    right: 8px;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--l-soft);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.alg-eye:hover { background: rgba(31, 15, 18, 0.06); color: var(--l-ink); }
+
+.form-error {
+    display: block;
+    margin-top: 6px;
+    color: var(--l-bad);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.form-group:has(.form-error) .alg-input input { border-color: rgba(168, 53, 63, 0.55); }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 24px;
+    border: 0;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+
+.btn-primary { background: var(--l-ink); color: #fff; }
+
+.btn-primary:hover {
+    background: var(--l-wine);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px -12px rgba(31, 15, 18, 0.55);
+}
+
+.btn-primary:active { transform: none; }
+
+.alg-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    color: var(--l-soft);
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s ease, gap 0.3s ease;
+}
+
+.alg-back:hover { gap: 12px; color: var(--l-ink); }
+
+/* ---------- Gerak ---------- */
+@keyframes algRise { from { opacity: 0; transform: translateY(20px); } }
+@keyframes algSpin { to { rotate: 360deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .alg-brand::after, .alg-card { animation: none; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+    .alg-page { grid-template-columns: minmax(0, 1fr); }
+
+    .alg-brand {
+        min-height: 0;
+        gap: 28px;
+        padding: 28px 24px 32px;
+    }
+
+    .alg-brand-copy p { font-size: 1.5rem; }
+    .alg-brand::after { width: 320px; right: -120px; bottom: -160px; }
+    .alg-panel { padding: 32px 20px 48px; align-items: start; }
+}
