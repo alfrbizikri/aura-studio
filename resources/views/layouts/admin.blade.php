@@ -78,6 +78,16 @@
 
                 </a>
 
+                {{-- KELOLA PAKET --}}
+                <a href="{{ route('admin.packages.index') }}"
+                    class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
+
+                    <i class="bi bi-box"></i>
+
+                    Kelola Paket
+
+                </a>
+
 
                 {{-- KELOLA GALERI --}}
                 <a href="{{ route('admin.galleries.index') }}"
