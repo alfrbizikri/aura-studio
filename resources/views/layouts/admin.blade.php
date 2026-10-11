@@ -98,6 +98,16 @@
 
                 </a>
 
+                {{-- KELOLA FOTOGRAFER --}}
+                <a href="{{ route('admin.photographers.index') }}"
+                    class="{{ request()->routeIs('admin.photographers.*') ? 'active' : '' }}">
+
+                    <i class="bi bi-person-badge"></i>
+
+                    Kelola Fotografer
+
+                </a>
+
 
                 {{-- KELOLA GALERI --}}
                 <a href="{{ route('admin.galleries.index') }}"

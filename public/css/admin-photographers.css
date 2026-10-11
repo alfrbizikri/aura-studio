@@ -1,0 +1,104 @@
+/* =========================================================
+   AURA STUDIO — ADMIN PHOTOGRAPHERS
+   ========================================================= */
+
+.admin-photographer-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 210px;
+}
+
+.admin-photographer-photo {
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid var(--a-line);
+    border-radius: 50%;
+    background: var(--a-paper);
+}
+
+.admin-photographer-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-photographer-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(
+        145deg,
+        #efe7da,
+        #e3d6c0
+    );
+    color: var(--a-gold-deep);
+    font-size: 1.3rem;
+}
+
+.admin-photographer-info strong {
+    display: block;
+}
+
+.admin-photographer-info small {
+    display: block;
+    margin-top: 3px;
+    color: var(--a-soft);
+    font-size: 0.78rem;
+}
+
+.admin-photographer-branch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(224, 183, 102, 0.16);
+    color: var(--a-gold-deep);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.admin-photographer-description {
+    max-width: 340px;
+    color: var(--a-soft);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.admin-current-photographer-photo {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px;
+    border: 1px solid var(--a-line);
+    border-radius: var(--a-r-md);
+    background: var(--a-paper);
+}
+
+.admin-current-photographer-photo img {
+    display: block;
+    width: 180px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: var(--a-r-sm);
+}
+
+.admin-current-photographer-photo span {
+    color: var(--a-soft);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.admin-help-text {
+    display: block;
+    margin-top: 6px;
+    color: var(--a-soft);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
