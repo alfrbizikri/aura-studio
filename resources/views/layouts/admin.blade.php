@@ -88,6 +88,16 @@
 
                 </a>
 
+                {{-- KELOLA STUDIO ROOM --}}
+                <a href="{{ route('admin.studio-rooms.index') }}"
+                    class="{{ request()->routeIs('admin.studio-rooms.*') ? 'active' : '' }}">
+
+                    <i class="bi bi-door-open"></i>
+
+                    Kelola Studio Room
+
+                </a>
+
 
                 {{-- KELOLA GALERI --}}
                 <a href="{{ route('admin.galleries.index') }}"

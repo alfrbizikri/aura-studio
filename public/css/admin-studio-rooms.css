@@ -1,0 +1,43 @@
+/* =========================================================
+   AURA STUDIO — ADMIN STUDIO ROOMS
+   ========================================================= */
+
+.admin-room-branch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(224, 183, 102, 0.16);
+    color: var(--a-gold-deep);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.admin-room-description {
+    max-width: 360px;
+    margin-top: 5px;
+    color: var(--a-soft);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.admin-room-icon {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--a-paper);
+    color: var(--a-gold-deep);
+    font-size: 1.2rem;
+}
+
+.admin-help-text {
+    display: block;
+    margin-top: 6px;
+    color: var(--a-soft);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}

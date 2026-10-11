@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
+use App\Http\Controllers\Admin\StudioRoomController as AdminStudioRoomController;
 
 
 /*
@@ -344,6 +345,11 @@ Route::prefix('admin')
         Route::resource(
             'packages',
             AdminPackageController::class
+        )->except('show');
+
+        Route::resource(
+            'studio-rooms',
+            AdminStudioRoomController::class
         )->except('show');
 
         Route::resource(
