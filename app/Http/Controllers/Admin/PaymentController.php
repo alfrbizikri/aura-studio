@@ -11,10 +11,10 @@ class PaymentController extends Controller
     public function index()
     {
         $payments = Payment::with([
-                'booking.user',
-                'booking.package',
-                'verifier',
-            ])
+            'booking.user',
+            'booking.package',
+            'verifier',
+        ])
             ->latest()
             ->get();
 
@@ -55,9 +55,9 @@ class PaymentController extends Controller
         $payment->update([
             'status' => 'paid',
             'rejection_reason' => null,
+            'verified_by' => auth()->id(),
             'verified_at' => now(),
         ]);
-
         $payment->booking()->update([
             'status' => 'confirmed',
         ]);
@@ -93,7 +93,9 @@ class PaymentController extends Controller
 
         $payment->update([
             'status' => 'rejected',
-            'rejection_reason' => $validated['rejection_reason'],
+            'rejection_reason' =>
+                $validated['rejection_reason'],
+            'verified_by' => auth()->id(),
             'verified_at' => now(),
         ]);
 

@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\CustomerPasswordResetController;
 use App\Http\Controllers\Customer\BookingController as CustomerBookingController;
 use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\Customer\BookingController;
 
 use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
@@ -277,6 +278,45 @@ Route::middleware('auth')->group(function () {
         CustomerBookingController::class,
         'show'
     ])->name('customer.bookings.show');
+
+    // Booking Wizard - Step 1: Pilihan
+    Route::get('/booking/mulai/{package?}', [BookingController::class, 'create'])
+        ->name('customer.bookings.create');
+
+    Route::post('/booking/pilihan', [BookingController::class, 'storeSelection'])
+        ->name('customer.bookings.selection.store');
+
+
+    // Step 2: Fotografer
+    Route::get('/booking/fotografer', [BookingController::class, 'photographer'])
+        ->name('customer.bookings.photographer');
+
+    Route::post('/booking/fotografer', [BookingController::class, 'storePhotographer'])
+        ->name('customer.bookings.photographer.store');
+
+
+    // Step 3: Jadwal
+    Route::get('/booking/jadwal', [BookingController::class, 'schedule'])
+        ->name('customer.bookings.schedule');
+
+    Route::post('/booking/jadwal', [BookingController::class, 'storeSchedule'])
+        ->name('customer.bookings.schedule.store');
+
+
+    // Step 4: Detail Pemesanan
+    Route::get('/booking/detail', [BookingController::class, 'detail'])
+        ->name('customer.bookings.detail');
+
+    Route::post('/booking/detail', [BookingController::class, 'storeDetail'])
+        ->name('customer.bookings.detail.store');
+
+
+    // Step 5: Konfirmasi
+    Route::get('/booking/konfirmasi', [BookingController::class, 'confirmation'])
+        ->name('customer.bookings.confirmation');
+
+    Route::post('/booking/konfirmasi', [BookingController::class, 'store'])
+        ->name('customer.bookings.store');
 
 
     /*

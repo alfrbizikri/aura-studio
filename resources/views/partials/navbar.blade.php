@@ -149,7 +149,7 @@
 
             {{-- BOOKING NANTI DISAMBUNG ABI --}}
             <a
-                href="#"
+                href="{{ route('customer.bookings.create') }}"
                 class="btn btn-primary">
                 Booking
 
