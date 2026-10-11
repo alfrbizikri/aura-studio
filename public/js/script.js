@@ -127,7 +127,19 @@
         '.brn-room',
         '.brn-strip li',
         '.brn-contact',
-        '.brn-map'
+        '.brn-map',
+        '.ph-card',
+        '.ph-mini',
+        '.ph-branch-card',
+        '.ph-perks li',
+        '.glr-card',
+        '.glr-service',
+        '.glr-head',
+        '.abt-value',
+        '.abt-branch',
+        '.abt-why-list li',
+        '.abt-story-copy',
+        '.abt-contact'
     ].join(',');
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

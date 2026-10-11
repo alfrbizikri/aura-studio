@@ -3,355 +3,168 @@
 @section('title', 'Fotografer - Aura Studio')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
     <link rel="stylesheet" href="{{ asset('css/photographers.css') }}">
 @endpush
 
 @section('content')
 
+    @php
+        $splitSpec = fn($s) => collect(preg_split('/\s*(?:&|,|\/|\bdan\b)\s*/iu', (string) $s))->map('trim')->filter()->values();
+        $specs = $photographers->flatMap(fn($p) => $splitSpec($p->specialization))->unique()->sort()->values();
+    @endphp
 
-    {{-- =====================================================
-     HERO
-     ===================================================== --}}
-    <section class="photographers-hero">
-
+    {{-- ============ HERO ============ --}}
+    <section class="ph-hero has-ring">
         <div class="container">
+            <nav class="svc-crumb is-center" aria-label="Breadcrumb">
+                <a href="{{ url('/') }}">Beranda</a><span class="sep">/</span><strong>Fotografer</strong>
+            </nav>
+            <span class="svc-pill">Tim profesional Aura Studio</span>
+            <h1>Temukan fotografer <em>yang sesuai.</em></h1>
+            <p class="svc-lead">Kenali fotografer Aura Studio berdasarkan cabang dan spesialisasi sebelum melanjutkan proses
+                booking.</p>
 
-            <div class="photographers-hero-grid">
-
-                <div class="photographers-hero-copy reveal-left">
-
-                    <div class="section-kicker">
-
-                        <span></span>
-
-                        Fotografer Aura Studio
-
+            <ul class="ph-perks">
+                <li><i class="bi bi-camera"></i>
+                    <div><strong>Fotografer profesional</strong><span>Terlatih dengan gaya editorial</span></div>
+                </li>
+                <li><i class="bi bi-palette"></i>
+                    <div><strong>Beragam spesialisasi</strong><span>Portrait hingga outdoor</span></div>
+                </li>
+                <li><i class="bi bi-buildings"></i>
+                    <div><strong>Di berbagai
+                            cabang</strong><span>{{ $branches->pluck('name')->map(fn($n) => trim(last(explode('—', $n))))->implode(', ') }}</span>
                     </div>
-
-
-                    <h1>
-                        Temukan Fotografer
-                        <em>untuk Momenmu</em>
-                    </h1>
-
-
-                    <p>
-                        Kenali fotografer Aura Studio dan pilih
-                        fotografer sesuai lokasi cabang serta
-                        kebutuhan sesi fotografi Anda.
-                    </p>
-
-                </div>
-
-
-                <div class="photographers-hero-visual reveal-right">
-
-                    <div class="photographer-hero-circle"></div>
-
-                    <div class="photographer-hero-card">
-
-                        <i class="bi bi-camera"></i>
-
-                        <span>
-                            Aura Studio
-                        </span>
-
-                        <strong>
-                            Creative Team
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+                </li>
+            </ul>
         </div>
-
     </section>
 
 
-
-    {{-- =====================================================
-     PHOTOGRAPHERS
-     ===================================================== --}}
-    <section class="photographers-section">
-
+    {{-- ============ DAFTAR ============ --}}
+    <section class="svc-section">
         <div class="container">
 
-            <div class="photographers-heading reveal">
-
-                <div>
-
-                    <span class="photographers-count">
-
-                        {{ $photographers->count() }}
-                        Fotografer Tersedia
-
-                    </span>
-
-                    <h2>
-                        Tim Fotografer Kami
-                    </h2>
-
-                </div>
-
-
-                <p>
-                    Pilih fotografer berdasarkan cabang
-                    yang paling sesuai dengan kebutuhan Anda.
-                </p>
-
+            <div class="ph-filter">
+                <label class="ph-field ph-field-search">
+                    <span>Cari fotografer</span>
+                    <div><i class="bi bi-search"></i><input type="search" id="phSearch"
+                            placeholder="Cari berdasarkan nama atau spesialisasi" autocomplete="off"></div>
+                </label>
+                <label class="ph-field">
+                    <span>Cabang</span>
+                    <select id="phBranch">
+                        <option value="">Semua Cabang</option>
+                        @foreach ($branches as $branch)
+                            <option value="{{ $branch->id }}" @selected((string) $selectedBranch === (string) $branch->id)>
+                                {{ $branch->name }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label class="ph-field">
+                    <span>Spesialisasi</span>
+                    <select id="phSpec">
+                        <option value="">Semua Spesialisasi</option>
+                        @foreach ($specs as $spec)
+                            <option value="{{ strtolower($spec) }}">{{ $spec }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <button type="button" class="ph-reset" id="phReset"><i class="bi bi-arrow-counterclockwise"></i>
+                    Reset</button>
             </div>
+            <p class="ph-count">Menampilkan <strong id="phCount">{{ $photographers->count() }}</strong> fotografer</p>
 
+            <div class="ph-grid" id="phGrid">
+                @forelse ($photographers as $person)
+                    <article class="ph-card" data-text="{{ strtolower($person->name . ' ' . $person->specialization) }}"
+                        data-branch="{{ $person->branch_id }}"
+                        data-specs="{{ $splitSpec($person->specialization)->map(fn($s) => strtolower($s))->implode('|') }}">
 
-
-            {{-- =================================================
-     FILTER CABANG
-     ================================================= --}}
-            <div class="photographer-filters reveal">
-
-                <a href="{{ route(
-                    'photographers.index',
-                    request()->filled('specialization') ? ['specialization' => request('specialization')] : [],
-                ) }}"
-                    class="photographer-filter-btn
-        {{ !request('branch') ? 'active' : '' }}">
-
-                    Semua Cabang
-
-                </a>
-
-
-                @foreach ($branches as $branch)
-                    <a href="{{ route(
-                        'photographers.index',
-                        array_filter([
-                            'branch' => $branch->id,
-                            'specialization' => request('specialization'),
-                        ]),
-                    ) }}"
-                        class="photographer-filter-btn
-            {{ request('branch') == $branch->id ? 'active' : '' }}">
-
-                        {{ $branch->name }}
-
-                    </a>
-                @endforeach
-
-            </div>
-
-
-            {{-- =================================================
-     FILTER SPESIALISASI
-     ================================================= --}}
-            <div class="photographer-filters reveal">
-
-                <a href="{{ route('photographers.index', request()->filled('branch') ? ['branch' => request('branch')] : []) }}"
-                    class="photographer-filter-btn
-        {{ !request('specialization') ? 'active' : '' }}">
-
-                    Semua Spesialisasi
-
-                </a>
-
-
-                @foreach ($specializations as $specialization)
-                    <a href="{{ route(
-                        'photographers.index',
-                        array_filter([
-                            'branch' => request('branch'),
-                            'specialization' => $specialization,
-                        ]),
-                    ) }}"
-                        class="photographer-filter-btn
-            {{ request('specialization') === $specialization ? 'active' : '' }}">
-
-                        {{ $specialization }}
-
-                    </a>
-                @endforeach
-
-            </div>
-
-
-
-            {{-- =================================================
-             CARDS
-             ================================================= --}}
-            <div class="photographers-grid">
-
-                @forelse ($photographers as $photographer)
-                    <article
-                        class="photographer-card reveal
-                    reveal-delay-{{ (($loop->iteration - 1) % 3) + 1 }}">
-
-                        {{-- PHOTO --}}
-                        <div class="photographer-photo">
-
-                            @if ($photographer->photo)
-                                <img src="{{ asset('storage/' . $photographer->photo) }}"
-                                    alt="{{ $photographer->name }}">
+                        <div class="ph-card-photo">
+                            {{-- 🖼 GAMBAR: foto fotografer → kolom `photo` di tabel photographers --}}
+                            @if ($person->photo)
+                                <img src="{{ asset('storage/' . $person->photo) }}" alt="{{ $person->name }}" loading="lazy">
                             @else
-                                <div class="photographer-placeholder">
-
-                                    <i class="bi bi-person"></i>
-
-                                </div>
+                                <div class="svc-ph tone-{{ ($loop->index % 3) + 1 }}"><i class="bi bi-person"></i></div>
                             @endif
-
-
-                            <span class="photographer-status">
-
-                                <span></span>
-
-                                Tersedia
-
-                            </span>
-
                         </div>
 
-
-                        {{-- CONTENT --}}
-                        <div class="photographer-content">
-
-                            <span class="photographer-branch">
-
-                                <i class="bi bi-geo-alt"></i>
-
-                                {{ $photographer->branch->name }}
-
-                            </span>
-
-
-                            <h3>
-                                {{ $photographer->name }}
-                            </h3>
-
-
-                            <span class="photographer-specialization">
-
-                                {{ $photographer->specialization ?? 'Fotografer' }}
-
-                            </span>
-
-
-                            @if ($photographer->description)
-                                <p>
-
-                                    {{ \Illuminate\Support\Str::limit($photographer->description, 125) }}
-
-                                </p>
+                        <div class="ph-card-body">
+                            <h2>{{ $person->name }}</h2>
+                            @if ($person->specialization)
+                                <span class="ph-spec"><i class="bi bi-camera"></i>{{ $person->specialization }}</span>
                             @endif
-
-
-                            <div class="photographer-card-footer">
-
-                                <a href="{{ route('photographers.show', $photographer->id) }}"
-                                    class="photographer-detail-btn">
-
-                                    Lihat Profil
-
-                                    <span>
-                                        <i class="bi bi-arrow-right"></i>
-                                    </span>
-
-                                </a>
-
-                            </div>
-
+                            @if ($person->branch)
+                                <span class="ph-branch"><i class="bi bi-geo-alt"></i>{{ $person->branch->name }}</span>
+                            @endif
+                            @if ($person->description)
+                                <p>{{ \Illuminate\Support\Str::limit($person->description, 110) }}</p>
+                            @endif
+                            <a href="{{ route('photographers.show', $person->id) }}" class="btn btn-outline">Lihat Profil</a>
                         </div>
-
                     </article>
-
-
                 @empty
-
-                    <div class="photographers-empty">
-
-                        <div class="photographers-empty-icon">
-
-                            <i class="bi bi-camera"></i>
-
-                        </div>
-
-                        <h3>
-                            Fotografer Tidak Ditemukan
-                        </h3>
-
-                        <p>
-                            Belum ada fotografer aktif
-                            pada cabang yang dipilih.
-                        </p>
-
-
-                        @if (request('branch'))
-                            <a href="{{ route('photographers.index') }}">
-
-                                Lihat Semua Fotografer
-
-                            </a>
-                        @endif
-
-                    </div>
+                    <p class="svc-empty">Belum ada fotografer tersedia.</p>
                 @endforelse
-
             </div>
 
-        </div>
+            <p class="svc-empty" id="phEmpty" hidden>Tidak ada fotografer yang cocok dengan filter.</p>
 
+            <p class="svc-note is-center">
+                <i class="bi bi-info-circle"></i>
+                <span><strong>Pemilihan fotografer saat booking.</strong> Fotografer dapat dipilih untuk layanan yang
+                    memerlukan fotografer. Pilihan yang tersedia menyesuaikan cabang, layanan, tanggal, dan sesi waktu. Self
+                    Photo Studio tidak memerlukan fotografer.</span>
+            </p>
+
+        </div>
     </section>
 
 
-
-    {{-- =====================================================
-     CTA
-     ===================================================== --}}
-    <section class="photographers-cta">
-
+    {{-- ============ CTA ============ --}}
+    <section class="svc-cta">
         <div class="container">
-
-            <div class="photographers-cta-box reveal">
-
-                <span>
-                    Aura Studio
-                </span>
-
-
-                <h2>
-                    Sudah Menemukan
-                    Fotografer Pilihanmu?
-                </h2>
-
-
-                <p>
-                    Selanjutnya pilih layanan dan paket
-                    yang sesuai dengan kebutuhan sesi Anda.
-                </p>
-
-
-                <div class="photographers-cta-actions">
-
-                    <a href="{{ route('services.index') }}" class="photographers-cta-primary">
-
-                        Lihat Layanan
-
-                    </a>
-
-
-                    <a href="{{ route('branches.index') }}" class="photographers-cta-secondary">
-
-                        Lihat Cabang
-
-                    </a>
-
+            <div class="svc-cta-box has-ring">
+                <span class="section-eyebrow">Reservasi sesi fotografi</span>
+                <h2>Sudah menemukan fotografer pilihan?</h2>
+                <p>Lanjutkan booking untuk memilih layanan, paket, cabang, tanggal, dan sesi yang tersedia.</p>
+                <div class="svc-actions is-center">
+                    <a href="{{ route('packages.index') }}" class="btn btn-primary">Mulai Booking</a>
+                    <a href="{{ route('services.index') }}" class="btn btn-outline-light">Lihat Layanan</a>
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
 
 @endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            var cards = document.querySelectorAll('.ph-card');
+            var q = document.getElementById('phSearch'), b = document.getElementById('phBranch'), s = document.getElementById('phSpec');
+            var count = document.getElementById('phCount'), empty = document.getElementById('phEmpty');
+
+            function apply() {
+                var text = (q.value || '').trim().toLowerCase(), n = 0;
+                cards.forEach(function (c) {
+                    var ok = (!text || c.dataset.text.indexOf(text) !== -1)
+                        && (!b.value || c.dataset.branch === b.value)
+                        && (!s.value || c.dataset.specs.split('|').indexOf(s.value) !== -1);
+                    c.hidden = !ok;
+                    if (ok) { n++; c.classList.add('in'); }
+                });
+                count.textContent = n;
+                empty.hidden = n !== 0 || !cards.length;
+            }
+
+            [q, b, s].forEach(function (el) { el.addEventListener(el === q ? 'input' : 'change', apply); });
+            document.getElementById('phReset').addEventListener('click', function () {
+                q.value = ''; b.value = ''; s.value = ''; apply();
+            });
+            apply();
+        })();
+    </script>
+@endpush

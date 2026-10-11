@@ -14,58 +14,19 @@ class PhotographerController extends Controller
             ->orderBy('name')
             ->get();
 
-        $specializations = Photographer::query()
-            ->where('status', 'active')
-            ->whereHas('branch', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->whereNotNull('specialization')
-            ->where('specialization', '!=', '')
-            ->distinct()
-            ->orderBy('specialization')
-            ->pluck('specialization');
-
+        // Semua fotografer aktif dikirim; pencarian & filter dijalankan di halaman.
+        // ?branch=ID tetap didukung sebagai pilihan awal filter cabang.
         $photographers = Photographer::with('branch')
             ->where('status', 'active')
-
-            // Jangan tampilkan fotografer dari cabang nonaktif
             ->whereHas('branch', function ($query) {
                 $query->where('status', 'active');
             })
-
-            // Filter cabang
-            ->when(
-                $request->filled('branch'),
-                function ($query) use ($request) {
-                    $query->where(
-                        'branch_id',
-                        $request->branch
-                    );
-                }
-            )
-
-            // Filter spesialisasi
-            ->when(
-                $request->filled('specialization'),
-                function ($query) use ($request) {
-                    $query->where(
-                        'specialization',
-                        $request->specialization
-                    );
-                }
-            )
-
             ->orderBy('name')
             ->get();
 
-        return view(
-            'pages.photographers.index',
-            compact(
-                'photographers',
-                'branches',
-                'specializations'
-            )
-        );
+        $selectedBranch = $request->input('branch');
+
+        return view('pages.photographers.index', compact('photographers', 'branches', 'selectedBranch'));
     }
 
     public function show(Photographer $photographer)
@@ -79,9 +40,21 @@ class PhotographerController extends Controller
             404
         );
 
-        return view(
-            'pages.photographers.show',
-            compact('photographer')
-        );
+        $photographer->load([
+            'branch.services' => function ($query) {
+                $query
+                    ->where('services.status', 'active')
+                    ->wherePivot('status', 'active');
+            }
+        ]);
+
+        $otherPhotographers = Photographer::where('branch_id', $photographer->branch_id)
+            ->where('id', '!=', $photographer->id)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->take(4)
+            ->get();
+
+        return view('pages.photographers.show', compact('photographer', 'otherPhotographers'));
     }
 }
