@@ -24,6 +24,21 @@
         'notes',
         $draft['notes'] ?? ''
     );
+
+    $scheduleDate =
+    \Carbon\Carbon::parse(
+        $draft['schedule_date']
+    );
+
+    $scheduleStart =
+        \Carbon\Carbon::parse(
+            $draft['start_time']
+        )->format('H:i');
+
+    $scheduleEnd =
+        \Carbon\Carbon::parse(
+            $draft['end_time']
+        )->format('H:i');
 @endphp
 
 
@@ -382,54 +397,57 @@
 
 
                         <div class="summary-row">
+
                             <span>Tanggal</span>
 
                             <strong>
-                                {{ $schedule->schedule_date
+                                {{ $scheduleDate
                                     ->locale('id')
-                                    ->translatedFormat('l, d F Y') }}
+                                    ->translatedFormat(
+                                        'l, d F Y'
+                                    ) }}
                             </strong>
+
                         </div>
 
 
                         <div class="summary-row">
+
                             <span>Waktu</span>
 
                             <strong>
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->start_time
-                                )->format('H:i') }}
-
+                                {{ $scheduleStart }}
                                 –
-
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->end_time
-                                )->format('H:i') }}
-
+                                {{ $scheduleEnd }}
                                 WIB
                             </strong>
+
                         </div>
 
 
                         <div class="summary-row">
+
                             <span>Fotografer</span>
 
                             <strong>
-                                {{ $schedule->photographer?->name
+                                {{ $photographer?->name
                                     ?? 'Tidak diperlukan' }}
                             </strong>
+
                         </div>
 
 
                         @if ($service->requires_room)
 
                             <div class="summary-row">
+
                                 <span>Studio Room</span>
 
                                 <strong>
-                                    {{ $schedule->studioRoom?->name
-                                        ?? 'Menyesuaikan jadwal' }}
+                                    {{ $studioRoom?->name
+                                        ?? 'Tidak diperlukan' }}
                                 </strong>
+
                             </div>
 
                         @endif

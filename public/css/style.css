@@ -1411,3 +1411,13 @@ ul {
     font-family: inherit;
     cursor: pointer;
 }
+
+.navbar-customer {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.navbar-customer:hover {
+    color: var(--color-primary);
+}

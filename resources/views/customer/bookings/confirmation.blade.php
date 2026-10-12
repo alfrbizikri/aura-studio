@@ -4,12 +4,26 @@
 
 @php
     $currentStep = 5;
+
+    $scheduleDate = \Carbon\Carbon::parse(
+        $draft['schedule_date']
+    );
+
+    $scheduleStart = \Carbon\Carbon::parse(
+        $draft['start_time']
+    )->format('H:i');
+
+    $scheduleEnd = \Carbon\Carbon::parse(
+        $draft['end_time']
+    )->format('H:i');
 @endphp
+
 
 @section('content')
 
 <section class="booking-page">
 
+    {{-- PAGE HEADING --}}
     <div class="booking-page-heading">
 
         <span class="booking-eyebrow">
@@ -30,6 +44,7 @@
     </div>
 
 
+    {{-- VALIDATION ERROR --}}
     @if ($errors->any())
 
         <div class="booking-alert booking-alert-error">
@@ -55,6 +70,7 @@
     @endif
 
 
+    {{-- BOOKING FORM --}}
     <form
         action="{{ route('customer.bookings.store') }}"
         method="POST"
@@ -67,7 +83,9 @@
             <div class="confirmation-content">
 
 
-                {{-- HERO CONFIRMATION --}}
+                {{-- =====================================================
+                    INTRO
+                ====================================================== --}}
                 <section class="confirmation-intro-card">
 
                     <span class="confirmation-intro-icon">
@@ -94,7 +112,9 @@
                 </section>
 
 
-                {{-- PILIHAN UTAMA --}}
+                {{-- =====================================================
+                    DETAIL RESERVASI
+                ====================================================== --}}
                 <section class="confirmation-card">
 
                     <div class="confirmation-card-heading">
@@ -105,7 +125,10 @@
 
                         <div>
                             <h2>Detail Reservasi</h2>
-                            <p>Layanan dan paket yang dipilih.</p>
+
+                            <p>
+                                Layanan dan paket yang dipilih.
+                            </p>
                         </div>
 
                     </div>
@@ -115,35 +138,52 @@
 
                         <div class="confirmation-item">
                             <span>Layanan</span>
-                            <strong>{{ $service->name }}</strong>
+
+                            <strong>
+                                {{ $service->name }}
+                            </strong>
                         </div>
+
 
                         <div class="confirmation-item">
                             <span>Cabang</span>
-                            <strong>{{ $branch->name }}</strong>
+
+                            <strong>
+                                {{ $branch->name }}
+                            </strong>
                         </div>
+
 
                         <div class="confirmation-item">
                             <span>Paket</span>
-                            <strong>{{ $package->name }}</strong>
+
+                            <strong>
+                                {{ $package->name }}
+                            </strong>
                         </div>
+
 
                         <div class="confirmation-item">
                             <span>Durasi</span>
+
                             <strong>
                                 {{ $package->duration_minutes }} menit
                             </strong>
                         </div>
 
+
                         <div class="confirmation-item">
                             <span>Jumlah Peserta</span>
+
                             <strong>
                                 {{ $draft['number_of_people'] }} orang
                             </strong>
                         </div>
 
+
                         <div class="confirmation-item">
                             <span>Total Harga</span>
+
                             <strong class="confirmation-price">
                                 Rp {{ number_format(
                                     $package->price,
@@ -159,7 +199,9 @@
                 </section>
 
 
-                {{-- JADWAL --}}
+                {{-- =====================================================
+                    JADWAL SESI
+                ====================================================== --}}
                 <section class="confirmation-card">
 
                     <div class="confirmation-card-heading">
@@ -170,7 +212,10 @@
 
                         <div>
                             <h2>Jadwal Sesi</h2>
-                            <p>Waktu dan tim yang menangani sesi.</p>
+
+                            <p>
+                                Waktu dan tim yang menangani sesi.
+                            </p>
                         </div>
 
                     </div>
@@ -178,64 +223,66 @@
 
                     <div class="confirmation-schedule">
 
+                        {{-- DATE BOX --}}
                         <div class="confirmation-date-box">
 
                             <small>
-                                {{ $schedule->schedule_date
+                                {{ $scheduleDate
                                     ->locale('id')
                                     ->translatedFormat('M') }}
                             </small>
 
                             <strong>
-                                {{ $schedule->schedule_date->format('d') }}
+                                {{ $scheduleDate->format('d') }}
                             </strong>
 
                             <span>
-                                {{ $schedule->schedule_date
-                                    ->locale('id')
-                                    ->translatedFormat('Y') }}
+                                {{ $scheduleDate->format('Y') }}
                             </span>
 
                         </div>
 
 
+                        {{-- SCHEDULE DETAIL --}}
                         <div class="confirmation-schedule-copy">
 
                             <h3>
-                                {{ $schedule->schedule_date
+                                {{ $scheduleDate
                                     ->locale('id')
-                                    ->translatedFormat('l, d F Y') }}
+                                    ->translatedFormat(
+                                        'l, d F Y'
+                                    ) }}
                             </h3>
+
 
                             <p>
                                 <i class="bi bi-clock"></i>
 
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->start_time
-                                )->format('H:i') }}
-
+                                {{ $scheduleStart }}
                                 –
-
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->end_time
-                                )->format('H:i') }}
-
+                                {{ $scheduleEnd }}
                                 WIB
                             </p>
 
-                            <p>
-                                <i class="bi bi-person"></i>
 
-                                {{ $schedule->photographer?->name
-                                    ?? 'Tidak memerlukan fotografer' }}
-                            </p>
+                            @if ($service->requires_photographer)
+
+                                <p>
+                                    <i class="bi bi-person"></i>
+
+                                    {{ $photographer?->name
+                                        ?? 'Fotografer menyesuaikan' }}
+                                </p>
+
+                            @endif
+
 
                             @if ($service->requires_room)
 
                                 <p>
                                     <i class="bi bi-door-open"></i>
 
-                                    {{ $schedule->studioRoom?->name
+                                    {{ $studioRoom?->name
                                         ?? 'Ruangan menyesuaikan' }}
                                 </p>
 
@@ -248,7 +295,9 @@
                 </section>
 
 
-                {{-- CUSTOMER --}}
+                {{-- =====================================================
+                    DATA PEMESAN
+                ====================================================== --}}
                 <section class="confirmation-card">
 
                     <div class="confirmation-card-heading">
@@ -259,7 +308,10 @@
 
                         <div>
                             <h2>Data Pemesan</h2>
-                            <p>Informasi customer dan catatan sesi.</p>
+
+                            <p>
+                                Informasi customer dan catatan sesi.
+                            </p>
                         </div>
 
                     </div>
@@ -269,23 +321,35 @@
 
                         <div class="confirmation-item">
                             <span>Nama</span>
-                            <strong>{{ $customer->name }}</strong>
-                        </div>
 
-                        <div class="confirmation-item">
-                            <span>Email</span>
-                            <strong>{{ $customer->email }}</strong>
-                        </div>
-
-                        <div class="confirmation-item">
-                            <span>Telepon</span>
                             <strong>
-                                {{ $customer->phone ?: 'Belum tersedia' }}
+                                {{ $customer->name }}
                             </strong>
                         </div>
 
+
+                        <div class="confirmation-item">
+                            <span>Email</span>
+
+                            <strong>
+                                {{ $customer->email }}
+                            </strong>
+                        </div>
+
+
+                        <div class="confirmation-item">
+                            <span>Telepon</span>
+
+                            <strong>
+                                {{ $customer->phone
+                                    ?: 'Belum tersedia' }}
+                            </strong>
+                        </div>
+
+
                         <div class="confirmation-item">
                             <span>Jumlah Peserta</span>
+
                             <strong>
                                 {{ $draft['number_of_people'] }} orang
                             </strong>
@@ -294,11 +358,14 @@
                     </div>
 
 
+                    {{-- CATATAN SESI --}}
                     @if (!empty($draft['notes']))
 
                         <div class="confirmation-note">
 
-                            <span>Catatan Sesi</span>
+                            <span>
+                                Catatan Sesi
+                            </span>
 
                             <p>
                                 {{ $draft['notes'] }}
@@ -309,6 +376,7 @@
                     @endif
 
 
+                    {{-- LOKASI PEMOTRETAN --}}
                     @if ($service->is_on_location)
 
                         <div class="confirmation-location">
@@ -322,10 +390,13 @@
                                 {{ $draft['location_address'] }}
                             </strong>
 
+
                             @if (!empty($draft['location_notes']))
+
                                 <p>
                                     {{ $draft['location_notes'] }}
                                 </p>
+
                             @endif
 
                         </div>
@@ -335,7 +406,9 @@
                 </section>
 
 
-                {{-- CONSENT --}}
+                {{-- =====================================================
+                    CONSENT
+                ====================================================== --}}
                 <label class="confirmation-consent">
 
                     <input
@@ -359,7 +432,9 @@
             </div>
 
 
-            {{-- SUMMARY --}}
+            {{-- =========================================================
+                SUMMARY
+            ========================================================== --}}
             <aside class="booking-summary">
 
                 <div class="booking-summary-card">
@@ -368,58 +443,92 @@
                         KONFIRMASI AKHIR
                     </span>
 
-                    <h3>Reservasimu</h3>
+                    <h3>
+                        Reservasimu
+                    </h3>
 
 
                     <div class="booking-summary-list">
 
                         <div class="summary-row">
                             <span>Paket</span>
+
                             <strong>
                                 {{ $package->name }}
                             </strong>
                         </div>
 
+
                         <div class="summary-row">
                             <span>Cabang</span>
+
                             <strong>
                                 {{ $branch->name }}
                             </strong>
                         </div>
 
+
                         <div class="summary-row">
                             <span>Tanggal</span>
+
                             <strong>
-                                {{ $schedule->schedule_date
+                                {{ $scheduleDate
                                     ->locale('id')
-                                    ->translatedFormat('d F Y') }}
+                                    ->translatedFormat(
+                                        'd F Y'
+                                    ) }}
                             </strong>
                         </div>
 
+
                         <div class="summary-row">
                             <span>Waktu</span>
+
                             <strong>
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->start_time
-                                )->format('H:i') }}
+                                {{ $scheduleStart }}
+                                –
+                                {{ $scheduleEnd }}
                                 WIB
                             </strong>
                         </div>
 
-                        <div class="summary-row">
-                            <span>Fotografer</span>
-                            <strong>
-                                {{ $schedule->photographer?->name
-                                    ?? 'Tidak diperlukan' }}
-                            </strong>
-                        </div>
+
+                        @if ($service->requires_photographer)
+
+                            <div class="summary-row">
+                                <span>Fotografer</span>
+
+                                <strong>
+                                    {{ $photographer?->name
+                                        ?? 'Menyesuaikan' }}
+                                </strong>
+                            </div>
+
+                        @endif
+
+
+                        @if ($service->requires_room)
+
+                            <div class="summary-row">
+                                <span>Studio Room</span>
+
+                                <strong>
+                                    {{ $studioRoom?->name
+                                        ?? 'Menyesuaikan' }}
+                                </strong>
+                            </div>
+
+                        @endif
 
                     </div>
 
 
+                    {{-- TOTAL --}}
                     <div class="summary-total">
 
-                        <span>Total Pembayaran</span>
+                        <span>
+                            Total Pembayaran
+                        </span>
 
                         <strong>
                             Rp {{ number_format(
@@ -433,6 +542,7 @@
                     </div>
 
 
+                    {{-- CONFIRM --}}
                     <button
                         type="submit"
                         class="booking-next-button"
@@ -443,6 +553,7 @@
                     </button>
 
 
+                    {{-- BACK --}}
                     <a
                         href="{{ route(
                             'customer.bookings.detail'
@@ -450,15 +561,18 @@
                         class="booking-back-link"
                     >
                         <i class="bi bi-arrow-left"></i>
+
                         Kembali Ubah Detail
                     </a>
 
 
                     <p class="summary-note">
+
                         <i class="bi bi-lock"></i>
 
                         Jadwal akan diamankan setelah
                         booking berhasil dibuat.
+
                     </p>
 
                 </div>

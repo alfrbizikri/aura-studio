@@ -16,7 +16,6 @@ use App\Http\Controllers\Auth\CustomerPasswordResetController;
 use App\Http\Controllers\Customer\BookingController as CustomerBookingController;
 use App\Http\Controllers\Customer\PaymentController as CustomerPaymentController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
-use App\Http\Controllers\Customer\BookingController;
 
 use App\Http\Controllers\Admin\BranchController as AdminBranchController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
@@ -29,6 +28,7 @@ use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\StudioRoomController as AdminStudioRoomController;
 use App\Http\Controllers\Admin\PhotographerController as AdminPhotographerController;
+use App\Http\Controllers\Admin\ReportController;
 
 
 /*
@@ -280,43 +280,63 @@ Route::middleware('auth')->group(function () {
     ])->name('customer.bookings.show');
 
     // Booking Wizard - Step 1: Pilihan
-    Route::get('/booking/mulai/{package?}', [BookingController::class, 'create'])
-        ->name('customer.bookings.create');
+    Route::get('/booking/mulai/{package?}', [
+        CustomerBookingController::class,
+        'create'
+    ])->name('customer.bookings.create');
 
-    Route::post('/booking/pilihan', [BookingController::class, 'storeSelection'])
-        ->name('customer.bookings.selection.store');
+    Route::post('/booking/pilihan', [
+        CustomerBookingController::class,
+        'storeSelection'
+    ])->name('customer.bookings.selection.store');
 
 
     // Step 2: Fotografer
-    Route::get('/booking/fotografer', [BookingController::class, 'photographer'])
-        ->name('customer.bookings.photographer');
+    Route::get('/booking/fotografer', [
+        CustomerBookingController::class,
+        'photographer'
+    ])->name('customer.bookings.photographer');
 
-    Route::post('/booking/fotografer', [BookingController::class, 'storePhotographer'])
-        ->name('customer.bookings.photographer.store');
+    Route::post('/booking/fotografer', [
+        CustomerBookingController::class,
+        'storePhotographer'
+    ])->name('customer.bookings.photographer.store');
 
 
     // Step 3: Jadwal
-    Route::get('/booking/jadwal', [BookingController::class, 'schedule'])
-        ->name('customer.bookings.schedule');
+    Route::get('/booking/jadwal', [
+        CustomerBookingController::class,
+        'schedule'
+    ])->name('customer.bookings.schedule');
 
-    Route::post('/booking/jadwal', [BookingController::class, 'storeSchedule'])
-        ->name('customer.bookings.schedule.store');
+    Route::post('/booking/jadwal', [
+        CustomerBookingController::class,
+        'storeSchedule'
+    ])->name('customer.bookings.schedule.store');
 
 
     // Step 4: Detail Pemesanan
-    Route::get('/booking/detail', [BookingController::class, 'detail'])
-        ->name('customer.bookings.detail');
+    Route::get('/booking/detail', [
+        CustomerBookingController::class,
+        'detail'
+    ])->name('customer.bookings.detail');
 
-    Route::post('/booking/detail', [BookingController::class, 'storeDetail'])
-        ->name('customer.bookings.detail.store');
+    Route::post('/booking/detail', [
+        CustomerBookingController::class,
+        'storeDetail'
+    ])->name('customer.bookings.detail.store');
 
 
     // Step 5: Konfirmasi
-    Route::get('/booking/konfirmasi', [BookingController::class, 'confirmation'])
-        ->name('customer.bookings.confirmation');
+    Route::get('/booking/konfirmasi', [
+        CustomerBookingController::class,
+        'confirmation'
+    ])->name('customer.bookings.confirmation');
 
-    Route::post('/booking/konfirmasi', [BookingController::class, 'store'])
-        ->name('customer.bookings.store');
+    Route::post('/booking/konfirmasi', [
+        CustomerBookingController::class,
+        'store'
+    ])->name('customer.bookings.store');
 
 
     /*
@@ -452,4 +472,13 @@ Route::prefix('admin')
             AdminAuthController::class,
             'logout'
         ])->name('logout');
+
+        Route::get('/laporan', [ReportController::class, 'index'])
+            ->name('reports.index');
+
+        Route::get('/laporan/export-pdf', [ReportController::class, 'exportPdf'])
+            ->name('reports.pdf');
+
+        Route::patch('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])
+            ->name('bookings.cancel');
     });

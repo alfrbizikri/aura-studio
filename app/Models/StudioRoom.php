@@ -11,6 +11,7 @@ class StudioRoom extends Model
 
     protected $fillable = [
         'branch_id',
+        'service_id',
         'name',
         'description',
         'status',
@@ -19,6 +20,11 @@ class StudioRoom extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 
     public function schedules()

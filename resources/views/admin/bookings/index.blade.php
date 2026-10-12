@@ -4,331 +4,330 @@
 
 @section('content')
 
-<div class="admin-page-header">
+    <div class="admin-page-header">
 
-    <div>
+        <div>
 
-        <span class="admin-label">
-            TRANSAKSI
-        </span>
+            <span class="admin-label">
+                TRANSAKSI
+            </span>
 
-        <h1>
-            Daftar Booking
-        </h1>
+            <h1>
+                Daftar Booking
+            </h1>
 
-        <p>
-            Lihat dan kelola seluruh booking customer Aura Studio.
-        </p>
+            <p>
+                Lihat dan kelola seluruh booking customer Aura Studio.
+            </p>
 
-    </div>
-
-</div>
-
-
-{{-- PESAN BERHASIL --}}
-@if (session('success'))
-
-    <div class="admin-alert success">
-
-        <i class="bi bi-check-circle"></i>
-
-        {{ session('success') }}
-
-    </div>
-
-@endif
-
-
-{{-- PESAN ERROR --}}
-@if (session('error'))
-
-    <div class="admin-alert error">
-
-        <i class="bi bi-exclamation-circle"></i>
-
-        {{ session('error') }}
-
-    </div>
-
-@endif
-
-
-{{-- STATISTIK --}}
-<div class="admin-stats">
-
-    <div class="admin-stat-card">
-
-        <span>
-            Total Booking
-        </span>
-
-        <strong>
-            {{ $bookings->count() }}
-        </strong>
+        </div>
 
     </div>
 
 
-    <div class="admin-stat-card">
+    {{-- PESAN BERHASIL --}}
+    @if (session('success'))
 
-        <span>
-            Pending
-        </span>
+        <div class="admin-alert success">
 
-        <strong>
-            {{ $bookings->where('status', 'pending')->count() }}
-        </strong>
+            <i class="bi bi-check-circle"></i>
+
+            {{ session('success') }}
+
+        </div>
+
+    @endif
+
+
+    {{-- PESAN ERROR --}}
+    @if (session('error'))
+
+        <div class="admin-alert error">
+
+            <i class="bi bi-exclamation-circle"></i>
+
+            {{ session('error') }}
+
+        </div>
+
+    @endif
+
+
+    {{-- STATISTIK --}}
+    <div class="admin-stats">
+
+        <div class="admin-stat-card">
+
+            <span>
+                Total Booking
+            </span>
+
+            <strong>
+                {{ $bookings->count() }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span>
+                Pending
+            </span>
+
+            <strong>
+                {{ $bookings->where('status', 'pending')->count() }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span>
+                Dikonfirmasi
+            </span>
+
+            <strong>
+                {{ $bookings->where('status', 'confirmed')->count() }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span>
+                Selesai
+            </span>
+
+            <strong>
+                {{ $bookings->where('status', 'completed')->count() }}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-stat-card">
+
+            <span>
+                Dibatalkan
+            </span>
+
+            <strong>
+                {{ $bookings->where('status', 'cancelled')->count() }}
+            </strong>
+
+        </div>
 
     </div>
 
 
-    <div class="admin-stat-card">
+    {{-- TABLE --}}
+    <div class="admin-table-card">
 
-        <span>
-            Dikonfirmasi
-        </span>
+        <div class="admin-table-title">
 
-        <strong>
-            {{ $bookings->where('status', 'confirmed')->count() }}
-        </strong>
+            <h2>
+                Data Booking
+            </h2>
 
-    </div>
+            <p>
+                Daftar booking yang dilakukan oleh customer.
+            </p>
 
+        </div>
 
-    <div class="admin-stat-card">
 
-        <span>
-            Selesai
-        </span>
+        <div class="admin-table-responsive">
 
-        <strong>
-            {{ $bookings->where('status', 'completed')->count() }}
-        </strong>
+            <table class="admin-table">
 
-    </div>
+                <thead>
 
+                    <tr>
 
-    <div class="admin-stat-card">
+                        <th>No</th>
 
-        <span>
-            Dibatalkan
-        </span>
+                        <th>Kode Booking</th>
 
-        <strong>
-            {{ $bookings->where('status', 'cancelled')->count() }}
-        </strong>
+                        <th>Customer</th>
 
-    </div>
+                        <th>Paket</th>
 
-</div>
+                        <th>Jadwal</th>
 
+                        <th>Total</th>
 
-{{-- TABLE --}}
-<div class="admin-table-card">
+                        <th>Status</th>
 
-    <div class="admin-table-title">
+                        <th>Aksi</th>
 
-        <h2>
-            Data Booking
-        </h2>
+                    </tr>
 
-        <p>
-            Daftar booking yang dilakukan oleh customer.
-        </p>
+                </thead>
 
-    </div>
 
+                <tbody>
 
-    <div class="admin-table-responsive">
+                    @forelse ($bookings as $booking)
 
-        <table class="admin-table">
+                                    @php
+                                        $schedule = $booking->schedules
+                                            ->sortBy('schedule_date')
+                                            ->first();
+                                    @endphp
 
-            <thead>
+                                    <tr>
 
-                <tr>
+                                        <td>
+                                            {{ $loop->iteration }}
+                                        </td>
 
-                    <th>No</th>
 
-                    <th>Kode Booking</th>
+                                        <td>
 
-                    <th>Customer</th>
+                                            <strong>
+                                                {{ $booking->booking_code }}
+                                            </strong>
 
-                    <th>Paket</th>
+                                        </td>
 
-                    <th>Jadwal</th>
 
-                    <th>Total</th>
+                                        <td>
 
-                    <th>Status</th>
+                                            {{ $booking->user?->name ?? '-' }}
 
-                    <th>Aksi</th>
+                                        </td>
 
-                </tr>
 
-            </thead>
+                                        <td>
 
+                                            {{ $booking->package?->name ?? '-' }}
 
-            <tbody>
+                                        </td>
 
-            @forelse ($bookings as $booking)
 
-                @php
-                    $schedule = $booking->schedules
-                        ->sortBy('schedule_date')
-                        ->first();
-                @endphp
+                                        <td>
 
-                <tr>
+                                            @if ($schedule)
 
-                    <td>
-                        {{ $loop->iteration }}
-                    </td>
+                                                                {{ $schedule->schedule_date->format('d/m/Y') }}
 
+                                                                <br>
 
-                    <td>
+                                                                <small>
 
-                        <strong>
-                            {{ $booking->booking_code }}
-                        </strong>
+                                                                    {{ \Carbon\Carbon::parse(
+                                                    $schedule->start_time
+                                                )->format('H:i') }}
 
-                    </td>
+                                                                    -
 
+                                                                    {{ \Carbon\Carbon::parse(
+                                                    $schedule->end_time
+                                                )->format('H:i') }}
 
-                    <td>
+                                                                </small>
 
-                        {{ $booking->user?->name ?? '-' }}
+                                            @else
 
-                    </td>
+                                                -
 
+                                            @endif
 
-                    <td>
+                                        </td>
 
-                        {{ $booking->package?->name ?? '-' }}
 
-                    </td>
+                                        <td>
 
-
-                    <td>
-
-                        @if ($schedule)
-
-                            {{ $schedule->schedule_date->format('d/m/Y') }}
-
-                            <br>
-
-                            <small>
-
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->start_time
-                                )->format('H:i') }}
-
-                                -
-
-                                {{ \Carbon\Carbon::parse(
-                                    $schedule->end_time
-                                )->format('H:i') }}
-
-                            </small>
-
-                        @else
-
-                            -
-
-                        @endif
-
-                    </td>
-
-
-                    <td>
-
-                        Rp {{ number_format(
+                                            Rp {{ number_format(
                             $booking->total_price,
                             0,
                             ',',
                             '.'
                         ) }}
 
-                    </td>
+                                        </td>
 
 
-                    <td>
+                                        <td>
 
-                        @if ($booking->status === 'pending')
+                                            @if ($booking->status === 'pending')
 
-                            <span class="admin-status">
-                                Pending
-                            </span>
+                                                <span class="admin-status">
+                                                    Pending
+                                                </span>
 
-                        @elseif ($booking->status === 'confirmed')
+                                            @elseif ($booking->status === 'confirmed')
 
-                            <span class="admin-status active">
-                                Dikonfirmasi
-                            </span>
+                                                <span class="admin-status active">
+                                                    Dikonfirmasi
+                                                </span>
 
-                        @elseif ($booking->status === 'completed')
+                                            @elseif ($booking->status === 'completed')
 
-                            <span class="admin-status active">
-                                Selesai
-                            </span>
+                                                <span class="admin-status active">
+                                                    Selesai
+                                                </span>
 
-                        @else
+                                            @else
 
-                            <span class="admin-status inactive">
-                                Dibatalkan
-                            </span>
+                                                <span class="admin-status inactive">
+                                                    Dibatalkan
+                                                </span>
 
-                        @endif
+                                            @endif
 
-                    </td>
-
-
-                    <td>
-
-                        <div class="admin-actions">
-
-                            <a
-                                href="{{ route(
-                                    'admin.bookings.show',
-                                    $booking->id
-                                ) }}"
-                                class="admin-action-btn"
-                                title="Lihat Detail"
-                            >
-
-                                <i class="bi bi-eye"></i>
-
-                            </a>
-
-                        </div>
-
-                    </td>
-
-                </tr>
+                                        </td>
 
 
-            @empty
+                                        <td>
+                                            <div class="admin-action-group">
 
-                <tr>
+                                                <a href="{{ route('admin.bookings.show', $booking) }}" class="admin-action-btn"
+                                                    title="Lihat Detail">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
 
-                    <td
-                        colspan="8"
-                        class="admin-empty"
-                    >
+                                                @if (!in_array($booking->status, ['completed', 'cancelled']))
+                                                    <form action="{{ route('admin.bookings.cancel', $booking) }}" method="POST"
+                                                        onsubmit="return confirm('Yakin ingin membatalkan booking {{ $booking->booking_code }}? Jadwal booking ini akan tersedia kembali.')">
+                                                        @csrf
+                                                        @method('PATCH')
 
-                        Belum ada data booking.
+                                                        <button type="submit" class="admin-action-btn cancel" title="Batalkan Booking">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
 
-                    </td>
+                                            </div>
+                                        </td>
 
-                </tr>
+                                    </tr>
 
-            @endforelse
 
-            </tbody>
+                    @empty
 
-        </table>
+                        <tr>
+
+                            <td colspan="8" class="admin-empty">
+
+                                Belum ada data booking.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </div>
-
-</div>
 
 @endsection

@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Services\BookingAvailabilityService;
 
 class BookingController extends Controller
 {
@@ -396,137 +397,266 @@ class BookingController extends Controller
             ->route('customer.bookings.schedule');
     }
 
-    public function schedule()
-    {
-        $draft = session('booking_draft');
+    public function schedule(
+        Request $request,
+        BookingAvailabilityService $availability
+    ) {
+        $draft = session(
+            'booking_draft',
+            []
+        );
 
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
         ) {
             return redirect()
-                ->route('packages.index')
-                ->with('error', 'Silakan mulai proses booking kembali.');
+                ->route(
+                    'customer.bookings.create'
+                )
+                ->with(
+                    'error',
+                    'Silakan lengkapi pilihan booking terlebih dahulu.'
+                );
         }
 
         $service = Service::query()
-            ->where('id', $draft['service_id'])
-            ->where('status', 'active')
-            ->firstOrFail();
+            ->where(
+                'status',
+                'active'
+            )
+            ->findOrFail(
+                $draft['service_id']
+            );
 
         $branch = Branch::query()
-            ->where('id', $draft['branch_id'])
-            ->where('status', 'active')
-            ->firstOrFail();
+            ->where(
+                'status',
+                'active'
+            )
+            ->findOrFail(
+                $draft['branch_id']
+            );
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
-            ->where('is_active', true)
-            ->firstOrFail();
+            ->where(
+                'is_active',
+                true
+            )
+            ->where(
+                'service_id',
+                $service->id
+            )
+            ->findOrFail(
+                $draft['package_id']
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Fotografer
+        |--------------------------------------------------------------------------
+        */
+        $photographerId =
+            $draft['photographer_id']
+            ?? null;
 
         $photographer = null;
 
-        if (!empty($draft['photographer_id'])) {
-            $photographer = Photographer::query()
-                ->where('id', $draft['photographer_id'])
-                ->where('branch_id', $branch->id)
-                ->where('status', 'active')
-                ->firstOrFail();
+        if ($photographerId) {
+            $photographer =
+                Photographer::query()
+                    ->where(
+                        'branch_id',
+                        $branch->id
+                    )
+                    ->where(
+                        'status',
+                        'active'
+                    )
+                    ->findOrFail(
+                        $photographerId
+                    );
         }
 
-        $schedules = Schedule::with([
-            'photographer',
-            'studioRoom',
-        ])
-            ->where('branch_id', $branch->id)
-            ->where('service_id', $service->id)
-            ->where('status', 'available')
+        /*
+        |--------------------------------------------------------------------------
+        | Range kalender
+        |--------------------------------------------------------------------------
+        */
+        $minDate =
+            today()->startOfDay();
 
-            ->when(
-                $photographer,
-                function ($query) use ($photographer) {
-                    $query->where(
-                        'photographer_id',
-                        $photographer->id
-                    );
-                }
-            )
+        $maxDate =
+            today()
+                ->copy()
+                ->addYear()
+                ->startOfDay();
 
-            ->when(
-                $service->requires_photographer,
-                function ($query) {
-                    $query
-                        ->whereNotNull('photographer_id')
-                        ->whereHas('photographer', function ($photographerQuery) {
-                            $photographerQuery
-                                ->where('status', 'active');
-                        });
-                }
-            )
+        /*
+        |--------------------------------------------------------------------------
+        | Tanggal yang dipilih
+        |--------------------------------------------------------------------------
+        */
+        $requestedDate =
+            $request->query(
+                'date',
+                $draft['schedule_date']
+                ?? $minDate->toDateString()
+            );
 
-            ->when(
-                $service->requires_room,
-                function ($query) {
-                    $query
-                        ->whereNotNull('studio_room_id')
-                        ->whereHas('studioRoom', function ($roomQuery) {
-                            $roomQuery
-                                ->where('status', 'active');
-                        });
-                }
-            )
+        try {
+            $selectedDateObject =
+                Carbon::createFromFormat(
+                    'Y-m-d',
+                    $requestedDate
+                )->startOfDay();
+        } catch (\Throwable $exception) {
+            $selectedDateObject =
+                $minDate->copy();
+        }
 
-            ->where(function ($query) {
-                $query
-                    ->whereDate('schedule_date', '>', today())
-                    ->orWhere(function ($todayQuery) {
-                        $todayQuery
-                            ->whereDate('schedule_date', today())
-                            ->whereTime(
-                                'start_time',
-                                '>',
-                                now()->format('H:i:s')
-                            );
-                    });
-            })
+        /*
+         * Jangan izinkan tanggal di luar range.
+         */
+        if (
+            $selectedDateObject->lt($minDate)
+            || $selectedDateObject->gt($maxDate)
+        ) {
+            $selectedDateObject =
+                $minDate->copy();
+        }
 
-            ->orderBy('schedule_date')
-            ->orderBy('start_time')
-            ->get()
+        $selectedDate =
+            $selectedDateObject
+                ->toDateString();
 
-            /*
-             * Pastikan durasi Schedule cukup
-             * untuk durasi Package.
-             */
-            ->filter(function ($schedule) use ($package) {
+        /*
+        |--------------------------------------------------------------------------
+        | Kalender bulan
+        |--------------------------------------------------------------------------
+        */
+        $displayMonth =
+            $selectedDateObject
+                ->copy()
+                ->startOfMonth();
 
-                $start = Carbon::createFromFormat(
-                    'H:i:s',
-                    $schedule->start_time
+        $calendarStart =
+            $displayMonth
+                ->copy()
+                ->startOfWeek(
+                    Carbon::MONDAY
                 );
 
-                $end = Carbon::createFromFormat(
-                    'H:i:s',
-                    $schedule->end_time
+        $calendarEnd =
+            $displayMonth
+                ->copy()
+                ->endOfMonth()
+                ->endOfWeek(
+                    Carbon::SUNDAY
                 );
 
-                return $start->diffInMinutes($end)
-                    >= $package->duration_minutes;
-            })
+        $calendarDays = collect();
 
-            ->values();
+        $calendarCursor =
+            $calendarStart->copy();
 
-        $scheduleGroups = $schedules->groupBy(
-            fn($schedule) =>
-                $schedule->schedule_date->format('Y-m-d')
-        );
+        while (
+            $calendarCursor->lte(
+                $calendarEnd
+            )
+        ) {
+            $calendarDays->push(
+                $calendarCursor->copy()
+            );
 
-        $selectedScheduleId =
-            old('schedule_id')
-            ?? ($draft['schedule_id'] ?? null);
+            $calendarCursor->addDay();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Navigasi bulan sebelumnya
+        |--------------------------------------------------------------------------
+        */
+        $previousMonthDate = null;
+
+        if (
+            $displayMonth->gt(
+                $minDate
+                    ->copy()
+                    ->startOfMonth()
+            )
+        ) {
+            $previousCandidate =
+                $displayMonth
+                    ->copy()
+                    ->subMonth()
+                    ->startOfMonth();
+
+            if (
+                $previousCandidate->lt(
+                    $minDate
+                )
+            ) {
+                $previousCandidate =
+                    $minDate->copy();
+            }
+
+            $previousMonthDate =
+                $previousCandidate
+                    ->toDateString();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Navigasi bulan berikutnya
+        |--------------------------------------------------------------------------
+        */
+        $nextMonthDate = null;
+
+        if (
+            $displayMonth->lt(
+                $maxDate
+                    ->copy()
+                    ->startOfMonth()
+            )
+        ) {
+            $nextCandidate =
+                $displayMonth
+                    ->copy()
+                    ->addMonth()
+                    ->startOfMonth();
+
+            if (
+                $nextCandidate->gt(
+                    $maxDate
+                )
+            ) {
+                $nextCandidate =
+                    $maxDate->copy();
+            }
+
+            $nextMonthDate =
+                $nextCandidate
+                    ->toDateString();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Availability HANYA untuk tanggal terpilih
+        |--------------------------------------------------------------------------
+        */
+        $availableSlots =
+            $availability
+                ->generateAvailableSlotsForDate(
+                    branch: $branch,
+                    service: $service,
+                    package: $package,
+                    date: $selectedDate,
+                    photographerId:
+                    $photographerId,
+                    intervalMinutes: 30
+                );
 
         return view(
             'customer.bookings.schedule',
@@ -535,172 +665,123 @@ class BookingController extends Controller
                 'branch',
                 'package',
                 'photographer',
-                'schedules',
-                'scheduleGroups',
-                'selectedScheduleId'
+                'draft',
+                'availableSlots',
+                'selectedDate',
+                'selectedDateObject',
+                'displayMonth',
+                'calendarDays',
+                'minDate',
+                'maxDate',
+                'previousMonthDate',
+                'nextMonthDate'
             )
         );
     }
 
 
-    public function storeSchedule(Request $request)
-    {
-        $draft = session('booking_draft');
+    public function storeSchedule(
+        Request $request,
+        BookingAvailabilityService $availability
+    ) {
+        $draft = session('booking_draft', []);
 
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
         ) {
             return redirect()
-                ->route('packages.index')
-                ->with('error', 'Data booking tidak ditemukan.');
+                ->route('customer.bookings.create')
+                ->with(
+                    'error',
+                    'Data booking tidak lengkap.'
+                );
         }
 
         $validated = $request->validate([
-            'schedule_id' => [
+            'schedule_date' => [
                 'required',
-                'integer',
-                'exists:schedules,id',
+                'date_format:Y-m-d',
+            ],
+
+            'start_time' => [
+                'required',
+                'date_format:H:i',
             ],
         ]);
 
         $service = Service::query()
-            ->where('id', $draft['service_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['service_id']);
+
+        $branch = Branch::query()
+            ->where('status', 'active')
+            ->findOrFail($draft['branch_id']);
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
             ->where('is_active', true)
-            ->firstOrFail();
+            ->where('service_id', $service->id)
+            ->findOrFail($draft['package_id']);
 
-        $schedule = Schedule::with([
-            'branch',
-            'photographer',
-            'studioRoom',
-        ])
-            ->where('id', $validated['schedule_id'])
-            ->where('branch_id', $draft['branch_id'])
-            ->where('service_id', $draft['service_id'])
-            ->where('status', 'available')
-            ->first();
+        /*
+         * Kalau customer memilih fotografer tertentu,
+         * service wajib mengecek fotografer tersebut.
+         *
+         * Kalau mode auto → null.
+         */
+        $photographerId =
+            $draft['photographer_id']
+            ?? null;
 
-        if (!$schedule) {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI ULANG SLOT
+        |--------------------------------------------------------------------------
+        |
+        | Jangan percaya slot yang dikirim browser.
+        | Engine mengecek lagi availability saat POST.
+        |
+        */
+        $resolvedSlot = $availability->resolveSlot(
+            branch: $branch,
+            service: $service,
+            package: $package,
+            date: $validated['schedule_date'],
+            startTime: $validated['start_time'],
+            photographerId: $photographerId
+        );
+
+        if (!$resolvedSlot) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal tersebut sudah tidak tersedia.',
-                ]);
+                ->with(
+                    'error',
+                    'Jadwal tersebut sudah tidak tersedia. Silakan pilih waktu lain.'
+                );
         }
 
         /*
-         * Jika customer memilih fotografer manual,
-         * jadwal wajib memakai fotografer tersebut.
-         */
-        if (
-            !empty($draft['photographer_id'])
-            && (int) $schedule->photographer_id
-            !== (int) $draft['photographer_id']
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal tidak sesuai dengan fotografer yang dipilih.',
-                ]);
-        }
+        |--------------------------------------------------------------------------
+        | Simpan slot ke draft
+        |--------------------------------------------------------------------------
+        */
+        unset($draft['schedule_id']);
 
-        if (
-            $schedule->schedule_date->isBefore(today())
-            || (
-                $schedule->schedule_date->isToday()
-                && $schedule->start_time
-                <= now()->format('H:i:s')
-            )
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal yang dipilih sudah lewat.',
-                ]);
-        }
+        $draft['schedule_date'] =
+            $resolvedSlot['date'];
 
-        if (
-            !$schedule->branch
-            || $schedule->branch->status !== 'active'
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'schedule_id' =>
-                        'Cabang pada jadwal ini sedang tidak aktif.',
-                ]);
-        }
+        $draft['start_time'] =
+            $resolvedSlot['start_time'];
 
-        if ($service->requires_photographer) {
-            if (
-                !$schedule->photographer
-                || $schedule->photographer->status !== 'active'
-            ) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'schedule_id' =>
-                            'Fotografer pada jadwal ini tidak tersedia.',
-                    ]);
-            }
-        }
+        $draft['end_time'] =
+            $resolvedSlot['end_time'];
 
-        if ($service->requires_room) {
-            if (
-                !$schedule->studioRoom
-                || $schedule->studioRoom->status !== 'active'
-            ) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'schedule_id' =>
-                            'Studio room pada jadwal ini tidak tersedia.',
-                    ]);
-            }
-        }
-
-        $start = Carbon::createFromFormat(
-            'H:i:s',
-            $schedule->start_time
-        );
-
-        $end = Carbon::createFromFormat(
-            'H:i:s',
-            $schedule->end_time
-        );
-
-        if (
-            $start->diffInMinutes($end)
-            < $package->duration_minutes
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'schedule_id' =>
-                        'Durasi jadwal tidak mencukupi untuk paket ini.',
-                ]);
-        }
-
-        $draft['schedule_id'] = $schedule->id;
-
-        /*
-         * Kalau fotografer dipilih otomatis,
-         * kita simpan fotografer hasil Schedule juga.
-         * photographer_mode tetap "auto".
-         */
         $draft['assigned_photographer_id'] =
-            $schedule->photographer_id;
+            $resolvedSlot['photographer_id'];
+
+        $draft['studio_room_id'] =
+            $resolvedSlot['studio_room_id'];
 
         session([
             'booking_draft' => $draft,
@@ -710,53 +791,88 @@ class BookingController extends Controller
             ->route('customer.bookings.detail');
     }
 
-    public function detail()
-    {
-        $draft = session('booking_draft');
+    public function detail(
+        BookingAvailabilityService $availability
+    ) {
+        $draft = session('booking_draft', []);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Draft harus sudah melewati Step 1–3
+        |--------------------------------------------------------------------------
+        */
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
-            || empty($draft['schedule_id'])
+            || empty($draft['schedule_date'])
+            || empty($draft['start_time'])
         ) {
             return redirect()
-                ->route('packages.index')
+                ->route('customer.bookings.schedule')
                 ->with(
                     'error',
-                    'Data booking belum lengkap. Silakan mulai kembali.'
+                    'Silakan pilih jadwal terlebih dahulu.'
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data utama
+        |--------------------------------------------------------------------------
+        */
         $service = Service::query()
-            ->where('id', $draft['service_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['service_id']);
 
         $branch = Branch::query()
-            ->where('id', $draft['branch_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['branch_id']);
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
             ->where('is_active', true)
-            ->firstOrFail();
-
-        $schedule = Schedule::with([
-            'photographer',
-            'studioRoom',
-        ])
-            ->where('id', $draft['schedule_id'])
-            ->where('branch_id', $branch->id)
             ->where('service_id', $service->id)
-            ->where('status', 'available')
-            ->first();
+            ->findOrFail($draft['package_id']);
 
-        if (!$schedule) {
-            $draft['schedule_id'] = null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi ulang slot
+        |--------------------------------------------------------------------------
+        |
+        | Slot bisa saja berubah sejak customer memilihnya.
+        |
+        | Kalau fotografer dipilih manual, fotografer itu harus
+        | tetap tersedia.
+        |
+        | Kalau mode otomatis, engine boleh memilih fotografer
+        | aktif lain yang masih tersedia.
+        |
+        */
+        $resolvedSlot = $availability->resolveSlot(
+            branch: $branch,
+            service: $service,
+            package: $package,
+            date: $draft['schedule_date'],
+            startTime: $draft['start_time'],
+            photographerId:
+            $draft['photographer_id']
+            ?? null
+        );
+
+
+        if (!$resolvedSlot) {
+
+            /*
+             * Reset hanya bagian jadwal.
+             * Pilihan layanan/cabang/paket/fotografer tetap ada.
+             */
+            $draft['schedule_date'] = null;
+            $draft['start_time'] = null;
+            $draft['end_time'] = null;
+            $draft['assigned_photographer_id'] = null;
+            $draft['studio_room_id'] = null;
 
             session([
                 'booking_draft' => $draft,
@@ -764,13 +880,52 @@ class BookingController extends Controller
 
             return redirect()
                 ->route('customer.bookings.schedule')
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal yang sebelumnya dipilih sudah tidak tersedia.',
-                ]);
+                ->with(
+                    'error',
+                    'Jadwal yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.'
+                );
         }
 
-        $customer = Auth::user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan hasil resolve terbaru
+        |--------------------------------------------------------------------------
+        */
+        $draft['schedule_date'] =
+            $resolvedSlot['date'];
+
+        $draft['start_time'] =
+            $resolvedSlot['start_time'];
+
+        $draft['end_time'] =
+            $resolvedSlot['end_time'];
+
+        $draft['assigned_photographer_id'] =
+            $resolvedSlot['photographer_id'];
+
+        $draft['studio_room_id'] =
+            $resolvedSlot['studio_room_id'];
+
+        session([
+            'booking_draft' => $draft,
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Resource untuk ditampilkan
+        |--------------------------------------------------------------------------
+        */
+        $photographer =
+            $resolvedSlot['photographer'];
+
+        $studioRoom =
+            $resolvedSlot['studio_room'];
+
+        $customer =
+            Auth::user();
+
 
         return view(
             'customer.bookings.detail',
@@ -778,7 +933,8 @@ class BookingController extends Controller
                 'service',
                 'branch',
                 'package',
-                'schedule',
+                'photographer',
+                'studioRoom',
                 'customer',
                 'draft'
             )
@@ -786,55 +942,106 @@ class BookingController extends Controller
     }
 
 
-    public function storeDetail(Request $request)
-    {
-        $draft = session('booking_draft');
+    public function storeDetail(
+        Request $request,
+        BookingAvailabilityService $availability
+    ) {
+        $draft = session('booking_draft', []);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan Step 1–3 lengkap
+        |--------------------------------------------------------------------------
+        */
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
-            || empty($draft['schedule_id'])
+            || empty($draft['schedule_date'])
+            || empty($draft['start_time'])
         ) {
             return redirect()
-                ->route('packages.index')
+                ->route('customer.bookings.schedule')
                 ->with(
                     'error',
-                    'Data booking tidak ditemukan. Silakan mulai kembali.'
+                    'Silakan pilih jadwal terlebih dahulu.'
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data utama
+        |--------------------------------------------------------------------------
+        */
         $service = Service::query()
-            ->where('id', $draft['service_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['service_id']);
+
+        $branch = Branch::query()
+            ->where('status', 'active')
+            ->findOrFail($draft['branch_id']);
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
             ->where('is_active', true)
-            ->firstOrFail();
-
-        $schedule = Schedule::query()
-            ->where('id', $draft['schedule_id'])
-            ->where('branch_id', $draft['branch_id'])
             ->where('service_id', $service->id)
-            ->where('status', 'available')
-            ->first();
+            ->findOrFail($draft['package_id']);
 
-        if (!$schedule) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi ulang availability
+        |--------------------------------------------------------------------------
+        */
+        $resolvedSlot = $availability->resolveSlot(
+            branch: $branch,
+            service: $service,
+            package: $package,
+            date: $draft['schedule_date'],
+            startTime: $draft['start_time'],
+            photographerId:
+            $draft['photographer_id']
+            ?? null
+        );
+
+
+        if (!$resolvedSlot) {
+
+            $draft['schedule_date'] = null;
+            $draft['start_time'] = null;
+            $draft['end_time'] = null;
+            $draft['assigned_photographer_id'] = null;
+            $draft['studio_room_id'] = null;
+
+            session([
+                'booking_draft' => $draft,
+            ]);
+
             return redirect()
                 ->route('customer.bookings.schedule')
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal yang dipilih sudah tidak tersedia.',
-                ]);
+                ->with(
+                    'error',
+                    'Jadwal tersebut sudah tidak tersedia. Silakan pilih jadwal lain.'
+                );
         }
 
-        $maxPeople = $package->max_people ?: 255;
 
-        $validated = $request->validate([
+        /*
+        |--------------------------------------------------------------------------
+        | Batas jumlah orang
+        |--------------------------------------------------------------------------
+        */
+        $maxPeople =
+            $package->max_people
+            ?: 255;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi form detail
+        |--------------------------------------------------------------------------
+        */
+        $rules = [
             'number_of_people' => [
                 'required',
                 'integer',
@@ -842,10 +1049,8 @@ class BookingController extends Controller
                 'max:' . $maxPeople,
             ],
 
-            'location_address' => [
-                $service->is_on_location
-                ? 'required'
-                : 'nullable',
+            'notes' => [
+                'nullable',
                 'string',
                 'max:1000',
             ],
@@ -855,98 +1060,182 @@ class BookingController extends Controller
                 'string',
                 'max:1000',
             ],
+        ];
 
-            'notes' => [
+
+        /*
+         * Alamat hanya wajib untuk layanan
+         * Photography On Location.
+         */
+        if ($service->is_on_location) {
+
+            $rules['location_address'] = [
+                'required',
+                'string',
+                'max:500',
+            ];
+
+        } else {
+
+            $rules['location_address'] = [
                 'nullable',
                 'string',
-                'max:1000',
-            ],
-        ], [
-            'number_of_people.required' =>
-                'Jumlah peserta wajib diisi.',
+                'max:500',
+            ];
+        }
 
-            'number_of_people.min' =>
-                'Jumlah peserta minimal 1 orang.',
 
-            'number_of_people.max' =>
-                'Jumlah peserta melebihi kapasitas paket.',
+        $validated =
+            $request->validate($rules);
 
-            'location_address.required' =>
-                'Alamat lokasi wajib diisi untuk layanan on-location.',
-        ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Update slot berdasarkan resolve terbaru
+        |--------------------------------------------------------------------------
+        */
+        $draft['end_time'] =
+            $resolvedSlot['end_time'];
+
+        $draft['assigned_photographer_id'] =
+            $resolvedSlot['photographer_id'];
+
+        $draft['studio_room_id'] =
+            $resolvedSlot['studio_room_id'];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Detail customer
+        |--------------------------------------------------------------------------
+        */
         $draft['number_of_people'] =
-            $validated['number_of_people'];
-
-        $draft['location_address'] =
-            $service->is_on_location
-            ? $validated['location_address']
-            : null;
-
-        $draft['location_notes'] =
-            $service->is_on_location
-            ? ($validated['location_notes'] ?? null)
-            : null;
+            (int) $validated['number_of_people'];
 
         $draft['notes'] =
-            $validated['notes'] ?? null;
+            $validated['notes']
+            ?? null;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Lokasi
+        |--------------------------------------------------------------------------
+        */
+        if ($service->is_on_location) {
+
+            $draft['location_address'] =
+                $validated['location_address'];
+
+            $draft['location_notes'] =
+                $validated['location_notes']
+                ?? null;
+
+        } else {
+
+            $draft['location_address'] =
+                null;
+
+            $draft['location_notes'] =
+                null;
+        }
+
 
         session([
             'booking_draft' => $draft,
         ]);
 
+
         return redirect()
-            ->route('customer.bookings.confirmation');
+            ->route(
+                'customer.bookings.confirmation'
+            );
     }
 
-    public function confirmation()
-    {
-        $draft = session('booking_draft');
+    public function confirmation(
+        BookingAvailabilityService $availability
+    ) {
+        $draft = session('booking_draft', []);
 
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
-            || empty($draft['schedule_id'])
+            || empty($draft['schedule_date'])
+            || empty($draft['start_time'])
             || empty($draft['number_of_people'])
         ) {
             return redirect()
-                ->route('packages.index')
+                ->route('customer.bookings.create')
                 ->with(
                     'error',
-                    'Data booking belum lengkap. Silakan mulai kembali.'
+                    'Data booking belum lengkap.'
                 );
         }
 
         $service = Service::query()
-            ->where('id', $draft['service_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['service_id']);
 
         $branch = Branch::query()
-            ->where('id', $draft['branch_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['branch_id']);
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
             ->where('is_active', true)
-            ->firstOrFail();
-
-        $schedule = Schedule::with([
-            'photographer',
-            'studioRoom',
-        ])
-            ->where('id', $draft['schedule_id'])
-            ->where('branch_id', $branch->id)
             ->where('service_id', $service->id)
-            ->where('status', 'available')
-            ->first();
+            ->findOrFail($draft['package_id']);
 
-        if (!$schedule) {
-            $draft['schedule_id'] = null;
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi jumlah peserta
+        |--------------------------------------------------------------------------
+        */
+        $maxPeople = $package->max_people ?: 255;
+
+        if (
+            (int) $draft['number_of_people'] < 1
+            || (int) $draft['number_of_people'] > $maxPeople
+        ) {
+            return redirect()
+                ->route('customer.bookings.detail')
+                ->with(
+                    'error',
+                    'Jumlah peserta tidak sesuai dengan paket.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pertahankan resource yang sudah ditampilkan di Step 4
+        |--------------------------------------------------------------------------
+        */
+        $photographerId =
+            $draft['assigned_photographer_id']
+            ?? $draft['photographer_id']
+            ?? null;
+
+        $studioRoomId =
+            $draft['studio_room_id']
+            ?? null;
+
+        $resolvedSlot = $availability->resolveSlot(
+            branch: $branch,
+            service: $service,
+            package: $package,
+            date: $draft['schedule_date'],
+            startTime: $draft['start_time'],
+            photographerId: $photographerId,
+            studioRoomId: $studioRoomId
+        );
+
+        if (!$resolvedSlot) {
+
+            $draft['schedule_date'] = null;
+            $draft['start_time'] = null;
+            $draft['end_time'] = null;
+            $draft['assigned_photographer_id'] = null;
+            $draft['studio_room_id'] = null;
 
             session([
                 'booking_draft' => $draft,
@@ -954,11 +1243,35 @@ class BookingController extends Controller
 
             return redirect()
                 ->route('customer.bookings.schedule')
-                ->withErrors([
-                    'schedule_id' =>
-                        'Jadwal yang dipilih sudah tidak tersedia.',
-                ]);
+                ->with(
+                    'error',
+                    'Jadwal yang dipilih sudah tidak tersedia. Silakan pilih waktu lain.'
+                );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Refresh resource dari hasil pengecekan
+        |--------------------------------------------------------------------------
+        */
+        $draft['end_time'] =
+            $resolvedSlot['end_time'];
+
+        $draft['assigned_photographer_id'] =
+            $resolvedSlot['photographer_id'];
+
+        $draft['studio_room_id'] =
+            $resolvedSlot['studio_room_id'];
+
+        session([
+            'booking_draft' => $draft,
+        ]);
+
+        $photographer =
+            $resolvedSlot['photographer'];
+
+        $studioRoom =
+            $resolvedSlot['studio_room'];
 
         $customer = Auth::user();
 
@@ -968,7 +1281,8 @@ class BookingController extends Controller
                 'service',
                 'branch',
                 'package',
-                'schedule',
+                'photographer',
+                'studioRoom',
                 'customer',
                 'draft'
             )
@@ -976,251 +1290,261 @@ class BookingController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
+    public function store(
+        Request $request,
+        BookingAvailabilityService $availability
+    ) {
         $request->validate([
             'confirmation' => [
                 'accepted',
             ],
         ], [
             'confirmation.accepted' =>
-                'Silakan setujui detail booking sebelum melanjutkan.',
+                'Silakan centang persetujuan sebelum mengonfirmasi booking.',
         ]);
 
-        $draft = session('booking_draft');
+        $draft = session('booking_draft', []);
 
         if (
-            !$draft
-            || empty($draft['service_id'])
+            empty($draft['service_id'])
             || empty($draft['branch_id'])
             || empty($draft['package_id'])
-            || empty($draft['schedule_id'])
+            || empty($draft['schedule_date'])
+            || empty($draft['start_time'])
             || empty($draft['number_of_people'])
         ) {
             return redirect()
-                ->route('packages.index')
+                ->route('customer.bookings.create')
                 ->with(
                     'error',
-                    'Data booking tidak lengkap. Silakan mulai kembali.'
+                    'Data booking belum lengkap.'
                 );
         }
 
         $service = Service::query()
-            ->where('id', $draft['service_id'])
             ->where('status', 'active')
-            ->firstOrFail();
+            ->findOrFail($draft['service_id']);
 
         $package = Package::query()
-            ->where('id', $draft['package_id'])
-            ->where('service_id', $service->id)
             ->where('is_active', true)
-            ->firstOrFail();
+            ->where('service_id', $service->id)
+            ->findOrFail($draft['package_id']);
+
+        $maxPeople =
+            $package->max_people
+            ?: 255;
 
         if (
-            $package->max_people
-            && $draft['number_of_people'] > $package->max_people
+            (int) $draft['number_of_people'] < 1
+            || (int) $draft['number_of_people'] > $maxPeople
         ) {
             return redirect()
                 ->route('customer.bookings.detail')
-                ->withErrors([
-                    'number_of_people' =>
-                        'Jumlah peserta melebihi kapasitas paket.',
-                ]);
+                ->with(
+                    'error',
+                    'Jumlah peserta tidak sesuai dengan paket.'
+                );
         }
 
         try {
 
-            $booking = DB::transaction(function () use ($draft, $service, $package) {
+            $booking = DB::transaction(
+                function () use ($draft, $service, $package, $availability) {
 
-                /*
-                |--------------------------------------------------------------------------
-                | Lock schedule
-                |--------------------------------------------------------------------------
-                |
-                | Mencegah dua customer mengambil slot yang sama
-                | pada waktu hampir bersamaan.
-                |
-                */
-                $schedule = Schedule::query()
-                    ->where('id', $draft['schedule_id'])
-                    ->where('branch_id', $draft['branch_id'])
-                    ->where('service_id', $service->id)
-                    ->lockForUpdate()
-                    ->first();
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Lock cabang
+                    |--------------------------------------------------------------------------
+                    |
+                    | Booking pada cabang yang sama akan diproses bergantian.
+                    | Ini membantu mencegah race condition / double booking.
+                    |
+                    */
+                    $branch = Branch::query()
+                        ->where('id', $draft['branch_id'])
+                        ->where('status', 'active')
+                        ->lockForUpdate()
+                        ->firstOrFail();
 
-                if (!$schedule) {
-                    throw ValidationException::withMessages([
-                        'schedule_id' =>
-                            'Jadwal booking tidak ditemukan.',
-                    ]);
-                }
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Gunakan resource yang sudah disetujui customer
+                    |--------------------------------------------------------------------------
+                    */
+                    $photographerId =
+                        $draft['assigned_photographer_id']
+                        ?? $draft['photographer_id']
+                        ?? null;
 
-                if ($schedule->status !== 'available') {
-                    throw ValidationException::withMessages([
-                        'schedule_id' =>
-                            'Jadwal ini baru saja dipesan oleh customer lain. Silakan pilih jadwal lain.',
-                    ]);
-                }
+                    $studioRoomId =
+                        $draft['studio_room_id']
+                        ?? null;
 
-                /*
-                |--------------------------------------------------------------------------
-                | Pastikan jadwal belum lewat
-                |--------------------------------------------------------------------------
-                */
-                if (
-                    $schedule->schedule_date->isBefore(today())
-                    || (
-                        $schedule->schedule_date->isToday()
-                        && $schedule->start_time
-                        <= now()->format('H:i:s')
-                    )
-                ) {
-                    throw ValidationException::withMessages([
-                        'schedule_id' =>
-                            'Jadwal yang dipilih sudah lewat.',
-                    ]);
-                }
+                    /*
+                    |--------------------------------------------------------------------------
+                    | CEK TERAKHIR
+                    |--------------------------------------------------------------------------
+                    */
+                    $resolvedSlot =
+                        $availability->resolveSlot(
+                            branch: $branch,
+                            service: $service,
+                            package: $package,
+                            date: $draft['schedule_date'],
+                            startTime: $draft['start_time'],
+                            photographerId:
+                            $photographerId,
+                            studioRoomId:
+                            $studioRoomId
+                        );
 
-                /*
-                |--------------------------------------------------------------------------
-                | Load relasi setelah row dikunci
-                |--------------------------------------------------------------------------
-                */
-                $schedule->load([
-                    'branch',
-                    'photographer',
-                    'studioRoom',
-                ]);
-
-                if (
-                    !$schedule->branch
-                    || $schedule->branch->status !== 'active'
-                ) {
-                    throw ValidationException::withMessages([
-                        'schedule_id' =>
-                            'Cabang untuk jadwal ini sedang tidak aktif.',
-                    ]);
-                }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Fotografer
-                |--------------------------------------------------------------------------
-                */
-                if ($service->requires_photographer) {
-
-                    if (
-                        !$schedule->photographer
-                        || $schedule->photographer->status !== 'active'
-                    ) {
+                    if (!$resolvedSlot) {
                         throw ValidationException::withMessages([
-                            'schedule_id' =>
-                                'Fotografer pada jadwal ini tidak tersedia.',
+                            'schedule' =>
+                                'Jadwal tersebut baru saja terisi atau tidak lagi tersedia.',
                         ]);
                     }
 
-                    if (
-                        !empty($draft['photographer_id'])
-                        && (int) $schedule->photographer_id
-                        !== (int) $draft['photographer_id']
-                    ) {
-                        throw ValidationException::withMessages([
-                            'schedule_id' =>
-                                'Jadwal tidak sesuai dengan fotografer yang dipilih.',
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Cek legacy schedule available
+                    |--------------------------------------------------------------------------
+                    |
+                    | Karena sebelumnya project menggunakan row available,
+                    | kalau ada row lama yang persis sama kita pakai row tersebut
+                    | daripada membuat duplikat.
+                    |
+                    */
+                    $schedule = Schedule::query()
+                        ->where('branch_id', $branch->id)
+                        ->where('service_id', $service->id)
+                        ->whereDate(
+                            'schedule_date',
+                            $resolvedSlot['date']
+                        )
+                        ->where(
+                            'start_time',
+                            $resolvedSlot['start_time']
+                        )
+                        ->where(
+                            'end_time',
+                            $resolvedSlot['end_time']
+                        )
+                        ->where(
+                            'photographer_id',
+                            $resolvedSlot['photographer_id']
+                        )
+                        ->where(
+                            'studio_room_id',
+                            $resolvedSlot['studio_room_id']
+                        )
+                        ->where('status', 'available')
+                        ->lockForUpdate()
+                        ->first();
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Kalau tidak ada schedule legacy, buat baru
+                    |--------------------------------------------------------------------------
+                    */
+                    if ($schedule) {
+
+                        $schedule->update([
+                            'status' => 'booked',
+                        ]);
+
+                    } else {
+
+                        $schedule = Schedule::create([
+                            'branch_id' =>
+                                $branch->id,
+
+                            'service_id' =>
+                                $service->id,
+
+                            'photographer_id' =>
+                                $resolvedSlot[
+                                    'photographer_id'
+                                ],
+
+                            'studio_room_id' =>
+                                $resolvedSlot[
+                                    'studio_room_id'
+                                ],
+
+                            'schedule_date' =>
+                                $resolvedSlot['date'],
+
+                            'start_time' =>
+                                $resolvedSlot['start_time'],
+
+                            'end_time' =>
+                                $resolvedSlot['end_time'],
+
+                            'status' =>
+                                'booked',
                         ]);
                     }
-                }
 
-                /*
-                |--------------------------------------------------------------------------
-                | Studio room
-                |--------------------------------------------------------------------------
-                */
-                if ($service->requires_room) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Buat Booking
+                    |--------------------------------------------------------------------------
+                    */
+                    $booking = Booking::create([
+                        'booking_code' =>
+                            $this->generateBookingCode(),
 
-                    if (
-                        !$schedule->studioRoom
-                        || $schedule->studioRoom->status !== 'active'
-                    ) {
-                        throw ValidationException::withMessages([
-                            'schedule_id' =>
-                                'Studio room pada jadwal ini tidak tersedia.',
-                        ]);
-                    }
-                }
+                        'user_id' =>
+                            Auth::id(),
 
-                /*
-                |--------------------------------------------------------------------------
-                | Validasi lokasi
-                |--------------------------------------------------------------------------
-                */
-                if (
-                    $service->is_on_location
-                    && empty($draft['location_address'])
-                ) {
-                    throw ValidationException::withMessages([
+                        'package_id' =>
+                            $package->id,
+
+                        'number_of_people' =>
+                            (int) $draft[
+                                'number_of_people'
+                            ],
+
                         'location_address' =>
-                            'Alamat lokasi pemotretan wajib diisi.',
+                            $service->is_on_location
+                            ? ($draft[
+                                'location_address'
+                            ] ?? null)
+                            : null,
+
+                        'location_notes' =>
+                            $service->is_on_location
+                            ? ($draft[
+                                'location_notes'
+                            ] ?? null)
+                            : null,
+
+                        'notes' =>
+                            $draft['notes']
+                            ?? null,
+
+                        'total_price' =>
+                            $package->price,
+
+                        'status' =>
+                            'pending',
                     ]);
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Hubungkan booking dengan schedule
+                    |--------------------------------------------------------------------------
+                    */
+                    $booking
+                        ->schedules()
+                        ->attach(
+                            $schedule->id
+                        );
+
+                    return $booking;
                 }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Buat Booking
-                |--------------------------------------------------------------------------
-                */
-                $booking = Booking::create([
-                    'booking_code' =>
-                        $this->generateBookingCode(),
-
-                    'user_id' =>
-                        Auth::id(),
-
-                    'package_id' =>
-                        $package->id,
-
-                    'number_of_people' =>
-                        $draft['number_of_people'],
-
-                    'location_address' =>
-                        $service->is_on_location
-                        ? ($draft['location_address'] ?? null)
-                        : null,
-
-                    'location_notes' =>
-                        $service->is_on_location
-                        ? ($draft['location_notes'] ?? null)
-                        : null,
-
-                    'notes' =>
-                        $draft['notes'] ?? null,
-
-                    'total_price' =>
-                        $package->price,
-
-                    'status' =>
-                        'pending',
-                ]);
-
-                /*
-                |--------------------------------------------------------------------------
-                | Hubungkan schedule
-                |--------------------------------------------------------------------------
-                */
-                $booking->schedules()
-                    ->attach($schedule->id);
-
-                /*
-                |--------------------------------------------------------------------------
-                | Slot tidak boleh muncul lagi
-                |--------------------------------------------------------------------------
-                */
-                $schedule->update([
-                    'status' => 'booked',
-                ]);
-
-                return $booking;
-            });
+            );
 
         } catch (ValidationException $exception) {
 
@@ -1233,13 +1557,18 @@ class BookingController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Hapus draft
+        | Booking berhasil
         |--------------------------------------------------------------------------
         */
-        session()->forget('booking_draft');
+        session()->forget(
+            'booking_draft'
+        );
 
         return redirect()
-            ->route('customer.payments.create', $booking)
+            ->route(
+                'customer.payments.create',
+                $booking
+            )
             ->with(
                 'success',
                 'Booking berhasil dibuat. Silakan lanjutkan proses pembayaran.'

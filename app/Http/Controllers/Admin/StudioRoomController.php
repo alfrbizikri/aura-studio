@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
+use App\Models\Service;
 use App\Models\StudioRoom;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class StudioRoomController extends Controller
 {
@@ -14,7 +16,10 @@ class StudioRoomController extends Controller
      */
     public function index()
     {
-        $studioRooms = StudioRoom::with('branch')
+        $studioRooms = StudioRoom::with([
+            'branch',
+            'service',
+        ])
             ->latest()
             ->get();
 
@@ -30,12 +35,27 @@ class StudioRoomController extends Controller
      */
     public function create()
     {
-        $branches = Branch::orderBy('name')
+        $branches = Branch::query()
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        /*
+         * Hanya layanan yang memang
+         * membutuhkan studio room.
+         */
+        $services = Service::query()
+            ->where('status', 'active')
+            ->where('requires_room', true)
+            ->orderBy('name')
             ->get();
 
         return view(
             'admin.studio-rooms.create',
-            compact('branches')
+            compact(
+                'branches',
+                'services'
+            )
         );
     }
 
@@ -49,6 +69,11 @@ class StudioRoomController extends Controller
             'branch_id' => [
                 'required',
                 'exists:branches,id',
+            ],
+
+            'service_id' => [
+                'required',
+                'exists:services,id',
             ],
 
             'name' => [
@@ -69,16 +94,79 @@ class StudioRoomController extends Controller
         ]);
 
 
-        StudioRoom::create([
-            'branch_id' => $validated['branch_id'],
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi layanan
+        |--------------------------------------------------------------------------
+        |
+        | Room hanya boleh dikaitkan dengan layanan:
+        | - aktif
+        | - requires_room = true
+        | - tersedia pada cabang tersebut
+        |
+        */
+        $service = Service::query()
+            ->where('id', $validated['service_id'])
+            ->where('status', 'active')
+            ->where('requires_room', true)
+            ->first();
 
-            'name' => $validated['name'],
+        if (!$service) {
+            throw ValidationException::withMessages([
+                'service_id' =>
+                    'Layanan tersebut tidak dapat menggunakan studio room.',
+            ]);
+        }
+
+
+        $branchOffersService = Branch::query()
+            ->where('id', $validated['branch_id'])
+            ->where('status', 'active')
+            ->whereHas(
+                'services',
+                function ($query) use ($validated) {
+                    $query
+                        ->where(
+                            'services.id',
+                            $validated['service_id']
+                        )
+                        ->where(
+                            'services.status',
+                            'active'
+                        )
+                        ->where(
+                            'branch_service.status',
+                            'active'
+                        );
+                }
+            )
+            ->exists();
+
+
+        if (!$branchOffersService) {
+            throw ValidationException::withMessages([
+                'service_id' =>
+                    'Layanan tersebut tidak tersedia pada cabang yang dipilih.',
+            ]);
+        }
+
+
+        StudioRoom::create([
+            'branch_id' =>
+                $validated['branch_id'],
+
+            'service_id' =>
+                $validated['service_id'],
+
+            'name' =>
+                $validated['name'],
 
             'description' =>
                 $validated['description']
                 ?? null,
 
-            'status' => $validated['status'],
+            'status' =>
+                $validated['status'],
         ]);
 
 
@@ -96,14 +184,23 @@ class StudioRoomController extends Controller
      */
     public function edit(StudioRoom $studioRoom)
     {
-        $branches = Branch::orderBy('name')
+        $branches = Branch::query()
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        $services = Service::query()
+            ->where('status', 'active')
+            ->where('requires_room', true)
+            ->orderBy('name')
             ->get();
 
         return view(
             'admin.studio-rooms.edit',
             compact(
                 'studioRoom',
-                'branches'
+                'branches',
+                'services'
             )
         );
     }
@@ -122,6 +219,11 @@ class StudioRoomController extends Controller
                 'exists:branches,id',
             ],
 
+            'service_id' => [
+                'required',
+                'exists:services,id',
+            ],
+
             'name' => [
                 'required',
                 'string',
@@ -140,16 +242,69 @@ class StudioRoomController extends Controller
         ]);
 
 
-        $studioRoom->update([
-            'branch_id' => $validated['branch_id'],
+        $service = Service::query()
+            ->where('id', $validated['service_id'])
+            ->where('status', 'active')
+            ->where('requires_room', true)
+            ->first();
 
-            'name' => $validated['name'],
+
+        if (!$service) {
+            throw ValidationException::withMessages([
+                'service_id' =>
+                    'Layanan tersebut tidak dapat menggunakan studio room.',
+            ]);
+        }
+
+
+        $branchOffersService = Branch::query()
+            ->where('id', $validated['branch_id'])
+            ->where('status', 'active')
+            ->whereHas(
+                'services',
+                function ($query) use ($validated) {
+                    $query
+                        ->where(
+                            'services.id',
+                            $validated['service_id']
+                        )
+                        ->where(
+                            'services.status',
+                            'active'
+                        )
+                        ->where(
+                            'branch_service.status',
+                            'active'
+                        );
+                }
+            )
+            ->exists();
+
+
+        if (!$branchOffersService) {
+            throw ValidationException::withMessages([
+                'service_id' =>
+                    'Layanan tersebut tidak tersedia pada cabang yang dipilih.',
+            ]);
+        }
+
+
+        $studioRoom->update([
+            'branch_id' =>
+                $validated['branch_id'],
+
+            'service_id' =>
+                $validated['service_id'],
+
+            'name' =>
+                $validated['name'],
 
             'description' =>
                 $validated['description']
                 ?? null,
 
-            'status' => $validated['status'],
+            'status' =>
+                $validated['status'],
         ]);
 
 

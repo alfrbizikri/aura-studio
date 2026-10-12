@@ -996,3 +996,45 @@ img {
         transition-duration: 0.01ms !important;
     }
 }
+
+.admin-action-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.admin-action-group form {
+    margin: 0;
+}
+
+.admin-action-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd3cc;
+    border-radius: 10px;
+    background: #fff;
+    color: #493d38;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.admin-action-btn:hover {
+    border-color: #b88a44;
+    color: #8a6228;
+}
+
+.admin-action-btn.cancel {
+    border-color: #efd7d7;
+    color: #a34444;
+}
+
+.admin-action-btn.cancel:hover {
+    background: #a34444;
+    border-color: #a34444;
+    color: #fff;
+}

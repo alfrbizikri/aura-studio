@@ -2365,3 +2365,203 @@ body.booking-body {
         font-size: 22px;
     }
 }
+
+/* =========================================================
+   BOOKING CALENDAR
+========================================================= */
+
+.booking-calendar {
+    margin-top: 22px;
+    border: 1px solid #e5ddd2;
+    background: #fffdf9;
+}
+
+.booking-calendar-header {
+    min-height: 58px;
+    padding: 0 12px;
+
+    border-bottom: 1px solid #e5ddd2;
+
+    display: grid;
+    grid-template-columns: 36px 1fr 36px;
+    align-items: center;
+    gap: 8px;
+}
+
+.booking-calendar-header strong {
+    text-align: center;
+
+    font-family: "Fraunces", serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #351d1d;
+}
+
+.booking-calendar-nav {
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid #e4d8ca;
+    background: #fff;
+
+    color: #8c6329;
+    text-decoration: none;
+
+    display: grid;
+    place-items: center;
+
+    transition: .18s ease;
+}
+
+.booking-calendar-nav:hover {
+    border-color: #b88a44;
+    background: #f7efe3;
+    color: #7c5017;
+}
+
+.booking-calendar-nav.disabled {
+    opacity: .3;
+    cursor: default;
+}
+
+
+.booking-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    padding: 12px 9px 7px;
+}
+
+.booking-calendar-weekdays span {
+    text-align: center;
+
+    color: #8f8277;
+
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+
+.booking-calendar-days {
+    padding: 4px 9px 12px;
+
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    gap: 5px;
+}
+
+
+.booking-calendar-day {
+    aspect-ratio: 1;
+
+    border: 1px solid transparent;
+
+    color: #433832;
+    background: #f8f5f0;
+
+    text-decoration: none;
+
+    display: grid;
+    place-items: center;
+
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+
+a.booking-calendar-day:hover {
+    border-color: #c29450;
+    background: #f5ebdc;
+    color: #7e541c;
+
+    transform: translateY(-1px);
+}
+
+
+.booking-calendar-day.today {
+    border-color: #762735;
+}
+
+
+.booking-calendar-day.selected {
+    border-color: #762735;
+    background: #762735;
+    color: #fff;
+}
+
+
+.booking-calendar-day.disabled {
+    background: transparent;
+    color: #c9c0b8;
+
+    pointer-events: none;
+}
+
+
+.booking-calendar-range {
+    margin-top: 13px;
+
+    color: #8c8078;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+
+    font-size: 8px;
+    line-height: 1.55;
+}
+
+.booking-calendar-range i {
+    color: #b88a44;
+}
+
+
+/* EMPTY DATE */
+
+.schedule-day-empty {
+    min-height: 185px;
+
+    padding: 28px;
+
+    border: 1px dashed #dfd5c9;
+    background: #faf7f2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.schedule-day-empty i {
+    margin-bottom: 10px;
+
+    color: #b88a44;
+    font-size: 24px;
+}
+
+.schedule-day-empty strong {
+    color: #392d28;
+
+    font-family: "Fraunces", serif;
+    font-size: 16px;
+}
+
+.schedule-day-empty p {
+    margin: 5px 0 0;
+
+    color: #8c8179;
+    font-size: 9px;
+}
+

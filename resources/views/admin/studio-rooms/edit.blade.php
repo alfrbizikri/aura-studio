@@ -3,253 +3,261 @@
 @section('title', 'Edit Studio Room - Aura Studio')
 
 @push('styles')
-    <link
-        rel="stylesheet"
-        href="{{ asset('css/admin-studio-rooms.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-studio-rooms.css') }}">
 @endpush
 
 
 @section('content')
 
-<div class="admin-page-header">
+    <div class="admin-page-header">
 
-    <div>
+        <div>
 
-        <a
-            href="{{ route('admin.studio-rooms.index') }}"
-            class="admin-back-link">
+            <a href="{{ route('admin.studio-rooms.index') }}" class="admin-back-link">
 
-            <i class="bi bi-arrow-left"></i>
+                <i class="bi bi-arrow-left"></i>
 
-            Kembali
+                Kembali
 
-        </a>
+            </a>
 
 
-        <span class="admin-label">
-            MASTER DATA
-        </span>
+            <span class="admin-label">
+                MASTER DATA
+            </span>
 
-        <h1>
-            Edit Studio Room
-        </h1>
+            <h1>
+                Edit Studio Room
+            </h1>
 
-        <p>
-            Perbarui informasi
-            {{ $studioRoom->name }}.
-        </p>
+            <p>
+                Perbarui informasi
+                {{ $studioRoom->name }}.
+            </p>
 
-    </div>
-
-</div>
-
-
-<div class="admin-form-card">
-
-    <div class="admin-form-title">
-
-        <h2>
-            Informasi Studio Room
-        </h2>
-
-        <p>
-            Perbarui cabang, nama,
-            deskripsi atau status ruangan.
-        </p>
+        </div>
 
     </div>
 
 
-    <form
-        action="{{ route(
-            'admin.studio-rooms.update',
-            $studioRoom
-        ) }}"
-        method="POST">
+    <div class="admin-form-card">
 
-        @csrf
-        @method('PUT')
+        <div class="admin-form-title">
+
+            <h2>
+                Informasi Studio Room
+            </h2>
+
+            <p>
+                Perbarui cabang, nama,
+                deskripsi atau status ruangan.
+            </p>
+
+        </div>
 
 
-        <div class="admin-form-grid">
+        <form action="{{ route(
+        'admin.studio-rooms.update',
+        $studioRoom
+    ) }}" method="POST">
 
-            {{-- CABANG --}}
-            <div class="admin-form-group">
+            @csrf
+            @method('PUT')
 
-                <label for="branch_id">
-                    Cabang <span>*</span>
-                </label>
 
-                <select
-                    id="branch_id"
-                    name="branch_id"
-                    required>
+            <div class="admin-form-grid">
 
-                    @foreach ($branches as $branch)
+                {{-- CABANG --}}
+                <div class="admin-form-group">
 
-                        <option
-                            value="{{ $branch->id }}"
-                            @selected(
+                    <label for="branch_id">
+                        Cabang <span>*</span>
+                    </label>
+
+                    <select id="branch_id" name="branch_id" required>
+
+                        @foreach ($branches as $branch)
+
+                            <option value="{{ $branch->id }}" @selected(
                                 old(
                                     'branch_id',
                                     $studioRoom->branch_id
                                 ) == $branch->id
                             )>
 
-                            {{ $branch->name }}
+                                {{ $branch->name }}
 
-                            @if ($branch->status !== 'active')
-                                — Nonaktif
-                            @endif
+                                @if ($branch->status !== 'active')
+                                    — Nonaktif
+                                @endif
 
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                    @error('branch_id')
+                        <small class="admin-field-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+                {{-- LAYANAN --}}
+                <div class="admin-form-group">
+
+                    <label for="service_id">
+                        Layanan <span>*</span>
+                    </label>
+
+                    <select id="service_id" name="service_id" required>
+
+                        <option value="">
+                            Pilih layanan
                         </option>
 
-                    @endforeach
+                        @foreach ($services as $service)
 
-                </select>
+                            <option value="{{ $service->id }}" @selected(
+                                old(
+                                    'service_id',
+                                    $studioRoom->service_id
+                                ) == $service->id
+                            )>
+                                {{ $service->name }}
+                            </option>
 
-                @error('branch_id')
-                    <small class="admin-field-error">
-                        {{ $message }}
+                        @endforeach
+
+                    </select>
+
+                    <small class="admin-help-text">
+                        Pilih layanan yang menggunakan ruangan ini.
                     </small>
-                @enderror
 
-            </div>
+                    @error('service_id')
+                        <small class="admin-field-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
 
 
-            {{-- STATUS --}}
-            <div class="admin-form-group">
+                {{-- STATUS --}}
+                <div class="admin-form-group">
 
-                <label for="status">
-                    Status <span>*</span>
-                </label>
+                    <label for="status">
+                        Status <span>*</span>
+                    </label>
 
-                <select
-                    id="status"
-                    name="status"
-                    required>
+                    <select id="status" name="status" required>
 
-                    <option
-                        value="active"
-                        @selected(
+                        <option value="active" @selected(
                             old(
                                 'status',
                                 $studioRoom->status
                             ) === 'active'
                         )>
-                        Aktif
-                    </option>
+                            Aktif
+                        </option>
 
-                    <option
-                        value="maintenance"
-                        @selected(
+                        <option value="maintenance" @selected(
                             old(
                                 'status',
                                 $studioRoom->status
                             ) === 'maintenance'
                         )>
-                        Maintenance
-                    </option>
+                            Maintenance
+                        </option>
 
-                    <option
-                        value="inactive"
-                        @selected(
+                        <option value="inactive" @selected(
                             old(
                                 'status',
                                 $studioRoom->status
                             ) === 'inactive'
                         )>
-                        Nonaktif
-                    </option>
+                            Nonaktif
+                        </option>
 
-                </select>
+                    </select>
 
-                @error('status')
-                    <small class="admin-field-error">
-                        {{ $message }}
-                    </small>
-                @enderror
+                    @error('status')
+                        <small class="admin-field-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
 
-            </div>
-
-
-            {{-- NAMA --}}
-            <div class="admin-form-group full">
-
-                <label for="name">
-                    Nama Studio Room <span>*</span>
-                </label>
-
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value="{{ old(
-                        'name',
-                        $studioRoom->name
-                    ) }}"
-                    required>
-
-                @error('name')
-                    <small class="admin-field-error">
-                        {{ $message }}
-                    </small>
-                @enderror
-
-            </div>
+                </div>
 
 
-            {{-- DESKRIPSI --}}
-            <div class="admin-form-group full">
+                {{-- NAMA --}}
+                <div class="admin-form-group full">
 
-                <label for="description">
-                    Deskripsi
-                </label>
+                    <label for="name">
+                        Nama Studio Room <span>*</span>
+                    </label>
 
-                <textarea
-                    id="description"
-                    name="description"
-                    rows="5">{{ old(
-                        'description',
-                        $studioRoom->description
-                    ) }}</textarea>
+                    <input type="text" id="name" name="name" value="{{ old(
+        'name',
+        $studioRoom->name
+    ) }}" required>
 
-                @error('description')
-                    <small class="admin-field-error">
-                        {{ $message }}
-                    </small>
-                @enderror
+                    @error('name')
+                        <small class="admin-field-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+
+                {{-- DESKRIPSI --}}
+                <div class="admin-form-group full">
+
+                    <label for="description">
+                        Deskripsi
+                    </label>
+
+                    <textarea id="description" name="description" rows="5">{{ old(
+        'description',
+        $studioRoom->description
+    ) }}</textarea>
+
+                    @error('description')
+                        <small class="admin-field-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
 
             </div>
 
-        </div>
+
+            <div class="admin-form-actions">
+
+                <button type="submit" class="admin-btn-primary">
+
+                    <i class="bi bi-check-lg"></i>
+
+                    Simpan Perubahan
+
+                </button>
 
 
-        <div class="admin-form-actions">
+                <a href="{{ route('admin.studio-rooms.index') }}" class="admin-btn-secondary">
 
-            <button
-                type="submit"
-                class="admin-btn-primary">
+                    Batal
 
-                <i class="bi bi-check-lg"></i>
+                </a>
 
-                Simpan Perubahan
+            </div>
 
-            </button>
+        </form>
 
-
-            <a
-                href="{{ route('admin.studio-rooms.index') }}"
-                class="admin-btn-secondary">
-
-                Batal
-
-            </a>
-
-        </div>
-
-    </form>
-
-</div>
+    </div>
 
 @endsection

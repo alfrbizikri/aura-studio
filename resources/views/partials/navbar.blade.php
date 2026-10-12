@@ -123,10 +123,13 @@
             </a>
 
             @else
-            <span class="navbar-customer">
+            <a
+                href="{{ route('customer.profile.edit') }}"
+                class="navbar-customer {{ request()->routeIs('customer.profile.*') ? 'active' : '' }}"
+                title="Profil Saya">
                 <i class="bi bi-person-circle"></i>
                 {{ auth()->user()->name }}
-            </span>
+            </a>
 
             <a href="{{ route('customer.bookings.index') }}"
                 class="btn btn-ghost">
