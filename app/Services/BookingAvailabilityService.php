@@ -490,6 +490,15 @@ class BookingAvailabilityService
             return collect();
         }
 
+        $busySchedules = Schedule::query()
+            ->where('branch_id', $branch->id)
+            ->whereDate('schedule_date', $date)
+            ->whereIn('status', [
+                'booked',
+                'blocked',
+            ])
+            ->get();
+
         $slots = collect();
 
         $cursor = $opening->copy();
@@ -533,41 +542,128 @@ class BookingAvailabilityService
                 photographerId: $photographerId
             );
 
-            if ($resolved) {
-                $slots->push([
-                    'date' => $date,
+            /*
+|--------------------------------------------------------------------------
+| Tentukan status slot
+|--------------------------------------------------------------------------
+|
+| Slot tidak lagi dihilangkan ketika tidak tersedia.
+| Slot tetap dikirim ke halaman reservasi agar customer dapat
+| melihat jam yang sudah dibooking / diblokir.
+|
+*/
 
-                    'date_label' => $dateObject
-                        ->locale('id')
-                        ->translatedFormat(
-                            'l, d F Y'
-                        ),
+            $isBlocked = false;
+            $isBooked = false;
 
-                    'start_time' =>
-                        $resolved['start_time'],
+            if (!$resolved) {
+                foreach ($busySchedules as $schedule) {
+                    if (
+                        !$this->overlaps(
+                            $slotStart,
+                            $slotEnd,
+                            $schedule
+                        )
+                    ) {
+                        continue;
+                    }
 
-                    'end_time' =>
-                        $resolved['end_time'],
+                    /*
+                     * Block seluruh service.
+                     */
+                    if (
+                        $schedule->status === 'blocked'
+                        && $schedule->service_id === $service->id
+                        && $schedule->photographer_id === null
+                        && $schedule->studio_room_id === null
+                    ) {
+                        $isBlocked = true;
+                        break;
+                    }
 
-                    'photographer_id' =>
-                        $resolved[
-                            'photographer_id'
-                        ],
+                    /*
+                     * Jika customer memilih fotografer tertentu,
+                     * cek apakah fotografer tersebut diblokir.
+                     */
+                    if (
+                        $schedule->status === 'blocked'
+                        && $photographerId
+                        && $schedule->photographer_id === $photographerId
+                    ) {
+                        $isBlocked = true;
+                        break;
+                    }
 
-                    'photographer_name' =>
-                        $resolved['photographer']
-                                ?->name,
-
-                    'studio_room_id' =>
-                        $resolved[
-                            'studio_room_id'
-                        ],
-
-                    'studio_room_name' =>
-                        $resolved['studio_room']
-                                ?->name,
-                ]);
+                    /*
+                     * Ada booking yang bentrok.
+                     */
+                    if ($schedule->status === 'booked') {
+                        $isBooked = true;
+                    }
+                }
             }
+
+            $status = 'available';
+            $statusLabel = 'Tersedia';
+
+            if (!$resolved) {
+                if ($isBlocked) {
+                    $status = 'blocked';
+                    $statusLabel = 'Tidak Tersedia';
+                } elseif ($isBooked) {
+                    $status = 'booked';
+                    $statusLabel = 'Sudah Dibooking';
+                } else {
+                    $status = 'unavailable';
+                    $statusLabel = 'Tidak Tersedia';
+                }
+            }
+
+            $slots->push([
+                'date' => $date,
+
+                'date_label' => $dateObject
+                    ->locale('id')
+                    ->translatedFormat(
+                        'l, d F Y'
+                    ),
+
+                'start_time' =>
+                    $slotStart->format('H:i'),
+
+                'end_time' =>
+                    $slotEnd->format('H:i'),
+
+                /*
+                 * Status availability untuk frontend.
+                 */
+                'available' => (bool) $resolved,
+
+                'status' => $status,
+
+                'status_label' => $statusLabel,
+
+                /*
+                 * Resource hanya ada jika slot berhasil di-resolve.
+                 */
+                'photographer_id' =>
+                    $resolved['photographer_id']
+                    ?? null,
+
+                'photographer_name' =>
+                    $resolved['photographer']
+                            ?->name
+                    ?? null,
+
+                'studio_room_id' =>
+                    $resolved['studio_room_id']
+                    ?? null,
+
+                'studio_room_name' =>
+                    $resolved['studio_room']
+                            ?->name
+                    ?? null,
+            ]);
 
             $cursor->addMinutes(
                 $intervalMinutes

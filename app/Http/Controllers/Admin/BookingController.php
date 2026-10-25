@@ -44,6 +44,25 @@ class BookingController extends Controller
         );
     }
 
+    public function complete(Booking $booking)
+    {
+        if ($booking->status !== 'confirmed') {
+            return back()->with(
+                'error',
+                'Hanya booking yang telah dikonfirmasi yang dapat ditandai selesai.'
+            );
+        }
+
+        $booking->update([
+            'status' => 'completed',
+        ]);
+
+        return back()->with(
+            'success',
+            'Booking berhasil ditandai selesai. Pelanggan sekarang dapat memberikan rating.'
+        );
+    }
+
     public function cancel(Booking $booking)
     {
         if ($booking->status === 'cancelled') {

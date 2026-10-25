@@ -115,11 +115,19 @@
                             <i class="bi bi-star-fill"></i>
 
                             <strong>
-                                4.9/5
+                                {{ $publishedTestimonialCount > 0
+        ? number_format($averageRating, 1, ',', '.') . '/5'
+        : '—/5'
+                                    }}
                             </strong>
 
                             <span>
-                                Pengalaman fotografi
+                                @if ($publishedTestimonialCount > 0)
+                                    {{ number_format($publishedTestimonialCount, 0, ',', '.') }}
+                                    ulasan pelanggan
+                                @else
+                                    Belum ada ulasan pelanggan
+                                @endif
                             </span>
 
                         </div>
@@ -737,19 +745,19 @@
 
 
     {{-- =====================================================
-    TESTIMONIAL
+    TESTIMONIAL — CAROUSEL HORIZONTAL
     ===================================================== --}}
 
-    @if ($testimonials->isNotEmpty())
+    <section class="home-testimonials">
 
-        <section class="home-testimonials">
+        <div class="container">
 
-            <div class="container">
+            <div class="testimonials-heading-row">
 
                 <div class="home-section-heading">
 
                     <span class="section-eyebrow">
-                        Testimoni
+                        Rating Pelanggan
                     </span>
 
                     <h2>
@@ -757,52 +765,102 @@
                     </h2>
 
                     <p>
-                        Pengalaman pelanggan setelah
-                        menikmati layanan Aura Studio.
+                        @if ($publishedTestimonialCount > 0)
+                            Simak pengalaman dari
+                            {{ number_format($publishedTestimonialCount, 0, ',', '.') }}
+                            ulasan pelanggan Aura Studio.
+                        @else
+                            Pengalaman pelanggan yang telah disetujui
+                            admin akan ditampilkan di sini.
+                        @endif
                     </p>
 
                 </div>
 
-
-                <div class="testimonials-grid">
-
-                    @foreach ($testimonials as $testimonial)
-
-                        <article class="testimonial-card">
-
-                            <div class="testimonial-stars" role="img" aria-label="Rating {{ $testimonial->rating }} dari 5">
-
-                                @for ($i = 1; $i <= 5; $i++)
-
-                                    <i class="bi bi-star{{ $i <= $testimonial->rating ? '-fill' : '' }}"></i>
-
-                                @endfor
-
-                            </div>
-
-
-                            <p>
-                                {{ $testimonial->comment }}
-                            </p>
-
-
-                            <strong>
-
-                                {{ $testimonial->booking->user->name ?? 'Pelanggan Aura Studio' }}
-
-                            </strong>
-
-                        </article>
-
-                    @endforeach
-
-                </div>
+                <a href="{{ route('testimonials.index') }}" class="testimonials-all-link">
+                    Lihat Semua Ulasan
+                    <i class="bi bi-arrow-right"></i>
+                </a>
 
             </div>
 
-        </section>
+            @if ($testimonials->isNotEmpty())
 
-    @endif
+                <div class="testimonials-marquee" role="region" aria-label="Ulasan pelanggan yang bergerak horizontal"
+                    tabindex="0">
+
+                    <div class="testimonials-track" style="--review-duration: {{ max(20, $testimonials->count() * 5) }}s;">
+
+                        {{-- Kelompok pertama --}}
+                        @for ($copy = 0; $copy < 2; $copy++)
+
+                            <div class="testimonials-track-group" @if ($copy === 1) aria-hidden="true" @endif>
+
+                                @foreach ($testimonials as $testimonial)
+
+                                    <article class="testimonial-card">
+
+                                        {{-- BINTANG RATING --}}
+                                        <div class="testimonial-stars" role="img" aria-label="Rating {{ $testimonial->rating }} dari 5">
+
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star{{ $i <= $testimonial->rating ? '-fill' : '' }}"></i>
+                                            @endfor
+
+                                            <span class="testimonial-rating-number">
+                                                {{ $testimonial->rating }}/5
+                                            </span>
+
+                                        </div>
+
+                                        {{-- KOMENTAR --}}
+                                        <p>
+                                            {{ \Illuminate\Support\Str::limit($testimonial->comment, 190) }}
+                                        </p>
+
+                                        {{-- IDENTITAS PELANGGAN --}}
+                                        <strong>
+                                            {{ $testimonial->booking?->user?->name ?? 'Pelanggan Aura Studio' }}
+                                        </strong>
+
+                                        <span class="testimonial-package">
+                                            {{ $testimonial->booking?->package?->name ?? 'Layanan Aura Studio' }}
+                                        </span>
+
+                                    </article>
+
+                                @endforeach
+
+                            </div>
+
+                        @endfor
+
+                    </div>
+
+                </div>
+
+            @else
+
+                <div class="testimonials-empty">
+
+                    <i class="bi bi-chat-square-heart"></i>
+
+                    <h3>
+                        Belum Ada Ulasan yang Dipublikasikan
+                    </h3>
+
+                    <p>
+                        Ulasan pelanggan akan muncul di sini setelah
+                        disetujui melalui Manajemen Ulasan.
+                    </p>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </section>
 
 
 

@@ -13,22 +13,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-    >
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
     {{-- BOOTSTRAP ICONS --}}
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     {{-- CSS DASAR ADMIN --}}
-    <link
-        rel="stylesheet"
-        href="{{ asset('css/admin-branches.css') }}"
-    >
+    <link rel="stylesheet" href="{{ asset('css/admin-branches.css') }}">
 
     {{-- CSS TAMBAHAN PER HALAMAN --}}
     @stack('styles')
@@ -36,18 +28,12 @@
 
 <body>
 
-    <div
-        class="admin-wrapper"
-        id="adminWrapper"
-    >
+    <div class="admin-wrapper" id="adminWrapper">
 
         {{-- =========================================================
         SIDEBAR
         ========================================================== --}}
-        <aside
-            class="admin-sidebar"
-            id="adminSidebar"
-        >
+        <aside class="admin-sidebar" id="adminSidebar">
 
             {{-- BRAND --}}
             <div class="admin-brand">
@@ -80,10 +66,8 @@
                 </small>
 
                 {{-- CABANG --}}
-                <a
-                    href="{{ route('admin.branches.index') }}"
-                    class="{{ request()->routeIs('admin.branches.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.branches.index') }}"
+                    class="{{ request()->routeIs('admin.branches.*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i>
 
                     Kelola Cabang
@@ -91,10 +75,8 @@
 
 
                 {{-- LAYANAN --}}
-                <a
-                    href="{{ route('admin.services.index') }}"
-                    class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.services.index') }}"
+                    class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
                     <i class="bi bi-camera"></i>
 
                     Kelola Layanan
@@ -102,10 +84,8 @@
 
 
                 {{-- PAKET --}}
-                <a
-                    href="{{ route('admin.packages.index') }}"
-                    class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.packages.index') }}"
+                    class="{{ request()->routeIs('admin.packages.*') ? 'active' : '' }}">
                     <i class="bi bi-box"></i>
 
                     Kelola Paket
@@ -113,10 +93,8 @@
 
 
                 {{-- STUDIO ROOM --}}
-                <a
-                    href="{{ route('admin.studio-rooms.index') }}"
-                    class="{{ request()->routeIs('admin.studio-rooms.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.studio-rooms.index') }}"
+                    class="{{ request()->routeIs('admin.studio-rooms.*') ? 'active' : '' }}">
                     <i class="bi bi-door-open"></i>
 
                     Kelola Studio Room
@@ -124,10 +102,8 @@
 
 
                 {{-- FOTOGRAFER --}}
-                <a
-                    href="{{ route('admin.photographers.index') }}"
-                    class="{{ request()->routeIs('admin.photographers.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.photographers.index') }}"
+                    class="{{ request()->routeIs('admin.photographers.*') ? 'active' : '' }}">
                     <i class="bi bi-person-badge"></i>
 
                     Kelola Fotografer
@@ -135,10 +111,8 @@
 
 
                 {{-- GALERI --}}
-                <a
-                    href="{{ route('admin.galleries.index') }}"
-                    class="{{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.galleries.index') }}"
+                    class="{{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
                     <i class="bi bi-images"></i>
 
                     Kelola Galeri
@@ -146,10 +120,8 @@
 
 
                 {{-- JADWAL --}}
-                <a
-                    href="{{ route('admin.schedules.index') }}"
-                    class="{{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.schedules.index') }}"
+                    class="{{ request()->routeIs('admin.schedules.*') ? 'active' : '' }}">
                     <i class="bi bi-calendar3"></i>
 
                     Kelola Jadwal
@@ -164,10 +136,8 @@
                 </small>
 
                 {{-- BOOKING --}}
-                <a
-                    href="{{ route('admin.bookings.index') }}"
-                    class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.bookings.index') }}"
+                    class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">
                     <i class="bi bi-journal-check"></i>
 
                     Daftar Booking
@@ -175,10 +145,8 @@
 
 
                 {{-- PEMBAYARAN --}}
-                <a
-                    href="{{ route('admin.payments.index') }}"
-                    class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.payments.index') }}"
+                    class="{{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
                     <i class="bi bi-credit-card"></i>
 
                     Verifikasi Pembayaran
@@ -193,13 +161,18 @@
                 </small>
 
                 {{-- CUSTOMER --}}
-                <a
-                    href="{{ route('admin.customers.index') }}"
-                    class="{{ request()->routeIs('admin.customers.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.customers.index') }}"
+                    class="{{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i>
 
                     Kelola Customer
+                </a>
+
+                {{-- MANAJEMEN ULASAN --}}
+                <a href="{{ route('admin.testimonials.index') }}"
+                    class="{{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
+                    <i class="bi bi-star-half"></i>
+                    Manajemen Ulasan
                 </a>
 
 
@@ -211,10 +184,8 @@
                 </small>
 
                 {{-- LAPORAN --}}
-                <a
-                    href="{{ route('admin.reports.index') }}"
-                    class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
-                >
+                <a href="{{ route('admin.reports.index') }}"
+                    class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-line"></i>
 
                     Laporan
@@ -224,10 +195,7 @@
 
 
             {{-- KEMBALI KE WEBSITE --}}
-            <a
-                href="{{ route('home') }}"
-                class="admin-back-site"
-            >
+            <a href="{{ route('home') }}" class="admin-back-site">
                 <i class="bi bi-arrow-left"></i>
 
                 Kembali ke Website
@@ -235,17 +203,10 @@
 
 
             {{-- LOGOUT --}}
-            <form
-                action="{{ route('admin.logout') }}"
-                method="POST"
-                class="admin-logout-form"
-            >
+            <form action="{{ route('admin.logout') }}" method="POST" class="admin-logout-form">
                 @csrf
 
-                <button
-                    type="submit"
-                    class="admin-logout-btn"
-                >
+                <button type="submit" class="admin-logout-btn">
                     <i class="bi bi-box-arrow-right"></i>
 
                     Logout Admin
@@ -256,10 +217,7 @@
 
 
         {{-- OVERLAY MOBILE --}}
-        <div
-            class="admin-overlay"
-            id="adminOverlay"
-        ></div>
+        <div class="admin-overlay" id="adminOverlay"></div>
 
 
         {{-- =========================================================
@@ -272,14 +230,8 @@
 
                 <div class="admin-topbar-left">
 
-                    <button
-                        type="button"
-                        class="admin-menu-toggle"
-                        id="adminMenuToggle"
-                        aria-label="Buka menu"
-                        aria-controls="adminSidebar"
-                        aria-expanded="false"
-                    >
+                    <button type="button" class="admin-menu-toggle" id="adminMenuToggle" aria-label="Buka menu"
+                        aria-controls="adminSidebar" aria-expanded="false">
                         <i class="bi bi-list"></i>
                     </button>
 

@@ -5,791 +5,671 @@
 @php
     $currentStep = 3;
 
-    $selectedStartTime =
-        old(
-            'start_time',
-            (
-                ($draft['schedule_date'] ?? null)
-                === $selectedDate
-            )
+    $selectedStartTime = old(
+        'start_time',
+        (
+            ($draft['schedule_date'] ?? null) === $selectedDate
+        )
             ? ($draft['start_time'] ?? null)
             : null
-        );
+    );
 @endphp
 
 
 @section('content')
 
-    <section class="booking-page">
+<section class="booking-page">
 
-        <div class="booking-page-heading">
+    {{-- =========================================================
+    HEADING
+    ========================================================== --}}
+    <div class="booking-page-heading">
 
-            <span class="booking-eyebrow">
-                LANGKAH KETIGA
+        <span class="booking-eyebrow">
+            LANGKAH KETIGA
+        </span>
+
+        <h1>
+            Pilih tanggal dan
+            <em>sesi fotografi.</em>
+        </h1>
+
+        <p>
+            Pilih waktu yang tersedia berdasarkan
+            jam operasional cabang dan durasi paketmu.
+        </p>
+
+    </div>
+
+
+    {{-- =========================================================
+    VALIDATION ERROR
+    ========================================================== --}}
+    @if ($errors->any())
+
+        <div class="booking-alert booking-alert-error">
+
+            <i class="bi bi-exclamation-circle"></i>
+
+            <div>
+
+                <strong>
+                    Jadwal belum dapat dipilih.
+                </strong>
+
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+
+            </div>
+
+        </div>
+
+    @endif
+
+
+    {{-- =========================================================
+    SESSION ERROR
+    ========================================================== --}}
+    @if (session('error'))
+
+        <div class="booking-alert booking-alert-error">
+
+            <i class="bi bi-exclamation-circle"></i>
+
+            <div>
+
+                <strong>
+                    Jadwal tidak tersedia.
+                </strong>
+
+                <p>
+                    {{ session('error') }}
+                </p>
+
+            </div>
+
+        </div>
+
+    @endif
+
+
+    {{-- =========================================================
+    CONTEXT
+    ========================================================== --}}
+    <div class="schedule-context-card">
+
+        <div class="schedule-context-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+
+
+        <div class="schedule-context-list">
+
+            <span>
+                Paket
+
+                <strong>
+                    {{ $package->name }}
+                </strong>
             </span>
 
-            <h1>
-                Pilih tanggal dan
-                <em>sesi fotografi.</em>
-            </h1>
 
-            <p>
-                Pilih waktu yang tersedia berdasarkan
-                jam operasional cabang dan durasi paketmu.
-            </p>
+            <span>
+                Durasi
 
-        </div>
+                <strong>
+                    {{ $package->duration_minutes }} menit
+                </strong>
+            </span>
 
 
-        {{-- VALIDATION ERROR --}}
-        @if ($errors->any())
+            <span>
+                Cabang
 
-            <div class="booking-alert booking-alert-error">
-
-                <i class="bi bi-exclamation-circle"></i>
-
-                <div>
-
-                    <strong>
-                        Jadwal belum dapat dipilih.
-                    </strong>
-
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-
-                </div>
-
-            </div>
-
-        @endif
+                <strong>
+                    {{ $branch->name }}
+                </strong>
+            </span>
 
 
-        {{-- SESSION ERROR --}}
-        @if (session('error'))
+            <span>
+                Jam Operasional
 
-            <div class="booking-alert booking-alert-error">
+                <strong>
+                    {{
+                        \Carbon\Carbon::parse(
+                            $branch->opening_time
+                        )->format('H:i')
+                    }}
 
-                <i class="bi bi-exclamation-circle"></i>
+                    –
 
-                <div>
-                    <strong>
-                        Jadwal tidak tersedia.
-                    </strong>
+                    {{
+                        \Carbon\Carbon::parse(
+                            $branch->closing_time
+                        )->format('H:i')
+                    }}
 
-                    <p>
-                        {{ session('error') }}
-                    </p>
-                </div>
-
-            </div>
-
-        @endif
-
-
-        {{-- =====================================================
-        CONTEXT
-        ====================================================== --}}
-        <div class="schedule-context-card">
-
-            <div class="schedule-context-icon">
-                <i class="bi bi-calendar-check"></i>
-            </div>
+                    WIB
+                </strong>
+            </span>
 
 
-            <div class="schedule-context-list">
+            <span>
+                Fotografer
 
-                <span>
-                    Paket
+                <strong>
 
-                    <strong>
-                        {{ $package->name }}
-                    </strong>
-                </span>
+                    @if ($photographer)
 
+                        {{ $photographer->name }}
 
-                <span>
-                    Durasi
+                    @elseif ($service->requires_photographer)
 
-                    <strong>
-                        {{ $package->duration_minutes }}
-                        menit
-                    </strong>
-                </span>
+                        Dipilihkan otomatis
 
+                    @else
 
-                <span>
-                    Cabang
+                        Tidak diperlukan
 
-                    <strong>
-                        {{ $branch->name }}
-                    </strong>
-                </span>
+                    @endif
 
-
-                <span>
-                    Jam Operasional
-
-                    <strong>
-                        {{ \Carbon\Carbon::parse(
-        $branch->opening_time
-    )->format('H:i') }}
-
-                        –
-
-                        {{ \Carbon\Carbon::parse(
-        $branch->closing_time
-    )->format('H:i') }}
-                        WIB
-                    </strong>
-                </span>
-
-
-                <span>
-                    Fotografer
-
-                    <strong>
-
-                        @if ($photographer)
-
-                            {{ $photographer->name }}
-
-                        @elseif ($service->requires_photographer)
-
-                            Dipilihkan otomatis
-
-                        @else
-
-                            Tidak diperlukan
-
-                        @endif
-
-                    </strong>
-                </span>
-
-            </div>
-
-
-            <a href="{{ route(
-        'customer.bookings.photographer'
-    ) }}" class="schedule-change-link">
-                Ubah Pilihan
-
-                <i class="bi bi-arrow-right"></i>
-            </a>
+                </strong>
+            </span>
 
         </div>
 
 
-        {{-- =====================================================
-        FORM
-        ====================================================== --}}
-        <form action="{{ route(
-        'customer.bookings.schedule.store'
-    ) }}" method="POST" id="scheduleForm">
+        <a
+            href="{{ route('customer.bookings.photographer') }}"
+            class="schedule-change-link"
+        >
+            Ubah Pilihan
 
-            @csrf
+            <i class="bi bi-arrow-right"></i>
+        </a>
 
-
-            {{-- SLOT YANG DIPILIH --}}
-            <input type="hidden" name="schedule_date" id="schedule_date" value="{{ $selectedDate }}">
-
-            <input type="hidden" name="start_time" id="start_time" value="{{ $selectedStartTime }}">
+    </div>
 
 
-            <div class="booking-step-layout">
+    {{-- =========================================================
+    FORM
+    ========================================================== --}}
+    <form
+        action="{{ route('customer.bookings.schedule.store') }}"
+        method="POST"
+        id="scheduleForm"
+    >
 
-                <div>
+        @csrf
 
 
-                    {{-- =================================================
-                    AVAILABLE SLOT
-                    ================================================== --}}
-                    @if ($availableSlots->isNotEmpty())
+        {{-- SLOT YANG DIPILIH --}}
+        <input
+            type="hidden"
+            name="schedule_date"
+            id="schedule_date"
+            value="{{ $selectedDate }}"
+        >
 
-                                <div class="schedule-picker-card">
+        <input
+            type="hidden"
+            name="start_time"
+            id="start_time"
+            value="{{ $selectedStartTime }}"
+        >
 
 
-                                    {{-- DATE COLUMN --}}
-                                    <div class="schedule-date-column">
+        <div class="booking-step-layout">
 
-                                        <span class="schedule-mini-eyebrow">
-                                            01
+            <div>
+
+                {{-- =================================================
+                SLOT JADWAL
+                ================================================== --}}
+                @if ($availableSlots->isNotEmpty())
+
+                    <div class="schedule-picker-card">
+
+
+                        {{-- =========================================
+                        DATE COLUMN
+                        ========================================== --}}
+                        <div class="schedule-date-column">
+
+                            <span class="schedule-mini-eyebrow">
+                                01
+                            </span>
+
+                            <h2>
+                                Pilih Tanggal
+                            </h2>
+
+                            <p>
+                                Pilih tanggal reservasi hingga
+                                satu tahun ke depan.
+                            </p>
+
+
+                            <div class="booking-calendar">
+
+
+                                {{-- MONTH HEADER --}}
+                                <div class="booking-calendar-header">
+
+                                    @if ($previousMonthDate)
+
+                                        <a
+                                            href="{{
+                                                route(
+                                                    'customer.bookings.schedule',
+                                                    [
+                                                        'date' =>
+                                                            $previousMonthDate
+                                                    ]
+                                                )
+                                            }}"
+                                            class="booking-calendar-nav"
+                                            aria-label="Bulan sebelumnya"
+                                        >
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+
+                                    @else
+
+                                        <span
+                                            class="
+                                                booking-calendar-nav
+                                                disabled
+                                            "
+                                        >
+                                            <i class="bi bi-chevron-left"></i>
                                         </span>
 
-                                        <h2>
-                                            Pilih Tanggal
-                                        </h2>
-
-                                        <p>
-                                            Pilih tanggal reservasi hingga
-                                            satu tahun ke depan.
-                                        </p>
+                                    @endif
 
 
-                                        <div class="booking-calendar">
-
-                                            {{-- MONTH HEADER --}}
-                                            <div class="booking-calendar-header">
-
-                                                @if ($previousMonthDate)
-
-                                                                            <a href="{{ route(
-                                                        'customer.bookings.schedule',
-                                                        [
-                                                            'date' =>
-                                                                $previousMonthDate
-                                                        ]
-                                                    ) }}" class="booking-calendar-nav" aria-label="Bulan sebelumnya">
-                                                                                <i class="bi bi-chevron-left"></i>
-                                                                            </a>
-
-                                                @else
-
-                                                    <span class="
-                                                                    booking-calendar-nav
-                                                                    disabled
-                                                                ">
-                                                        <i class="bi bi-chevron-left"></i>
-                                                    </span>
-
-                                                @endif
-
-
-                                                <strong>
-                                                    {{ $displayMonth
-                        ->locale('id')
-                        ->translatedFormat(
-                            'F Y'
-                        ) }}
-                                                </strong>
-
-
-                                                @if ($nextMonthDate)
-
-                                                                            <a href="{{ route(
-                                                        'customer.bookings.schedule',
-                                                        [
-                                                            'date' =>
-                                                                $nextMonthDate
-                                                        ]
-                                                    ) }}" class="booking-calendar-nav" aria-label="Bulan berikutnya">
-                                                                                <i class="bi bi-chevron-right"></i>
-                                                                            </a>
-
-                                                @else
-
-                                                    <span class="
-                                                                    booking-calendar-nav
-                                                                    disabled
-                                                                ">
-                                                        <i class="bi bi-chevron-right"></i>
-                                                    </span>
-
-                                                @endif
-
-                                            </div>
-
-
-                                            {{-- WEEKDAY --}}
-                                            <div class="booking-calendar-weekdays">
-
-                                                <span>Sen</span>
-                                                <span>Sel</span>
-                                                <span>Rab</span>
-                                                <span>Kam</span>
-                                                <span>Jum</span>
-                                                <span>Sab</span>
-                                                <span>Min</span>
-
-                                            </div>
-
-
-                                            {{-- DAYS --}}
-                                            <div class="booking-calendar-days">
-
-                                                @foreach ($calendarDays as $day)
-
-                                                    @php
-                                                        $dayString =
-                                                            $day->toDateString();
-
-                                                        $isCurrentMonth =
-                                                            $day->month
-                                                            === $displayMonth->month
-                                                            &&
-                                                            $day->year
-                                                            === $displayMonth->year;
-
-                                                        $isOutsideRange =
-                                                            $day->lt($minDate)
-                                                            || $day->gt($maxDate);
-
-                                                        $isDisabled =
-                                                            !$isCurrentMonth
-                                                            || $isOutsideRange;
-
-                                                        $isSelected =
-                                                            $dayString
-                                                            === $selectedDate;
-                                                    @endphp
-
-
-                                                    @if ($isDisabled)
-
-                                                        <span class="
-                                                                            booking-calendar-day
-                                                                            disabled
-                                                                        ">
-                                                            @if ($isCurrentMonth)
-                                                                {{ $day->format('d') }}
-                                                            @endif
-                                                        </span>
-
-                                                    @else
-
-                                                                            <a href="{{ route(
-                                                            'customer.bookings.schedule',
-                                                            [
-                                                                'date' =>
-                                                                    $dayString
-                                                            ]
-                                                        ) }}" class="
-                                                                                                booking-calendar-day
-
-                                                                                                {{ $isSelected
-                                                            ? 'selected'
-                                                            : '' }}
-
-                                                                                                {{ $day->isToday()
-                                                            ? 'today'
-                                                            : '' }}
-                                                                                            ">
-
-                                                                                {{ $day->format('d') }}
-
-                                                                            </a>
-
-                                                    @endif
-
-                                                @endforeach
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="booking-calendar-range">
-
-                                            <i class="bi bi-calendar-range"></i>
-
-                                            <span>
-                                                Booking tersedia hingga
-                                                {{ $maxDate
-                        ->locale('id')
-                        ->translatedFormat(
-                            'd F Y'
-                        ) }}.
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    {{-- =========================================
-                                    SESSION COLUMN
-                                    ========================================== --}}
-                                    <div class="schedule-session-column">
-
-                                        <span class="schedule-mini-eyebrow">
-                                            02
-                                        </span>
-
-                                        <h2>
-                                            Pilih Waktu
-                                        </h2>
-
-                                        <p>
-                                            Waktu dibuat otomatis dari jam
-                                            operasional studio dan durasi paket.
-                                        </p>
-
-
-                                        <div class="schedule-selected-date">
-
-                                            <i class="bi bi-calendar3"></i>
-
-                                            {{ $selectedDateObject
+                                    <strong>
+                                        {{
+                                            $displayMonth
                                                 ->locale('id')
-                                                ->translatedFormat(
-                                                'l, d F Y'
-                                            ) }}
-
-                                        </div>
+                                                ->translatedFormat('F Y')
+                                        }}
+                                    </strong>
 
 
-                                        @if ($availableSlots->isNotEmpty())
+                                    @if ($nextMonthDate)
 
-                                            <div class="schedule-session-grid">
+                                        <a
+                                            href="{{
+                                                route(
+                                                    'customer.bookings.schedule',
+                                                    [
+                                                        'date' =>
+                                                            $nextMonthDate
+                                                    ]
+                                                )
+                                            }}"
+                                            class="booking-calendar-nav"
+                                            aria-label="Bulan berikutnya"
+                                        >
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
 
-                                                @foreach ($availableSlots as $slot)
+                                    @else
 
-                                                                @php
-                                                                    $isSelected =
-                                                                        $selectedStartTime
-                                                                        === $slot['start_time'];
-                                                                @endphp
+                                        <span
+                                            class="
+                                                booking-calendar-nav
+                                                disabled
+                                            "
+                                        >
+                                            <i class="bi bi-chevron-right"></i>
+                                        </span>
 
-
-                                                                <button type="button" class="
-                                                        schedule-session-choice
-                                                        {{ $isSelected
-                                                    ? 'selected'
-                                                    : '' }}
-                                                    " data-date="{{ $slot['date'] }}" data-date-label="{{ $slot['date_label'] }}"
-                                                                    data-start="{{ $slot['start_time'] }}" data-end="{{ $slot['end_time'] }}"
-                                                                    data-photographer="{{ $slot['photographer_name'] ?? 'Tidak diperlukan' }}"
-                                                                    data-room="{{ $slot['studio_room_name'] ?? 'Tidak diperlukan' }}">
-
-                                                                    <strong>
-                                                                        {{ $slot['start_time'] }}
-                                                                    </strong>
-
-                                                                    <span>
-                                                                        –
-                                                                        {{ $slot['end_time'] }}
-                                                                    </span>
-
-                                                                </button>
-
-                                                @endforeach
-
-                                            </div>
-
-                                        @else
-
-                                            <div class="schedule-day-empty">
-
-                                                <i class="bi bi-calendar-x"></i>
-
-                                                <strong>
-                                                    Tidak ada waktu tersedia
-                                                </strong>
-
-                                                <p>
-                                                    Coba pilih tanggal lain
-                                                    pada kalender.
-                                                </p>
-
-                                            </div>
-
-                                        @endif
-
-
-                                        {{-- SELECTED INFORMATION --}}
-                                        <div class="schedule-selection-info" id="scheduleSelectionInfo" hidden>
-
-                                            <span class="schedule-selection-check">
-                                                <i class="bi bi-check-lg"></i>
-                                            </span>
-
-
-                                            <div>
-
-                                                <small>
-                                                    SESI DIPILIH
-                                                </small>
-
-                                                <strong id="selectedScheduleText">
-                                                    —
-                                                </strong>
-
-                                                <p id="selectedScheduleMeta">
-                                                    —
-                                                </p>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
+                                    @endif
 
                                 </div>
 
 
-                    @else
+                                {{-- WEEKDAY --}}
+                                <div class="booking-calendar-weekdays">
 
-                                    {{-- =============================================
-                                    EMPTY
-                                    ============================================== --}}
-                                    <div class="
-                                                booking-empty-state
-                                                schedule-empty
-                                            ">
+                                    <span>Sen</span>
+                                    <span>Sel</span>
+                                    <span>Rab</span>
+                                    <span>Kam</span>
+                                    <span>Jum</span>
+                                    <span>Sab</span>
+                                    <span>Min</span>
 
-                                        <i class="bi bi-calendar-x"></i>
-
-                                        <h3>
-                                            Belum ada waktu tersedia
-                                        </h3>
-
-                                        <p>
-                                            Tidak ditemukan waktu yang sesuai
-                                            dengan jam operasional, durasi paket,
-                                            dan resource yang tersedia.
-                                        </p>
+                                </div>
 
 
-                                        <a href="{{ route(
-                            'customer.bookings.photographer'
-                        ) }}" class="booking-back-link">
+                                {{-- DAYS --}}
+                                <div class="booking-calendar-days">
 
-                                            <i class="bi bi-arrow-left"></i>
+                                    @foreach ($calendarDays as $day)
 
-                                            Kembali Pilih Fotografer
+                                        @php
+                                            $dayString =
+                                                $day->toDateString();
 
-                                        </a>
+                                            $isCurrentMonth =
+                                                $day->month
+                                                    === $displayMonth->month
+                                                &&
+                                                $day->year
+                                                    === $displayMonth->year;
 
-                                    </div>
+                                            $isOutsideRange =
+                                                $day->lt($minDate)
+                                                || $day->gt($maxDate);
 
-                    @endif
+                                            $isDisabled =
+                                                !$isCurrentMonth
+                                                || $isOutsideRange;
 
-
-                    {{-- =================================================
-                    ROOM INFORMATION
-                    ================================================== --}}
-                    @if ($service->requires_room)
-
-                        <div class="schedule-room-info">
-
-                            <span>
-                                <i class="bi bi-door-open"></i>
-                            </span>
+                                            $isSelected =
+                                                $dayString
+                                                    === $selectedDate;
+                                        @endphp
 
 
-                            <div>
+                                        @if ($isDisabled)
 
-                                <strong>
-                                    Penentuan Ruangan Otomatis
-                                </strong>
+                                            <span
+                                                class="
+                                                    booking-calendar-day
+                                                    disabled
+                                                "
+                                            >
+                                                @if ($isCurrentMonth)
+                                                    {{ $day->format('d') }}
+                                                @endif
+                                            </span>
 
-                                <p>
-                                    Kamu tidak perlu memilih studio room
-                                    secara manual. Sistem akan memilih
-                                    ruangan aktif yang tidak sedang
-                                    digunakan pada waktu tersebut.
-                                </p>
+                                        @else
+
+                                            <a
+                                                href="{{
+                                                    route(
+                                                        'customer.bookings.schedule',
+                                                        [
+                                                            'date' =>
+                                                                $dayString
+                                                        ]
+                                                    )
+                                                }}"
+                                                class="
+                                                    booking-calendar-day
+
+                                                    {{
+                                                        $isSelected
+                                                            ? 'selected'
+                                                            : ''
+                                                    }}
+
+                                                    {{
+                                                        $day->isToday()
+                                                            ? 'today'
+                                                            : ''
+                                                    }}
+                                                "
+                                            >
+                                                {{ $day->format('d') }}
+                                            </a>
+
+                                        @endif
+
+                                    @endforeach
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="booking-calendar-range">
+
+                                <i class="bi bi-calendar-range"></i>
+
+                                <span>
+                                    Booking tersedia hingga
+
+                                    {{
+                                        $maxDate
+                                            ->locale('id')
+                                            ->translatedFormat('d F Y')
+                                    }}.
+                                </span>
 
                             </div>
 
                         </div>
 
-                    @endif
 
+                        {{-- =========================================
+                        SESSION COLUMN
+                        ========================================== --}}
+                        <div class="schedule-session-column">
 
-                    {{-- AUTO PHOTOGRAPHER INFORMATION --}}
-                    @if (
-                            $service->requires_photographer
-                            && !$photographer
-                        )
-
-                        <div class="schedule-room-info">
-
-                            <span>
-                                <i class="bi bi-person-check"></i>
+                            <span class="schedule-mini-eyebrow">
+                                02
                             </span>
 
+                            <h2>
+                                Pilih Waktu
+                            </h2>
 
-                            <div>
+                            <p>
+                                Slot yang sudah dipesan tetap ditampilkan
+                                agar kamu dapat melihat jadwal reservasi studio.
+                            </p>
 
-                                <strong>
-                                    Fotografer Dipilihkan Otomatis
-                                </strong>
 
-                                <p>
-                                    Sistem akan menentukan fotografer aktif
-                                    yang tersedia pada sesi yang kamu pilih.
-                                </p>
+                            <div class="schedule-selected-date">
+
+                                <i class="bi bi-calendar3"></i>
+
+                                {{
+                                    $selectedDateObject
+                                        ->locale('id')
+                                        ->translatedFormat(
+                                            'l, d F Y'
+                                        )
+                                }}
+
+                            </div>
+
+
+                            {{-- =====================================
+                            SESSION GRID
+                            ====================================== --}}
+                            <div class="schedule-session-grid">
+
+                                @foreach ($availableSlots as $slot)
+
+                                    @php
+                                        $isAvailable =
+                                            (bool) (
+                                                $slot['available']
+                                                ?? false
+                                            );
+
+                                        $slotStatus =
+                                            $slot['status']
+                                            ?? (
+                                                $isAvailable
+                                                    ? 'available'
+                                                    : 'unavailable'
+                                            );
+
+                                        $statusLabel =
+                                            $slot['status_label']
+                                            ?? (
+                                                $isAvailable
+                                                    ? 'Tersedia'
+                                                    : 'Tidak Tersedia'
+                                            );
+
+                                        $isSelected =
+                                            $isAvailable
+                                            &&
+                                            $selectedStartTime
+                                                === $slot['start_time'];
+                                    @endphp
+
+
+                                    <button
+                                        type="button"
+
+                                        class="
+                                            schedule-session-choice
+                                            schedule-session-choice-{{ $slotStatus }}
+
+                                            {{
+                                                $isSelected
+                                                    ? 'selected'
+                                                    : ''
+                                            }}
+                                        "
+
+                                        data-date="{{ $slot['date'] }}"
+
+                                        data-date-label="{{
+                                            $slot['date_label']
+                                        }}"
+
+                                        data-start="{{
+                                            $slot['start_time']
+                                        }}"
+
+                                        data-end="{{
+                                            $slot['end_time']
+                                        }}"
+
+                                        data-available="{{
+                                            $isAvailable
+                                                ? '1'
+                                                : '0'
+                                        }}"
+
+                                        data-status="{{
+                                            $slotStatus
+                                        }}"
+
+                                        data-photographer="{{
+                                            $slot[
+                                                'photographer_name'
+                                            ]
+                                            ?? 'Tidak diperlukan'
+                                        }}"
+
+                                        data-room="{{
+                                            $slot[
+                                                'studio_room_name'
+                                            ]
+                                            ?? 'Tidak diperlukan'
+                                        }}"
+
+                                        @disabled(!$isAvailable)
+                                    >
+
+                                        <strong>
+                                            {{ $slot['start_time'] }}
+                                        </strong>
+
+                                        <span>
+                                            –
+                                            {{ $slot['end_time'] }}
+                                        </span>
+
+                                        <small
+                                            class="
+                                                schedule-session-status
+                                            "
+                                        >
+                                            {{ $statusLabel }}
+                                        </small>
+
+                                    </button>
+
+                                @endforeach
+
+                            </div>
+
+
+                            {{-- SELECTED INFORMATION --}}
+                            <div
+                                class="schedule-selection-info"
+                                id="scheduleSelectionInfo"
+                                hidden
+                            >
+
+                                <span class="schedule-selection-check">
+                                    <i class="bi bi-check-lg"></i>
+                                </span>
+
+
+                                <div>
+
+                                    <small>
+                                        SESI DIPILIH
+                                    </small>
+
+                                    <strong id="selectedScheduleText">
+                                        —
+                                    </strong>
+
+                                    <p id="selectedScheduleMeta">
+                                        —
+                                    </p>
+
+                                </div>
 
                             </div>
 
                         </div>
 
-                    @endif
-
-                </div>
+                    </div>
 
 
+                @else
 
-                {{-- =====================================================
-                SUMMARY
-                ====================================================== --}}
-                <aside class="booking-summary">
+                    {{-- =============================================
+                    EMPTY
+                    ============================================== --}}
+                    <div
+                        class="
+                            booking-empty-state
+                            schedule-empty
+                        "
+                    >
 
-                    <div class="booking-summary-card">
-
-                        <span class="booking-summary-eyebrow">
-                            RINGKASAN BOOKING
-                        </span>
-
+                        <i class="bi bi-calendar-x"></i>
 
                         <h3>
-                            Reservasimu
+                            Belum ada jadwal
                         </h3>
 
-
-                        <div class="booking-summary-list">
-
-                            <div class="summary-row">
-
-                                <span>
-                                    Layanan
-                                </span>
-
-                                <strong>
-                                    {{ $service->name }}
-                                </strong>
-
-                            </div>
+                        <p>
+                            Tidak ditemukan jadwal yang sesuai dengan
+                            jam operasional dan durasi paket pada
+                            tanggal tersebut.
+                        </p>
 
 
-                            <div class="summary-row">
-
-                                <span>
-                                    Cabang
-                                </span>
-
-                                <strong>
-                                    {{ $branch->name }}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="summary-row">
-
-                                <span>
-                                    Paket
-                                </span>
-
-                                <strong>
-                                    {{ $package->name }}
-                                </strong>
-
-                            </div>
-
-
-                            <div class="summary-row">
-
-                                <span>
-                                    Durasi
-                                </span>
-
-                                <strong>
-                                    {{ $package->duration_minutes }}
-                                    menit
-                                </strong>
-
-                            </div>
-
-
-                            <div class="summary-row">
-
-                                <span>
-                                    Fotografer
-                                </span>
-
-                                <strong id="summarySchedulePhotographer">
-
-                                    @if ($photographer)
-
-                                        {{ $photographer->name }}
-
-                                    @elseif (
-                                            $service->requires_photographer
-                                        )
-
-                                        Menyesuaikan sesi
-
-                                    @else
-
-                                        Tidak diperlukan
-
-                                    @endif
-
-                                </strong>
-
-                            </div>
-
-                        </div>
-
-
-                        {{-- SELECTED SUMMARY --}}
-                        <div class="schedule-summary-selected" id="scheduleSummarySelected" hidden>
-
-                            <small>
-                                JADWAL TERPILIH
-                            </small>
-
-                            <strong id="summaryScheduleDate">
-                                —
-                            </strong>
-
-                            <span id="summaryScheduleTime">
-                                —
-                            </span>
-
-
-                            @if ($service->requires_room)
-
-                                <p>
-
-                                    <i class="bi bi-door-open"></i>
-
-                                    <span id="summaryScheduleRoom">
-                                        Ruangan otomatis
-                                    </span>
-
-                                </p>
-
-                            @endif
-
-                        </div>
-
-
-                        <div class="summary-total">
-
-                            <span>
-                                Total Paket
-                            </span>
-
-                            <strong>
-                                Rp {{ number_format(
-        $package->price,
-        0,
-        ',',
-        '.'
-    ) }}
-                            </strong>
-
-                        </div>
-
-
-                        <button type="submit" class="booking-next-button" id="scheduleContinueButton" disabled>
-
-                            Lanjut Isi Detail
-
-                            <i class="bi bi-arrow-right"></i>
-
-                        </button>
-
-
-                        <a href="{{ route(
-        'customer.bookings.photographer'
-    ) }}" class="booking-back-link">
+                        <a
+                            href="{{
+                                route(
+                                    'customer.bookings.photographer'
+                                )
+                            }}"
+                            class="booking-back-link"
+                        >
 
                             <i class="bi bi-arrow-left"></i>
 
@@ -799,13 +679,273 @@
 
                     </div>
 
-                </aside>
+                @endif
+
+
+                {{-- =================================================
+                ROOM INFORMATION
+                ================================================== --}}
+                @if ($service->requires_room)
+
+                    <div class="schedule-room-info">
+
+                        <span>
+                            <i class="bi bi-door-open"></i>
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Penentuan Ruangan Otomatis
+                            </strong>
+
+                            <p>
+                                Kamu tidak perlu memilih studio room
+                                secara manual. Sistem akan memilih
+                                ruangan aktif yang tidak sedang
+                                digunakan pada waktu tersebut.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                AUTO PHOTOGRAPHER INFORMATION
+                ================================================== --}}
+                @if (
+                    $service->requires_photographer
+                    && !$photographer
+                )
+
+                    <div class="schedule-room-info">
+
+                        <span>
+                            <i class="bi bi-person-check"></i>
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Fotografer Dipilihkan Otomatis
+                            </strong>
+
+                            <p>
+                                Sistem akan menentukan fotografer aktif
+                                yang tersedia pada sesi yang kamu pilih.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
 
             </div>
 
-        </form>
 
-    </section>
+            {{-- =====================================================
+            SUMMARY
+            ====================================================== --}}
+            <aside class="booking-summary">
+
+                <div class="booking-summary-card">
+
+                    <span class="booking-summary-eyebrow">
+                        RINGKASAN BOOKING
+                    </span>
+
+
+                    <h3>
+                        Reservasimu
+                    </h3>
+
+
+                    <div class="booking-summary-list">
+
+                        <div class="summary-row">
+
+                            <span>
+                                Layanan
+                            </span>
+
+                            <strong>
+                                {{ $service->name }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Cabang
+                            </span>
+
+                            <strong>
+                                {{ $branch->name }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Paket
+                            </span>
+
+                            <strong>
+                                {{ $package->name }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Durasi
+                            </span>
+
+                            <strong>
+                                {{ $package->duration_minutes }} menit
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Fotografer
+                            </span>
+
+                            <strong id="summarySchedulePhotographer">
+
+                                @if ($photographer)
+
+                                    {{ $photographer->name }}
+
+                                @elseif (
+                                    $service->requires_photographer
+                                )
+
+                                    Menyesuaikan sesi
+
+                                @else
+
+                                    Tidak diperlukan
+
+                                @endif
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- SELECTED SUMMARY --}}
+                    <div
+                        class="schedule-summary-selected"
+                        id="scheduleSummarySelected"
+                        hidden
+                    >
+
+                        <small>
+                            JADWAL TERPILIH
+                        </small>
+
+                        <strong id="summaryScheduleDate">
+                            —
+                        </strong>
+
+                        <span id="summaryScheduleTime">
+                            —
+                        </span>
+
+
+                        @if ($service->requires_room)
+
+                            <p>
+
+                                <i class="bi bi-door-open"></i>
+
+                                <span id="summaryScheduleRoom">
+                                    Ruangan otomatis
+                                </span>
+
+                            </p>
+
+                        @endif
+
+                    </div>
+
+
+                    <div class="summary-total">
+
+                        <span>
+                            Total Paket
+                        </span>
+
+                        <strong>
+                            Rp {{
+                                number_format(
+                                    $package->price,
+                                    0,
+                                    ',',
+                                    '.'
+                                )
+                            }}
+                        </strong>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="booking-next-button"
+                        id="scheduleContinueButton"
+                        disabled
+                    >
+
+                        Lanjut Isi Detail
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+
+                    <a
+                        href="{{
+                            route(
+                                'customer.bookings.photographer'
+                            )
+                        }}"
+                        class="booking-back-link"
+                    >
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Kembali Pilih Fotografer
+
+                    </a>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </form>
+
+</section>
 
 @endsection
 
@@ -834,11 +974,36 @@ document.addEventListener(
                 'scheduleContinueButton'
             );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Semua slot
+        |--------------------------------------------------------------------------
+        */
         const sessionChoices = [
             ...document.querySelectorAll(
                 '.schedule-session-choice'
             )
         ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Hanya slot yang benar-benar dapat dipilih
+        |--------------------------------------------------------------------------
+        */
+        const selectableChoices =
+            sessionChoices.filter(
+                function (item) {
+
+                    return (
+                        item.dataset.available === '1'
+                        && !item.disabled
+                    );
+
+                }
+            );
+
 
         const selectionInfo =
             document.getElementById(
@@ -881,9 +1046,14 @@ document.addEventListener(
             );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Cari slot yang sedang dipilih
+        |--------------------------------------------------------------------------
+        */
         function findSelectedSlot() {
 
-            return sessionChoices.find(
+            return selectableChoices.find(
                 function (item) {
 
                     return (
@@ -896,16 +1066,32 @@ document.addEventListener(
 
                 }
             );
+
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Update tampilan pilihan
+        |--------------------------------------------------------------------------
+        */
         function updateSelectedSchedule() {
 
             const selected =
                 findSelectedSlot();
 
 
+            /*
+             * Tidak ada slot valid yang dipilih.
+             */
             if (!selected) {
+
+                /*
+                 * Hapus nilai lama jika draft sebelumnya
+                 * ternyata sudah tidak tersedia.
+                 */
+                startInput.value = '';
+
 
                 if (selectionInfo) {
                     selectionInfo.hidden = true;
@@ -919,10 +1105,25 @@ document.addEventListener(
                     continueButton.disabled = true;
                 }
 
+
+                sessionChoices.forEach(
+                    function (item) {
+
+                        item.classList.remove(
+                            'selected'
+                        );
+
+                    }
+                );
+
+
                 return;
             }
 
 
+            /*
+             * Tandai hanya slot aktif yang dipilih.
+             */
             sessionChoices.forEach(
                 function (item) {
 
@@ -948,51 +1149,89 @@ document.addEventListener(
             }
 
 
-            selectedScheduleText.textContent =
-                `${selected.dataset.dateLabel} • `
-                + `${selected.dataset.start}`
-                + `–${selected.dataset.end} WIB`;
+            /*
+             * Informasi slot terpilih.
+             */
+            if (selectedScheduleText) {
+
+                selectedScheduleText.textContent =
+                    `${selected.dataset.dateLabel} • `
+                    + `${selected.dataset.start}`
+                    + `–${selected.dataset.end} WIB`;
+
+            }
 
 
             let meta =
                 `Fotografer: `
                 + selected.dataset.photographer;
 
+
             if (
                 selected.dataset.room
-                !== 'Tidak diperlukan'
+                    !== 'Tidak diperlukan'
             ) {
+
                 meta +=
                     ` • Ruangan: `
                     + selected.dataset.room;
+
             }
 
-            selectedScheduleMeta.textContent =
-                meta;
+
+            if (selectedScheduleMeta) {
+                selectedScheduleMeta.textContent =
+                    meta;
+            }
 
 
-            summaryDate.textContent =
-                selected.dataset.dateLabel;
+            /*
+             * Summary sebelah kanan.
+             */
+            if (summaryDate) {
 
-            summaryTime.textContent =
-                `${selected.dataset.start}`
-                + `–${selected.dataset.end} WIB`;
+                summaryDate.textContent =
+                    selected.dataset.dateLabel;
+
+            }
+
+
+            if (summaryTime) {
+
+                summaryTime.textContent =
+                    `${selected.dataset.start}`
+                    + `–${selected.dataset.end} WIB`;
+
+            }
 
 
             if (summaryPhotographer) {
+
                 summaryPhotographer.textContent =
                     selected.dataset.photographer;
+
             }
 
 
             if (summaryRoom) {
+
                 summaryRoom.textContent =
                     selected.dataset.room;
+
             }
+
         }
 
 
-        sessionChoices.forEach(
+        /*
+        |--------------------------------------------------------------------------
+        | Klik slot yang tersedia
+        |--------------------------------------------------------------------------
+        |
+        | Slot booked / blocked tidak mendapat event klik.
+        |
+        */
+        selectableChoices.forEach(
             function (choice) {
 
                 choice.addEventListener(
@@ -1031,6 +1270,10 @@ document.addEventListener(
         );
 
 
+        /*
+         * Restore pilihan lama hanya kalau
+         * slot tersebut masih tersedia.
+         */
         updateSelectedSchedule();
 
     }

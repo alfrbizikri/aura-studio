@@ -22,28 +22,58 @@ class ReportController extends Controller
     {
         $data = $this->getReportData($request);
 
-        $pdf = Pdf::loadView('admin.reports.pdf', $data)
-            ->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadView(
+            'admin.reports.pdf',
+            $data
+        )->setPaper('a4', 'landscape');
 
-        $fileName = 'laporan-aura-studio-' . now()->format('Y-m-d-His') . '.pdf';
+        $fileName =
+            'laporan-aura-studio-'
+            . now()->format('Y-m-d-His')
+            . '.pdf';
 
         return $pdf->download($fileName);
     }
 
-    private function getReportData(Request $request): array
-    {
-        $type = $request->get('type', 'monthly');
+    private function getReportData(
+        Request $request
+    ): array {
+        $type = $request->get(
+            'type',
+            'monthly'
+        );
 
-        $month = (int) $request->get('month', now()->month);
+        $month = (int) $request->get(
+            'month',
+            now()->month
+        );
 
-        $year = (int) $request->get('year', now()->year);
+        $year = (int) $request->get(
+            'year',
+            now()->year
+        );
 
-        $branchId = $request->get('branch_id');
+        $branchId =
+            $request->get('branch_id');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Data Cabang
+        |--------------------------------------------------------------------------
+        */
 
         $branches = Branch::query()
             ->where('status', 'active')
             ->orderBy('name')
             ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Query Booking
+        |--------------------------------------------------------------------------
+        */
 
         $query = Booking::query()
             ->with([
@@ -53,6 +83,7 @@ class ReportController extends Controller
                 'schedules.branch',
             ]);
 
+
         /*
         |--------------------------------------------------------------------------
         | Filter Periode
@@ -60,16 +91,42 @@ class ReportController extends Controller
         */
 
         if ($type === 'yearly') {
-            $query->whereHas('schedules', function ($scheduleQuery) use ($year) {
-                $scheduleQuery->whereYear('schedule_date', $year);
-            });
+
+            $query->whereHas(
+                'schedules',
+                function ($scheduleQuery) use (
+                    $year
+                ) {
+                    $scheduleQuery
+                        ->whereYear(
+                            'schedule_date',
+                            $year
+                        );
+                }
+            );
+
         } else {
-            $query->whereHas('schedules', function ($scheduleQuery) use ($month, $year) {
-                $scheduleQuery
-                    ->whereMonth('schedule_date', $month)
-                    ->whereYear('schedule_date', $year);
-            });
+
+            $query->whereHas(
+                'schedules',
+                function ($scheduleQuery) use (
+                    $month,
+                    $year
+                ) {
+                    $scheduleQuery
+                        ->whereMonth(
+                            'schedule_date',
+                            $month
+                        )
+                        ->whereYear(
+                            'schedule_date',
+                            $year
+                        );
+                }
+            );
+
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -78,14 +135,33 @@ class ReportController extends Controller
         */
 
         if ($branchId) {
-            $query->whereHas('schedules', function ($scheduleQuery) use ($branchId) {
-                $scheduleQuery->where('branch_id', $branchId);
-            });
+
+            $query->whereHas(
+                'schedules',
+                function ($scheduleQuery) use (
+                    $branchId
+                ) {
+                    $scheduleQuery
+                        ->where(
+                            'branch_id',
+                            $branchId
+                        );
+                }
+            );
+
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil Data Booking
+        |--------------------------------------------------------------------------
+        */
 
         $bookings = $query
             ->latest()
             ->get();
+
 
         /*
         |--------------------------------------------------------------------------
@@ -93,43 +169,104 @@ class ReportController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $totalBooking = $bookings->count();
+        $totalBooking =
+            $bookings->count();
 
-        $completedBooking = $bookings
-            ->where('status', 'completed')
-            ->count();
 
-        $pendingBooking = $bookings
-            ->where('status', 'pending')
-            ->count();
+        $completedBooking =
+            $bookings
+                ->where(
+                    'status',
+                    'completed'
+                )
+                ->count();
 
-        $confirmedBooking = $bookings
-            ->where('status', 'confirmed')
-            ->count();
 
-        $cancelledBooking = $bookings
-            ->where('status', 'cancelled')
-            ->count();
+        $pendingBooking =
+            $bookings
+                ->where(
+                    'status',
+                    'pending'
+                )
+                ->count();
+
+
+        $confirmedBooking =
+            $bookings
+                ->where(
+                    'status',
+                    'confirmed'
+                )
+                ->count();
+
+
+        $cancelledBooking =
+            $bookings
+                ->where(
+                    'status',
+                    'cancelled'
+                )
+                ->count();
+
 
         /*
         |--------------------------------------------------------------------------
         | Pendapatan
         |--------------------------------------------------------------------------
         |
-        | Hanya pembayaran yang sudah berstatus paid.
+        | Pendapatan hanya dihitung jika:
+        |
+        | 1. Booking TIDAK dibatalkan
+        | 2. Booking memiliki payment
+        | 3. Payment berstatus paid
+        |
+        | Booking cancelled tetap muncul dalam riwayat laporan,
+        | tetapi nominalnya tidak dihitung sebagai pendapatan.
         |
         */
 
-        $totalRevenue = $bookings->sum(function ($booking) {
-            if (
-                $booking->payment
-                && $booking->payment->status === 'paid'
-            ) {
-                return (float) $booking->payment->amount;
-            }
+        $totalRevenue =
+            $bookings->sum(
+                function ($booking) {
 
-            return 0;
-        });
+                    /*
+                     * Booking dibatalkan
+                     * tidak menghasilkan pendapatan.
+                     */
+                    if (
+                        $booking->status
+                        === 'cancelled'
+                    ) {
+                        return 0;
+                    }
+
+
+                    /*
+                     * Harus memiliki payment.
+                     */
+                    if (!$booking->payment) {
+                        return 0;
+                    }
+
+
+                    /*
+                     * Payment harus sudah paid.
+                     */
+                    if (
+                        $booking->payment->status
+                        !== 'paid'
+                    ) {
+                        return 0;
+                    }
+
+
+                    return (float)
+                        $booking
+                            ->payment
+                            ->amount;
+                }
+            );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -139,36 +276,89 @@ class ReportController extends Controller
 
         Carbon::setLocale('id');
 
+
         if ($type === 'yearly') {
-            $periodLabel = 'Tahun ' . $year;
+
+            $periodLabel =
+                'Tahun ' . $year;
+
         } else {
-            $periodLabel = Carbon::create($year, $month, 1)
-                ->translatedFormat('F Y');
+
+            $periodLabel =
+                Carbon::create(
+                    $year,
+                    $month,
+                    1
+                )->translatedFormat(
+                    'F Y'
+                );
+
         }
 
-        $selectedBranch = $branchId
-            ? $branches->firstWhere('id', $branchId)
-            : null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cabang Terpilih
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedBranch =
+            $branchId
+                ? $branches->firstWhere(
+                    'id',
+                    $branchId
+                )
+                : null;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return Data
+        |--------------------------------------------------------------------------
+        */
 
         return [
-            'bookings' => $bookings,
-            'branches' => $branches,
+            'bookings' =>
+                $bookings,
 
-            'type' => $type,
-            'month' => $month,
-            'year' => $year,
-            'branchId' => $branchId,
+            'branches' =>
+                $branches,
 
-            'periodLabel' => $periodLabel,
-            'selectedBranch' => $selectedBranch,
+            'type' =>
+                $type,
 
-            'totalBooking' => $totalBooking,
-            'completedBooking' => $completedBooking,
-            'pendingBooking' => $pendingBooking,
-            'confirmedBooking' => $confirmedBooking,
-            'cancelledBooking' => $cancelledBooking,
+            'month' =>
+                $month,
 
-            'totalRevenue' => $totalRevenue,
+            'year' =>
+                $year,
+
+            'branchId' =>
+                $branchId,
+
+            'periodLabel' =>
+                $periodLabel,
+
+            'selectedBranch' =>
+                $selectedBranch,
+
+            'totalBooking' =>
+                $totalBooking,
+
+            'completedBooking' =>
+                $completedBooking,
+
+            'pendingBooking' =>
+                $pendingBooking,
+
+            'confirmedBooking' =>
+                $confirmedBooking,
+
+            'cancelledBooking' =>
+                $cancelledBooking,
+
+            'totalRevenue' =>
+                $totalRevenue,
         ];
     }
 }

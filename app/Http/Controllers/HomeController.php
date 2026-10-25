@@ -75,14 +75,29 @@ class HomeController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Testimonial
+        | Testimoni dan Statistik Rating
         |--------------------------------------------------------------------------
         */
 
-        $testimonials = Testimonial::with('booking.user')
+        // Menghitung jumlah ulasan publik dan rata-rata rating.
+        $reviewStats = Testimonial::query()
+            ->where('status', 'published')
+            ->selectRaw(
+                'COUNT(*) AS total, COALESCE(AVG(rating), 0) AS average_rating'
+            )
+            ->first();
+
+        $publishedTestimonialCount = (int) ($reviewStats->total ?? 0);
+        $averageRating = (float) ($reviewStats->average_rating ?? 0);
+
+        // Mengambil maksimal 10 ulasan terbaru yang sudah dipublikasikan.
+        $testimonials = Testimonial::with([
+            'booking.user',
+            'booking.package',
+        ])
             ->where('status', 'published')
             ->latest()
-            ->take(3)
+            ->take(10)
             ->get();
 
 
@@ -91,7 +106,9 @@ class HomeController extends Controller
             'packages',
             'branches',
             'galleries',
-            'testimonials'
+            'testimonials',
+            'publishedTestimonialCount',
+            'averageRating'
         ));
     }
 }

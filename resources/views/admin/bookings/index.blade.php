@@ -290,6 +290,25 @@
                                                     <i class="bi bi-eye"></i>
                                                 </a>
 
+                                                @if ($booking->status === 'confirmed')
+                                                    <form
+                                                        action="{{ route('admin.bookings.complete', $booking) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Tandai booking {{ $booking->booking_code }} sebagai selesai?')"
+                                                    >
+                                                        @csrf
+                                                        @method('PATCH')
+
+                                                        <button
+                                                            type="submit"
+                                                            class="admin-action-btn"
+                                                            title="Tandai Selesai"
+                                                        >
+                                                            <i class="bi bi-check2-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
                                                 @if (!in_array($booking->status, ['completed', 'cancelled']))
                                                     <form action="{{ route('admin.bookings.cancel', $booking) }}" method="POST"
                                                         onsubmit="return confirm('Yakin ingin membatalkan booking {{ $booking->booking_code }}? Jadwal booking ini akan tersedia kembali.')">

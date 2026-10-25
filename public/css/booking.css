@@ -2565,3 +2565,240 @@ a.booking-calendar-day:hover {
     font-size: 9px;
 }
 
+/* =========================================================
+   SCHEDULE SLOT STATUS
+========================================================= */
+
+.schedule-session-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+
+/* Base slot */
+
+.schedule-session-choice {
+    position: relative;
+
+    min-height: 78px;
+
+    padding: 14px 16px;
+
+    border: 1px solid #ddd5cd;
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    gap: 3px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+
+.schedule-session-choice strong {
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #352c27;
+}
+
+
+.schedule-session-choice > span {
+    font-size: 12px;
+    color: #8a7f77;
+}
+
+
+/* =========================================================
+   STATUS LABEL
+========================================================= */
+
+.schedule-session-status {
+    display: inline-flex;
+    align-items: center;
+
+    width: fit-content;
+
+    margin-top: 7px;
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   AVAILABLE
+========================================================= */
+
+.schedule-session-choice-available {
+    border-color: #d8d1ca;
+    background: #ffffff;
+}
+
+
+.schedule-session-choice-available
+.schedule-session-status {
+    background: #eaf4ec;
+    color: #477253;
+}
+
+
+.schedule-session-choice-available:hover {
+    border-color: #8f6b58;
+
+    background: #fffaf7;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 22px
+        rgba(70, 50, 40, .09);
+}
+
+
+/* =========================================================
+   SELECTED
+========================================================= */
+
+.schedule-session-choice.selected {
+    border-color: #6f4539;
+
+    background: #f9efea;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(111, 69, 57, .10);
+}
+
+
+.schedule-session-choice.selected strong {
+    color: #6f4539;
+}
+
+
+.schedule-session-choice.selected
+.schedule-session-status {
+    background: #6f4539;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   BOOKED
+========================================================= */
+
+.schedule-session-choice-booked {
+    border-color: #ead5d8;
+
+    background: #fbf4f5;
+
+    cursor: not-allowed;
+
+    opacity: 1;
+}
+
+
+.schedule-session-choice-booked strong {
+    color: #86646a;
+}
+
+
+.schedule-session-choice-booked > span {
+    color: #aa8e93;
+}
+
+
+.schedule-session-choice-booked
+.schedule-session-status {
+    background: #f0dfe2;
+    color: #8a4e58;
+}
+
+
+/* =========================================================
+   BLOCKED / UNAVAILABLE
+========================================================= */
+
+.schedule-session-choice-blocked,
+.schedule-session-choice-unavailable {
+    border-color: #e2ded9;
+
+    background: #f5f3f1;
+
+    cursor: not-allowed;
+
+    opacity: 1;
+}
+
+
+.schedule-session-choice-blocked strong,
+.schedule-session-choice-unavailable strong {
+    color: #8c8580;
+}
+
+
+.schedule-session-choice-blocked > span,
+.schedule-session-choice-unavailable > span {
+    color: #aaa39e;
+}
+
+
+.schedule-session-choice-blocked
+.schedule-session-status,
+.schedule-session-choice-unavailable
+.schedule-session-status {
+    background: #e7e3df;
+    color: #77716c;
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.schedule-session-choice:disabled {
+    pointer-events: none;
+}
+
+
+.schedule-session-choice:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 720px) {
+
+    .schedule-session-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-session-choice {
+        min-height: 72px;
+    }
+
+}
