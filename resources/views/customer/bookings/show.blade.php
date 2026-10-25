@@ -284,6 +284,174 @@
             </div>
 
 
+                {{-- RATING DAN ULASAN --}}
+                <div class="booking-detail-card testimonial-card">
+
+                    <div class="detail-card-header">
+                        <div>
+                            <span class="booking-label">
+                                Pengalaman Anda
+                            </span>
+                            <h2>Rating & Komentar</h2>
+                        </div>
+
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+
+                    @if (session('success'))
+                        <div class="testimonial-alert testimonial-alert-success"
+                            role="status">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="testimonial-alert testimonial-alert-error"
+                            role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="testimonial-alert testimonial-alert-error"
+                            role="alert">
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if ($booking->testimonial)
+
+                        {{-- RIWAYAT ULASAN YANG SUDAH DIKIRIM --}}
+                        <div class="testimonial-existing">
+
+                            <div class="testimonial-display-stars"
+                                aria-label="Rating {{ $booking->testimonial->rating }} dari 5">
+
+                                @for ($star = 1; $star <= 5; $star++)
+                                    <span class="{{ $star <= $booking->testimonial->rating ? 'is-active' : '' }}">★</span>
+                                @endfor
+
+                                <strong>
+                                    {{ $booking->testimonial->rating }}/5
+                                </strong>
+                            </div>
+
+                            <p class="testimonial-comment">
+                                {{ $booking->testimonial->comment }}
+                            </p>
+
+                            <div class="testimonial-history-meta">
+                                <span>
+                                    Dikirim
+                                    {{ $booking->testimonial->created_at?->format('d M Y, H:i') ?? '-' }}
+                                </span>
+
+                                <span class="testimonial-status testimonial-status-{{ $booking->testimonial->status }}">
+                                    @if ($booking->testimonial->status === 'pending')
+                                        Menunggu Persetujuan
+                                    @elseif ($booking->testimonial->status === 'published')
+                                        Dipublikasikan
+                                    @else
+                                        Disembunyikan dari Publik
+                                    @endif
+                                </span>
+                            </div>
+
+                        </div>
+
+                    @elseif ($booking->status === 'completed')
+
+                        {{-- FORMULIR RATING --}}
+                        <p class="testimonial-description">
+                            Terima kasih telah memilih Aura Studio.
+                            Bagikan pengalaman Anda agar kami bisa terus berkembang.
+                        </p>
+
+                        <form
+                            action="{{ route('customer.bookings.testimonial.store', $booking) }}"
+                            method="POST"
+                            class="testimonial-form"
+                        >
+                            @csrf
+
+                            <label class="testimonial-form-label">
+                                Berikan Rating
+                            </label>
+
+                            <div class="testimonial-star-rating"
+                                role="radiogroup"
+                                aria-label="Pilih rating bintang">
+
+                                @for ($star = 5; $star >= 1; $star--)
+                                    <input
+                                        type="radio"
+                                        id="testimonial-rating-{{ $star }}"
+                                        name="rating"
+                                        value="{{ $star }}"
+                                        {{ old('rating') == $star ? 'checked' : '' }}
+                                        required
+                                    >
+
+                                    <label
+                                        for="testimonial-rating-{{ $star }}"
+                                        title="{{ $star }} bintang"
+                                        aria-label="{{ $star }} bintang"
+                                    >★</label>
+                                @endfor
+
+                            </div>
+
+                            <label
+                                for="testimonial-comment"
+                                class="testimonial-form-label"
+                            >
+                                Komentar Anda
+                            </label>
+
+                            <textarea
+                                id="testimonial-comment"
+                                name="comment"
+                                rows="5"
+                                minlength="5"
+                                maxlength="1000"
+                                placeholder="Ceritakan pengalaman Anda menggunakan layanan Aura Studio..."
+                                required
+                            >{{ old('comment') }}</textarea>
+
+                            <p class="testimonial-helper">
+                                Komentar minimal 5 dan maksimal 1.000 karakter.
+                                Ulasan akan ditinjau oleh admin sebelum ditampilkan secara publik.
+                            </p>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i>
+                                Kirim Rating
+                            </button>
+
+                        </form>
+
+                    @else
+
+                        <div class="testimonial-waiting">
+                            <i class="bi bi-hourglass-split"></i>
+
+                            <div>
+                                <strong>Rating belum tersedia</strong>
+                                <p>
+                                    Anda dapat memberikan rating setelah
+                                    booking ditandai selesai oleh admin.
+                                </p>
+                            </div>
+                        </div>
+
+                    @endif
+
+                </div>
+
+
+
             {{-- INVOICE --}}
             <aside class="booking-invoice">
 

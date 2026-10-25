@@ -9,6 +9,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\TestimonialController;
 
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Controllers\Auth\CustomerPasswordResetController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Admin\PackageController as AdminPackageController;
 use App\Http\Controllers\Admin\StudioRoomController as AdminStudioRoomController;
 use App\Http\Controllers\Admin\PhotographerController as AdminPhotographerController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 
 
 /*
@@ -41,6 +43,12 @@ Route::get('/', [
     HomeController::class,
     'index'
 ])->name('home');
+
+
+Route::get('/ulasan', [
+    TestimonialController::class,
+    'index',
+])->name('testimonials.index');
 
 
 /*
@@ -279,6 +287,11 @@ Route::middleware('auth')->group(function () {
         'show'
     ])->name('customer.bookings.show');
 
+    Route::post('/riwayat-booking/{booking}/ulasan', [
+        CustomerBookingController::class,
+        'storeTestimonial'
+    ])->name('customer.bookings.testimonial.store');
+
     // Booking Wizard - Step 1: Pilihan
     Route::get('/booking/mulai/{package?}', [
         CustomerBookingController::class,
@@ -481,4 +494,23 @@ Route::prefix('admin')
 
         Route::patch('/bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])
             ->name('bookings.cancel');
+
+        Route::patch('/bookings/{booking}/complete', [AdminBookingController::class, 'complete'])
+            ->name('bookings.complete');
+
+        // MANAJEMEN ULASAN
+        Route::get('/ulasan', [
+            AdminTestimonialController::class,
+            'index',
+        ])->name('testimonials.index');
+
+        Route::patch('/ulasan/{testimonial}/publish', [
+            AdminTestimonialController::class,
+            'publish',
+        ])->name('testimonials.publish');
+
+        Route::patch('/ulasan/{testimonial}/hide', [
+            AdminTestimonialController::class,
+            'hide',
+        ])->name('testimonials.hide');
     });

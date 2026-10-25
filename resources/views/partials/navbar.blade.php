@@ -96,6 +96,18 @@
 
 
             <a
+                href="{{ route('testimonials.index') }}"
+                class="{{ request()->routeIs('testimonials.*') ? 'active' : '' }}"
+                @if (request()->routeIs('testimonials.*'))
+                    aria-current="page"
+                @endif
+            >
+                Ulasan
+            </a>
+
+
+
+            <a
                 href="{{ route('about') }}"
                 class="{{ request()->routeIs('about') ? 'active' : '' }}"
                 @if (request()->routeIs('about'))

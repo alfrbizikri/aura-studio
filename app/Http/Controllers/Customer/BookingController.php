@@ -1589,12 +1589,63 @@ class BookingController extends Controller
             'schedules.service',
             'schedules.photographer',
             'schedules.studioRoom',
+            'testimonial',
         ]);
 
         return view(
             'customer.bookings.show',
             compact('booking')
         );
+    }
+
+    public function storeTestimonial(Request $request, Booking $booking)
+    {
+        // Pastikan booking milik pelanggan yang sedang login.
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        // Rating hanya boleh diberikan setelah booking selesai.
+        if ($booking->status !== 'completed') {
+            return back()->with(
+                'error',
+                'Rating hanya dapat diberikan setelah booking selesai.'
+            );
+        }
+
+        // Satu booking hanya boleh memiliki satu ulasan.
+        if ($booking->testimonial()->exists()) {
+            return back()->with(
+                'error',
+                'Booking ini sudah memiliki ulasan.'
+            );
+        }
+
+        // Validasi rating dan komentar.
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['required', 'string', 'min:5', 'max:1000'],
+        ], [
+            'rating.required' => 'Silakan pilih rating bintang.',
+            'rating.integer' => 'Rating tidak valid.',
+            'rating.min' => 'Rating minimal 1 bintang.',
+            'rating.max' => 'Rating maksimal 5 bintang.',
+            'comment.required' => 'Komentar wajib diisi.',
+            'comment.min' => 'Komentar minimal 5 karakter.',
+            'comment.max' => 'Komentar maksimal 1000 karakter.',
+        ]);
+
+        // Simpan sebagai pending agar menunggu persetujuan admin.
+        $booking->testimonial()->create([
+            'rating' => $validated['rating'],
+            'comment' => trim($validated['comment']),
+            'status' => 'pending',
+        ]);
+
+        return redirect()
+            ->route('customer.bookings.show', $booking)
+            ->with(
+                'success',
+                'Rating dan komentar berhasil dikirim dan sedang menunggu persetujuan admin.'
+            );
     }
 
     private function generateBookingCode(): string
